@@ -3,7 +3,7 @@ import { Package, Calendar, UserPlus, FileText, Settings, LayoutDashboard } from
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col fixed left-0 top-0">
+    <aside className="w-64 bg-white border-r border-gray-200 h-screen hidden md:flex flex-col fixed left-0 top-0">
       <div className="p-6">
         <h1 className="text-2xl font-bold text-green-600 flex items-center gap-2">
           <Package className="w-6 h-6" />
