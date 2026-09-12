@@ -135,13 +135,13 @@ export default function CustomerFormPage() {
                 let inputClass = "w-full px-4 py-3 rounded-xl border bg-white focus:outline-none transition-all duration-200 text-gray-900 placeholder-gray-400 ";
 
                 if (groupType === 'sender') {
-                  labelClass += "text-blue-900";
-                  inputClass += "border-blue-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
+                  labelClass += "text-slate-700";
+                  inputClass += "border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500";
                 } else if (groupType === 'receiver') {
-                  labelClass += "text-emerald-900";
-                  inputClass += "border-emerald-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500";
+                  labelClass += "text-stone-700";
+                  inputClass += "border-stone-300 focus:border-stone-500 focus:ring-1 focus:ring-stone-500";
                 } else {
-                  labelClass += "text-gray-800";
+                  labelClass += "text-gray-700";
                   inputClass += "border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-500";
                 }
 
@@ -159,9 +159,9 @@ export default function CustomerFormPage() {
                         rows={3}
                       />
                     ) : field.type === 'checkbox' ? (
-                      <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors bg-white ${groupType === 'sender' ? 'border-blue-200 hover:bg-blue-50' : groupType === 'receiver' ? 'border-emerald-200 hover:bg-emerald-50' : 'border-gray-300 hover:bg-gray-50'}`}>
-                        <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-blue-600 border-blue-400 focus:ring-blue-500' : groupType === 'receiver' ? 'text-emerald-600 border-emerald-400 focus:ring-emerald-500' : 'text-gray-600 border-gray-400 focus:ring-gray-500'}`} />
-                        <span className={`text-sm leading-relaxed ${groupType === 'sender' ? 'text-blue-900' : groupType === 'receiver' ? 'text-emerald-900' : 'text-gray-800'}`}>{field.placeholder || '동의합니다.'}</span>
+                      <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors bg-white ${groupType === 'sender' ? 'border-slate-300 hover:bg-slate-100' : groupType === 'receiver' ? 'border-stone-300 hover:bg-stone-100' : 'border-gray-300 hover:bg-gray-50'}`}>
+                        <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-500' : groupType === 'receiver' ? 'text-stone-600 border-stone-400 focus:ring-stone-500' : 'text-gray-600 border-gray-400 focus:ring-gray-500'}`} />
+                        <span className={`text-sm leading-relaxed ${groupType === 'sender' ? 'text-slate-700' : groupType === 'receiver' ? 'text-stone-700' : 'text-gray-700'}`}>{field.placeholder || '동의합니다.'}</span>
                       </label>
                     ) : field.type === 'address' ? (
                       <div className="space-y-2">
@@ -195,9 +195,9 @@ export default function CustomerFormPage() {
               return (
                 <div className="space-y-8">
                   {senderFields.length > 0 && (
-                    <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-5 sm:p-7 shadow-sm">
-                      <h3 className="font-extrabold text-blue-900 mb-5 text-lg flex items-center gap-2">
-                        <span className="w-2 h-6 bg-blue-500 rounded-full inline-block"></span>
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
+                      <h3 className="font-extrabold text-slate-700 mb-5 text-lg flex items-center gap-2">
+                        <span className="w-2 h-6 bg-slate-500 rounded-full inline-block"></span>
                         보내는 분 (발송인)
                       </h3>
                       <div>
@@ -207,9 +207,9 @@ export default function CustomerFormPage() {
                   )}
 
                   {receiverFields.length > 0 && (
-                    <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-5 sm:p-7 shadow-sm">
-                      <h3 className="font-extrabold text-emerald-900 mb-5 text-lg flex items-center gap-2">
-                        <span className="w-2 h-6 bg-emerald-500 rounded-full inline-block"></span>
+                    <div className="bg-[#FCFAF8] border border-stone-200 rounded-2xl p-5 sm:p-7 shadow-sm">
+                      <h3 className="font-extrabold text-stone-700 mb-5 text-lg flex items-center gap-2">
+                        <span className="w-2 h-6 bg-stone-500 rounded-full inline-block"></span>
                         받는 분 (수령인)
                       </h3>
                       <div>
@@ -220,7 +220,7 @@ export default function CustomerFormPage() {
 
                   {otherFields.length > 0 && (
                     <div className="bg-gray-50/70 border border-gray-200 rounded-2xl p-5 sm:p-7 shadow-sm">
-                      <h3 className="font-extrabold text-gray-800 mb-5 text-lg flex items-center gap-2">
+                      <h3 className="font-extrabold text-gray-700 mb-5 text-lg flex items-center gap-2">
                         <span className="w-2 h-6 bg-gray-400 rounded-full inline-block"></span>
                         기타 정보
                       </h3>
