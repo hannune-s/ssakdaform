@@ -42,17 +42,18 @@ export default function FormBuilder() {
   // --- 고객에게 보여질 '고급스러운 미리보기' 화면 ---
   if (showPreview) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center py-10 px-4 fixed inset-0 z-50 overflow-y-auto">
-        <button 
-          onClick={() => setShowPreview(false)}
-          className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-full text-gray-700 hover:bg-gray-50 transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          어드민으로 돌아가기
-        </button>
+      <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-50">
+        <div className="min-h-screen flex flex-col items-center justify-start py-20 px-4 relative">
+          <button 
+            onClick={() => setShowPreview(false)}
+            className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-full text-gray-700 hover:bg-gray-50 transition z-10"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            어드민으로 돌아가기
+          </button>
 
-        <div className="w-full max-w-lg mt-12 bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-          <div className="bg-gray-900 px-8 py-10 text-center relative overflow-hidden">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 mb-20">
+            <div className="bg-gray-900 px-8 py-10 text-center relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-500"></div>
             <p className="text-gray-400 text-sm font-medium tracking-widest uppercase mb-3">{storeName}</p>
             <h1 className="text-3xl font-light text-white tracking-tight">{formTitle}</h1>
