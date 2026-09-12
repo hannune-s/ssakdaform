@@ -121,15 +121,6 @@ export default function DeliveryForm() {
             </div>
           </section>
 
-          <div className="pt-6 flex flex-col md:flex-row justify-end gap-3 border-t border-gray-100">
-            <button type="button" className="w-full md:w-auto px-6 py-3 md:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-              취소
-            </button>
-            <button type="button" className="w-full md:w-auto px-6 py-3 md:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-sm">
-              접수하기
-            </button>
-          </div>
-
         </form>
       </div>
     </div>

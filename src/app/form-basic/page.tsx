@@ -108,15 +108,6 @@ export default function BasicForm() {
             ></textarea>
           </div>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
-            <button type="button" className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-              취소
-            </button>
-            <button type="button" className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-sm">
-              신청서 저장하기
-            </button>
-          </div>
-
         </form>
       </div>
     </div>
