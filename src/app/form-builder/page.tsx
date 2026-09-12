@@ -68,7 +68,18 @@ export default function FormBuilder() {
 
   const handlePreview = () => {
     localStorage.setItem('ssakdaform_preview', JSON.stringify({ storeName, formTitle, fields }));
-    window.open('/preview', '_blank');
+    
+    // 모바일 크기에 맞춘 팝업창 띄우기 (화면 중앙 정렬)
+    const width = 480;
+    const height = 850;
+    const left = (window.screen.width / 2) - (width / 2);
+    const top = (window.screen.height / 2) - (height / 2);
+    
+    window.open(
+      '/preview', 
+      'PreviewPopup', 
+      `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+    );
   };
 
   const handleReset = () => {
