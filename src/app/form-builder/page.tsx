@@ -188,69 +188,69 @@ export default function FormBuilder() {
           </div>
         </div>
 
-        {/* 오른쪽: 폼 항목 리스트 (빌더) */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-4">
-            <h3 className="font-semibold text-gray-800">입력 항목 관리</h3>
-            <p className="text-sm text-gray-500">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
+        {/* 오른쪽: 입력 항목 리스트 (빌더) */}
+        <div className="lg:col-span-2 space-y-3">
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm mb-3">
+            <h3 className="font-semibold text-[15px] text-gray-800">입력 항목 관리</h3>
+            <p className="text-[13px] text-gray-500 mt-1">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
           </div>
 
           {fields.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-              <p className="text-gray-500">아직 추가된 항목이 없습니다.<br/>왼쪽 메뉴에서 항목을 추가해주세요.</p>
+            <div className="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+              <p className="text-[13px] text-gray-500">아직 추가된 항목이 없습니다.<br/>왼쪽 메뉴에서 항목을 추가해주세요.</p>
             </div>
           ) : (
             fields.map((field, index) => (
-              <div key={field.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative group">
-                <div className="absolute -left-3 -top-3 w-8 h-8 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-sm">
+              <div key={field.id} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative group">
+                <div className="absolute -left-2 -top-2 w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-[12px] border-2 border-white shadow-sm">
                   {index + 1}
                 </div>
                 
                 <button 
                   onClick={() => removeField(field.id)}
-                  className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                  className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
                   title="삭제"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 pr-6">
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">항목 이름</label>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">항목 이름</label>
                     <input 
                       type="text" 
                       value={field.label}
                       onChange={(e) => updateField(field.id, 'label', e.target.value)}
                       placeholder="예: 연락처, 방문일자 등"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm" 
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">안내 문구</label>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">안내 문구</label>
                     <input 
                       type="text" 
                       value={field.placeholder}
                       onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
                       placeholder="입력칸 안에 희미하게 보일 문구"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm" 
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                     />
                   </div>
                   
-                  <div className="md:col-span-2 flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-gray-500 bg-white px-2 py-1 rounded border border-gray-200 uppercase tracking-wider">
+                  <div className="md:col-span-2 flex items-center justify-between bg-gray-50 p-2 sm:px-3 sm:py-2 rounded-lg border border-gray-100 mt-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-bold text-gray-500 bg-white px-1.5 py-0.5 rounded border border-gray-200 uppercase tracking-wider">
                         {field.type}
                       </span>
-                      <span className="text-sm text-gray-600">입력 타입</span>
+                      <span className="text-[12px] text-gray-600 font-medium">입력 타입</span>
                     </div>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-1.5 cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={field.required}
                         onChange={(e) => updateField(field.id, 'required', e.target.checked)}
-                        className="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer" 
+                        className="w-3.5 h-3.5 text-green-600 rounded focus:ring-green-500 cursor-pointer" 
                       />
-                      <span className="text-sm font-medium text-gray-700 select-none">필수 항목으로 설정</span>
+                      <span className="text-[12px] font-medium text-gray-700 select-none">필수 항목으로 설정</span>
                     </label>
                   </div>
                 </div>
