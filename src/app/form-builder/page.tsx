@@ -132,57 +132,57 @@ export default function FormBuilder() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
         
         {/* 왼쪽: 폼 기본 정보 설정 */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="font-semibold text-gray-800 mb-4 border-b pb-2">기본 정보 설정</h3>
-            <div className="space-y-4">
+        <div className="lg:col-span-1 space-y-4">
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="font-semibold text-[15px] text-gray-800 mb-3 border-b pb-2">기본 정보 설정</h3>
+            <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">상호명 (스토어 이름)</label>
+                <label className="block text-[13px] font-medium text-gray-700 mb-1">상호명 (스토어 이름)</label>
                 <input 
                   type="text" 
                   value={storeName}
                   onChange={(e) => setStoreName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">폼 제목 (신청서 이름)</label>
+                <label className="block text-[13px] font-medium text-gray-700 mb-1">폼 제목 (신청서 이름)</label>
                 <input 
                   type="text" 
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="font-semibold text-gray-800 mb-4 border-b pb-2">항목 추가하기</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => addField('text')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition">
-                <Type className="w-4 h-4" /> 텍스트
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="font-semibold text-[15px] text-gray-800 mb-3 border-b pb-2">항목 추가하기</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={() => addField('text')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
+                <Type className="w-3.5 h-3.5" /> 텍스트
               </button>
-              <button onClick={() => addField('number')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition">
-                <Hash className="w-4 h-4" /> 숫자
+              <button onClick={() => addField('number')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
+                <Hash className="w-3.5 h-3.5" /> 숫자
               </button>
-              <button onClick={() => addField('phone')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition">
-                <Phone className="w-4 h-4" /> 연락처
+              <button onClick={() => addField('phone')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
+                <Phone className="w-3.5 h-3.5" /> 연락처
               </button>
-              <button onClick={() => addField('date')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition">
-                <Calendar className="w-4 h-4" /> 날짜
+              <button onClick={() => addField('date')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
+                <Calendar className="w-3.5 h-3.5" /> 날짜
               </button>
-              <button onClick={() => addField('textarea')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2">
-                <Type className="w-4 h-4" /> 장문 텍스트
+              <button onClick={() => addField('textarea')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2 text-[13px] font-medium text-gray-700 shadow-sm">
+                <Type className="w-3.5 h-3.5" /> 장문 텍스트
               </button>
-              <button onClick={() => addField('address')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2">
-                <Hash className="w-4 h-4" /> 주소 (우편번호 검색)
+              <button onClick={() => addField('address')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2 text-[13px] font-medium text-gray-700 shadow-sm">
+                <Hash className="w-3.5 h-3.5" /> 주소 (우편번호 검색)
               </button>
-              <button onClick={() => addField('checkbox')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2">
-                <CheckSquare className="w-4 h-4" /> 체크박스(동의)
+              <button onClick={() => addField('checkbox')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2 text-[13px] font-medium text-gray-700 shadow-sm">
+                <CheckSquare className="w-3.5 h-3.5" /> 체크박스(동의)
               </button>
             </div>
           </div>
