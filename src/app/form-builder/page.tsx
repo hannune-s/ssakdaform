@@ -216,7 +216,7 @@ export default function FormBuilder() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">항목 이름 (Label)</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">항목 이름</label>
                     <input 
                       type="text" 
                       value={field.label}
@@ -226,7 +226,7 @@ export default function FormBuilder() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">안내 문구 (Placeholder)</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">안내 문구</label>
                     <input 
                       type="text" 
                       value={field.placeholder}
