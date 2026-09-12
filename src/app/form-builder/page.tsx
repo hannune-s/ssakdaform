@@ -114,19 +114,19 @@ export default function FormBuilder() {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">맞춤형 폼 만들기</h1>
           <p className="text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
         </div>
-        <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="flex flex-row items-center gap-2 w-full md:w-auto">
           <button 
             onClick={handleReset}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm"
+            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-2 sm:px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-base whitespace-nowrap"
           >
-            <RotateCcw className="w-5 h-5 text-gray-500" />
+            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
             초기화
           </button>
           <button 
             onClick={handlePreview}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md"
+            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-2 sm:px-5 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md text-[13px] sm:text-base whitespace-nowrap"
           >
-            <Eye className="w-5 h-5" />
+            <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
             고객화면 미리보기
           </button>
         </div>
