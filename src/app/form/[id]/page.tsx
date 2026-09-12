@@ -126,24 +126,24 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
               const isReceiver = field.label.includes('받는 분');
               
               let labelClass = "block text-sm font-bold mb-2 ";
-              let inputClass = "w-full px-4 py-3 rounded-xl border focus:outline-none transition-all duration-200 ";
+              let inputClass = "w-full px-4 py-3 rounded-xl border bg-white focus:outline-none transition-all duration-200 text-gray-900 placeholder-gray-400 ";
 
               if (isSender) {
-                labelClass += "text-slate-800";
-                inputClass += "bg-slate-800 border-slate-700 focus:bg-slate-900 focus:ring-2 focus:ring-slate-500 text-white placeholder-slate-400";
+                labelClass += "text-slate-600";
+                inputClass += "border-slate-400 focus:border-slate-600 focus:ring-1 focus:ring-slate-600";
               } else if (isReceiver) {
-                labelClass += "text-emerald-900";
-                inputClass += "bg-emerald-900 border-emerald-800 focus:bg-emerald-950 focus:ring-2 focus:ring-emerald-500 text-white placeholder-emerald-400";
+                labelClass += "text-emerald-700/80";
+                inputClass += "border-emerald-600/50 focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700";
               } else {
-                labelClass += "text-stone-800";
-                inputClass += "bg-stone-800 border-stone-700 focus:bg-stone-900 focus:ring-2 focus:ring-stone-500 text-white placeholder-stone-400";
+                labelClass += "text-gray-700";
+                inputClass += "border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-500";
               }
 
               return (
                 <div key={field.id} className="relative">
                   <label className={labelClass}>
                     {field.label || '제목 없는 항목'}
-                    {field.required && <span className="text-rose-500 ml-1">*</span>}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
                   
                   {field.type === 'textarea' ? (
@@ -153,9 +153,9 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
                       rows={3}
                     />
                   ) : field.type === 'checkbox' ? (
-                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isSender ? 'bg-slate-800 border-slate-700 hover:bg-slate-700' : isReceiver ? 'bg-emerald-900 border-emerald-800 hover:bg-emerald-800' : 'bg-stone-800 border-stone-700 hover:bg-stone-700'}`}>
-                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-slate-600 border-slate-500 focus:ring-slate-500 bg-slate-900' : isReceiver ? 'text-emerald-600 border-emerald-500 focus:ring-emerald-500 bg-emerald-950' : 'text-stone-600 border-stone-500 focus:ring-stone-500 bg-stone-900'}`} />
-                      <span className={`text-sm leading-relaxed ${isSender ? 'text-slate-200' : isReceiver ? 'text-emerald-100' : 'text-stone-200'}`}>{field.placeholder || '동의합니다.'}</span>
+                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors bg-white ${isSender ? 'border-slate-400 hover:bg-slate-50' : isReceiver ? 'border-emerald-600/50 hover:bg-emerald-50' : 'border-gray-300 hover:bg-gray-50'}`}>
+                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : isReceiver ? 'text-emerald-600 border-emerald-500 focus:ring-emerald-600' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
+                      <span className={`text-sm leading-relaxed ${isSender ? 'text-slate-700' : isReceiver ? 'text-emerald-800' : 'text-gray-700'}`}>{field.placeholder || '동의합니다.'}</span>
                     </label>
                   ) : field.type === 'address' ? (
                     <div className="space-y-2">
