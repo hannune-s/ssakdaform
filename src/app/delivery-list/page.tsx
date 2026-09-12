@@ -79,10 +79,11 @@ export default function DeliveryListPage() {
             <tbody className="divide-y divide-gray-100">
               {responses.length > 0 ? (
                 responses.map((res) => {
-                  const senderName = res.data['보내는 분 - 이름'] || '-';
-                  const senderPhone = res.data['보내는 분 - 연락처'] || '-';
-                  const receiverName = res.data['받는 분 - 이름'] || '-';
-                  const receiverAddress = res.data['받는 분 - 주소'] || '-';
+                  const data = res.data || {};
+                  const senderName = data['보내는 분 - 이름'] || res.senderName || '-';
+                  const senderPhone = data['보내는 분 - 연락처'] || res.senderPhone || '-';
+                  const receiverName = data['받는 분 - 이름'] || res.receiverName || '-';
+                  const receiverAddress = data['받는 분 - 주소'] || res.receiverAddress || '-';
                   const isCompleted = res.status === '발송완료';
 
                   return (
@@ -171,7 +172,7 @@ export default function DeliveryListPage() {
               </div>
 
               <div className="space-y-6">
-                {Object.entries(selectedResponse.data).map(([key, value]: any) => (
+                {Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' }).map(([key, value]: any) => (
                   <div key={key}>
                     <div className="text-xs font-bold text-gray-500 mb-1.5">{key}</div>
                     <div className="text-sm text-gray-900 font-medium bg-gray-50/50 border border-gray-100 p-3 rounded-xl whitespace-pre-wrap">
