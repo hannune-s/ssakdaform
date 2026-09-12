@@ -7,10 +7,10 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-green-500">
+        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-indigo-500">
           <h3 className="text-gray-500 font-medium mb-4">오늘 총 방문자</h3>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-green-500">2</span>
+            <span className="text-4xl font-bold text-indigo-500">2</span>
             <span className="text-gray-500">명</span>
           </div>
         </div>
@@ -23,20 +23,20 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-teal-500">
+        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-blue-500">
           <h3 className="text-gray-500 font-medium mb-4">유입 경로 (고유 방문자)</h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600">App</span>
-              <span className="text-teal-500 font-medium">129명 <span className="text-gray-400 font-normal">(58%)</span></span>
+              <span className="text-blue-500 font-medium">129명 <span className="text-gray-400 font-normal">(58%)</span></span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600">Mobile Web</span>
-              <span className="text-teal-500 font-medium">60명 <span className="text-gray-400 font-normal">(27%)</span></span>
+              <span className="text-blue-500 font-medium">60명 <span className="text-gray-400 font-normal">(27%)</span></span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600">PC Web</span>
-              <span className="text-teal-500 font-medium">32명 <span className="text-gray-400 font-normal">(14%)</span></span>
+              <span className="text-blue-500 font-medium">32명 <span className="text-gray-400 font-normal">(14%)</span></span>
             </div>
           </div>
         </div>
