@@ -80,51 +80,70 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
         
         <div className="p-8 sm:p-10">
           <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
-            {data.fields.map((field: any) => (
-              <div key={field.id} className="relative">
-                <label className="block text-sm font-semibold text-stone-700 mb-2">
-                  {field.label || '제목 없는 항목'}
-                  {field.required && <span className="text-emerald-500 ml-1">*</span>}
-                </label>
-                
-                {field.type === 'textarea' ? (
-                  <textarea 
-                    className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all duration-200 text-stone-800 placeholder-stone-400"
-                    placeholder={field.placeholder}
-                    rows={3}
-                  />
-                ) : field.type === 'checkbox' ? (
-                  <label className="flex items-start gap-3 p-4 bg-stone-50/50 rounded-xl border border-stone-200 cursor-pointer hover:bg-stone-50 transition-colors">
-                    <input type="checkbox" className="w-5 h-5 mt-0.5 text-emerald-600 rounded border-stone-300 focus:ring-emerald-600 cursor-pointer" />
-                    <span className="text-stone-700 text-sm leading-relaxed">{field.placeholder || '동의합니다.'}</span>
+            {data.fields.map((field: any) => {
+              const isSender = field.label.includes('보내는 분');
+              const isReceiver = field.label.includes('받는 분');
+              
+              let labelClass = "block text-sm font-bold mb-2 ";
+              let inputClass = "w-full px-4 py-3 rounded-xl border focus:bg-white focus:outline-none transition-all duration-200 ";
+
+              if (isSender) {
+                labelClass += "text-indigo-800";
+                inputClass += "bg-indigo-50/40 border-indigo-200 focus:ring-2 focus:ring-indigo-500 text-indigo-900 placeholder-indigo-300";
+              } else if (isReceiver) {
+                labelClass += "text-emerald-800";
+                inputClass += "bg-emerald-50/40 border-emerald-200 focus:ring-2 focus:ring-emerald-500 text-emerald-900 placeholder-emerald-300";
+              } else {
+                labelClass += "text-stone-700 font-semibold";
+                inputClass += "bg-stone-50/50 border-stone-200 focus:ring-2 focus:ring-emerald-600 text-stone-800 placeholder-stone-400";
+              }
+
+              return (
+                <div key={field.id} className="relative">
+                  <label className={labelClass}>
+                    {field.label || '제목 없는 항목'}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
-                ) : field.type === 'address' ? (
-                  <div className="space-y-2">
-                    <input 
-                      type="text" 
-                      readOnly
-                      onClick={() => openPostcode(field.id)}
-                      value={addressValues[field.id] || ''}
-                      className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all duration-200 text-stone-800 placeholder-stone-400 cursor-pointer"
-                      placeholder="클릭하여 주소 검색"
+                  
+                  {field.type === 'textarea' ? (
+                    <textarea 
+                      className={inputClass}
+                      placeholder={field.placeholder}
+                      rows={3}
                     />
-                    {addressValues[field.id] && (
+                  ) : field.type === 'checkbox' ? (
+                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isSender ? 'bg-indigo-50/40 border-indigo-200 hover:bg-indigo-50' : isReceiver ? 'bg-emerald-50/40 border-emerald-200 hover:bg-emerald-50' : 'bg-stone-50/50 border-stone-200 hover:bg-stone-50'}`}>
+                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-indigo-600 border-indigo-300 focus:ring-indigo-500' : isReceiver ? 'text-emerald-600 border-emerald-300 focus:ring-emerald-500' : 'text-emerald-600 border-stone-300 focus:ring-emerald-600'}`} />
+                      <span className={`text-sm leading-relaxed ${isSender ? 'text-indigo-800' : isReceiver ? 'text-emerald-800' : 'text-stone-700'}`}>{field.placeholder || '동의합니다.'}</span>
+                    </label>
+                  ) : field.type === 'address' ? (
+                    <div className="space-y-2">
                       <input 
                         type="text" 
-                        className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all duration-200 text-stone-800 placeholder-stone-400"
-                        placeholder="상세 주소를 입력하세요"
+                        readOnly
+                        onClick={() => openPostcode(field.id)}
+                        value={addressValues[field.id] || ''}
+                        className={`${inputClass} cursor-pointer`}
+                        placeholder="클릭하여 주소 검색"
                       />
-                    )}
-                  </div>
-                ) : (
-                  <input 
-                    type={field.type === 'phone' ? 'tel' : field.type} 
-                    className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all duration-200 text-stone-800 placeholder-stone-400"
-                    placeholder={field.placeholder}
-                  />
-                )}
-              </div>
-            ))}
+                      {addressValues[field.id] && (
+                        <input 
+                          type="text" 
+                          className={inputClass}
+                          placeholder="상세 주소를 입력하세요"
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <input 
+                      type={field.type === 'phone' ? 'tel' : field.type} 
+                      className={inputClass}
+                      placeholder={field.placeholder}
+                    />
+                  )}
+                </div>
+              );
+            })}
             
             <div className="pt-8">
               <button 
