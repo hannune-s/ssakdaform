@@ -191,10 +191,12 @@ export default function CustomerFormPage() {
                   inputClass += "border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 shadow-sm";
                 }
 
+                const displayLabel = field.label ? field.label.replace('보내는 분 - ', '').replace('받는 분 - ', '') : '제목 없는 항목';
+
                 return (
                   <div key={field.id} className="relative mb-5 last:mb-0">
                     <label className={labelClass}>
-                      {field.label || '제목 없는 항목'}
+                      {displayLabel}
                       {field.required && <span className="text-red-500 ml-1">*</span>}
                     </label>
                     
