@@ -37,7 +37,7 @@ export default function AdminHub() {
 
       {/* 매장 통합 링크 (고객 전송용) - 최상단 고정 */}
       <div className="w-full max-w-4xl mx-auto mb-6">
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-200">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-gray-300">
               <h2 className="text-xl font-extrabold text-gray-900 mb-2">🚀 우리 매장 고객용 통합 링크</h2>
               <p className="text-gray-500 text-sm mb-5">
                 이 링크를 복사하여 인스타그램 프로필, 카카오톡 채널, 문자 메시지 등으로 고객에게 안내하세요.
