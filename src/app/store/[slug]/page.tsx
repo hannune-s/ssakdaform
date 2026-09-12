@@ -114,8 +114,9 @@ export default function StoreHubPage() {
         <div className="space-y-4">
           {standardForms.map((form) => (
             <Link href={`/form/${form.id}`} key={form.id} className="block group">
-              <div className="p-5 rounded-2xl border border-transparent transition-all duration-200 flex items-center gap-4 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.02)] group-hover:shadow-md cursor-pointer">
-                <div className={`p-3 rounded-xl ${form.color} transition-colors border`}>
+              <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className={`relative z-10 p-3 rounded-xl ${form.color} transition-colors border shadow-sm`}>
                   {form.icon}
                 </div>
                 <div className="flex-1">
@@ -132,12 +133,13 @@ export default function StoreHubPage() {
         <div className="mt-12 pt-8 border-t border-gray-200">
            <h3 className="text-sm font-bold text-gray-400 mb-4 px-2 uppercase tracking-wider">이벤트 & 기획전 (커스텀 폼 예시)</h3>
            <Link href="/form/demo-12345" className="block group">
-              <div className="p-5 rounded-2xl border border-gray-200 bg-white shadow-sm group-hover:shadow-md transition-all flex items-center justify-between">
-                <div>
+              <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center justify-between group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="relative z-10">
                   <h4 className="font-bold text-gray-800">🎉 추석 맞이 특별 할인 신청</h4>
                   <p className="text-xs text-gray-500 mt-1">2026.09.15 ~ 09.30</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500" />
+                <ChevronRight className="relative z-10 w-5 h-5 text-gray-300 group-hover:text-gray-500" />
               </div>
            </Link>
         </div>
