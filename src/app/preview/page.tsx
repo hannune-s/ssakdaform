@@ -192,6 +192,19 @@ export default function PreviewPage() {
                           />
                         )}
                       </div>
+                    ) : field.type === 'time' ? (
+                      <select
+                        name={field.label}
+                        className={inputClass}
+                        defaultValue={field.defaultValue || ''}
+                      >
+                        <option value="" disabled>{field.placeholder || '시간을 선택해주세요'}</option>
+                        {Array.from({ length: 24 * 6 }).map((_, i) => {
+                          const h = Math.floor(i / 6).toString().padStart(2, '0');
+                          const m = ((i % 6) * 10).toString().padStart(2, '0');
+                          return <option key={`${h}:${m}`} value={`${h}:${m}`}>{`${h}:${m}`}</option>;
+                        })}
+                      </select>
                     ) : (
                       <input 
                         name={field.label}
@@ -199,7 +212,6 @@ export default function PreviewPage() {
                         className={inputClass}
                         placeholder={field.placeholder}
                         defaultValue={field.defaultValue}
-                        step={field.type === 'time' ? '600' : undefined}
                       />
                     )}
                   </div>
