@@ -108,6 +108,14 @@ export default function Sidebar() {
             <FileText className="w-5 h-5" />
             택배 신청 현황
           </Link>
+          <Link href="/reservation-list" onClick={() => setIsOpen(false)} className={getLinkClass("/reservation-list")}>
+            <Calendar className="w-5 h-5" />
+            매장 예약 현황
+          </Link>
+          <Link href="/order-list" onClick={() => setIsOpen(false)} className={getLinkClass("/order-list")}>
+            <ShoppingBag className="w-5 h-5" />
+            상품 주문 현황
+          </Link>
           <Link href="/form-builder" onClick={() => setIsOpen(false)} className={getLinkClass("/form-builder")}>
             <Package className="w-5 h-5" />
             맞춤형 폼 만들기
