@@ -30,7 +30,7 @@ export default function BasicForm() {
   };
 
   const handleCopyLink = () => {
-    const dummyLink = "https://ssakdaform.vercel.app/form/basic-preset";
+    const dummyLink = `${window.location.origin}/form/basic-preset`;
     navigator.clipboard.writeText(dummyLink).then(() => {
       alert(`고객에게 전송할 기본 신청서 링크가 복사되었습니다!\n\n${dummyLink}`);
     });

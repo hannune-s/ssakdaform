@@ -92,7 +92,7 @@ export default function FormBuilder() {
 
   const handleCopyLink = () => {
     // 향후 실제 DB ID로 대체될 가짜 링크
-    const dummyLink = "https://ssakdaform.vercel.app/form/demo-12345";
+    const dummyLink = `${window.location.origin}/form/demo-12345`;
     navigator.clipboard.writeText(dummyLink).then(() => {
       alert(`고객에게 전송할 폼 링크가 복사되었습니다!\n\n${dummyLink}\n\n(아직 DB 연동 전이라 가상의 링크가 복사됩니다)`);
     });

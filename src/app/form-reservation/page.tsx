@@ -32,7 +32,7 @@ export default function ReservationForm() {
   };
 
   const handleCopyLink = () => {
-    const dummyLink = "https://ssakdaform.vercel.app/form/reservation-preset";
+    const dummyLink = `${window.location.origin}/form/reservation-preset`;
     navigator.clipboard.writeText(dummyLink).then(() => {
       alert(`고객에게 전송할 예약 신청서 링크가 복사되었습니다!\n\n${dummyLink}`);
     });

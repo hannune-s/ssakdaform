@@ -33,7 +33,7 @@ export default function DeliveryForm() {
   };
 
   const handleCopyLink = () => {
-    const dummyLink = "https://ssakdaform.vercel.app/form/delivery-preset";
+    const dummyLink = `${window.location.origin}/form/delivery-preset`;
     navigator.clipboard.writeText(dummyLink).then(() => {
       alert(`고객에게 전송할 택배 접수 폼 링크가 복사되었습니다!\n\n${dummyLink}`);
     });
