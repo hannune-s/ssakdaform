@@ -38,8 +38,8 @@ export default function CustomerFormPage() {
         fields: [
           { id: 1, type: 'text', label: '예약자 이름', placeholder: '이름을 입력하세요', required: true },
           { id: 2, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
-          { id: 3, type: 'text', label: '예약 날짜', placeholder: '예: 10월 24일 또는 내일', required: true },
-          { id: 4, type: 'text', label: '예약 시간', placeholder: '예: 오후 2시 30분', required: true },
+          { id: 3, type: 'date', label: '예약 날짜', placeholder: '날짜를 선택해주세요', required: true },
+          { id: 4, type: 'time', label: '예약 시간', placeholder: '시간을 선택해주세요', required: true },
           { id: 5, type: 'text', label: '방문 인원', placeholder: '예: 성인 2명, 아이 1명', required: true },
           { id: 6, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '매장에 미리 요청하실 사항이나 알러지 정보 등을 자유롭게 적어주세요.', required: false }
         ]
