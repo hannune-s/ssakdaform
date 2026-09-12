@@ -72,16 +72,16 @@ export default function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-12 px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
+    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        <div className="bg-white px-8 py-10 text-center relative border-b border-stone-100">
+        <div className="bg-white px-5 sm:px-8 py-8 sm:py-10 text-center relative border-b border-stone-100">
           <div className="absolute top-0 left-0 w-full h-1 bg-emerald-600"></div>
           <p className="text-emerald-700 text-base font-bold tracking-wide mb-2">{data.storeName}</p>
           <h1 className="text-2xl sm:text-3xl font-bold text-stone-800 tracking-tight">{data.formTitle}</h1>
         </div>
         
-        <div className="p-8 sm:p-10">
+        <div className="px-4 sm:px-10 py-6 sm:py-10">
           <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
             {(() => {
               const senderFields = data.fields.filter((f: any) => f.label.includes('보내는 분'));
@@ -160,7 +160,7 @@ export default function PreviewPage() {
               return (
                 <div className="space-y-8">
                   {senderFields.length > 0 && (
-                    <div className="bg-slate-100 border border-slate-300 rounded-2xl p-5 sm:p-7 shadow-sm">
+                    <div className="bg-slate-100 border border-slate-300 rounded-2xl p-4 sm:p-7 shadow-sm">
                       <h3 className="font-extrabold text-slate-800 mb-5 text-lg flex items-center gap-2">
                         <span className="w-2 h-6 bg-slate-600 rounded-full inline-block"></span>
                         보내는 분 (발송인)
@@ -172,7 +172,7 @@ export default function PreviewPage() {
                   )}
 
                   {receiverFields.length > 0 && (
-                    <div className="bg-[#F6F1EA] border border-[#E8DCC9] rounded-2xl p-5 sm:p-7 shadow-sm">
+                    <div className="bg-[#F6F1EA] border border-[#E8DCC9] rounded-2xl p-4 sm:p-7 shadow-sm">
                       <h3 className="font-extrabold text-[#5C4D3C] mb-5 text-lg flex items-center gap-2">
                         <span className="w-2 h-6 bg-[#8B7355] rounded-full inline-block"></span>
                         받는 분 (수령인)
@@ -184,7 +184,7 @@ export default function PreviewPage() {
                   )}
 
                   {otherFields.length > 0 && (
-                    <div className="bg-gray-100 border border-gray-300 rounded-2xl p-5 sm:p-7 shadow-sm">
+                    <div className="bg-gray-100 border border-gray-300 rounded-2xl p-4 sm:p-7 shadow-sm">
                       <h3 className="font-extrabold text-gray-800 mb-5 text-lg flex items-center gap-2">
                         <span className="w-2 h-6 bg-gray-500 rounded-full inline-block"></span>
                         {(senderFields.length > 0 || receiverFields.length > 0) ? '기타 정보' : '입력 정보'}
