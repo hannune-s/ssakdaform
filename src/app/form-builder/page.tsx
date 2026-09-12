@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Eye, ArrowLeft, Type, Hash, Calendar, Phone, CheckSquare, Link as LinkIcon, RotateCcw } from 'lucide-react';
 
-type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox';
+type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
 
 interface FormField {
   id: number;
@@ -177,6 +177,9 @@ export default function FormBuilder() {
               </button>
               <button onClick={() => addField('textarea')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2">
                 <Type className="w-4 h-4" /> 장문 텍스트
+              </button>
+              <button onClick={() => addField('address')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2">
+                <Hash className="w-4 h-4" /> 주소 (우편번호 검색)
               </button>
               <button onClick={() => addField('checkbox')} className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2">
                 <CheckSquare className="w-4 h-4" /> 체크박스(동의)

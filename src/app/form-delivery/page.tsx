@@ -7,10 +7,10 @@ export default function DeliveryForm() {
     const fields = [
       { id: 1, type: 'text', label: '보내는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
       { id: 2, type: 'phone', label: '보내는 분 - 연락처', placeholder: '010-0000-0000', required: true },
-      { id: 3, type: 'text', label: '보내는 분 - 주소', placeholder: '상세 주소를 포함하여 입력해주세요', required: true },
+      { id: 3, type: 'address', label: '보내는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
       { id: 4, type: 'text', label: '받는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
       { id: 5, type: 'phone', label: '받는 분 - 연락처', placeholder: '010-0000-0000', required: true },
-      { id: 6, type: 'text', label: '받는 분 - 주소', placeholder: '상세 주소를 포함하여 입력해주세요', required: true },
+      { id: 6, type: 'address', label: '받는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
       { id: 7, type: 'text', label: '배송 기사님께 남길 말씀', placeholder: '예: 문 앞에 놓고 문자 부탁드립니다.', required: false },
       { id: 8, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '사장님께 전달하실 기타 요청사항을 자유롭게 적어주세요.', required: false }
     ];

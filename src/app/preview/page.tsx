@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
 
-type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox';
+type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
 
 interface FormField {
   id: number;
@@ -20,6 +21,11 @@ interface PreviewData {
 
 export default function PreviewPage() {
   const [data, setData] = useState<PreviewData | null>(null);
+  
+  // 주소 검색 모달 관련 상태
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  const [currentAddressFieldId, setCurrentAddressFieldId] = useState<number | null>(null);
+  const [addressValues, setAddressValues] = useState<Record<number, string>>({});
 
   useEffect(() => {
     // 로컬 스토리지에서 빌더 데이터 가져오기
@@ -37,18 +43,44 @@ export default function PreviewPage() {
     );
   }
 
+  const handleComplete = (data: any) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
+      }
+      fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
+    }
+
+    if (currentAddressFieldId !== null) {
+      setAddressValues(prev => ({
+        ...prev,
+        [currentAddressFieldId]: fullAddress
+      }));
+    }
+    setIsPostcodeOpen(false);
+  };
+
+  const openPostcode = (fieldId: number) => {
+    setCurrentAddressFieldId(fieldId);
+    setIsPostcodeOpen(true);
+  };
+
   return (
-    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-12 px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-12 px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        {/* 고급스러운 헤더 영역 (블랙 대신 깨끗한 화이트 & 딥 그린 포인트) */}
         <div className="bg-white px-8 py-10 text-center relative border-b border-stone-100">
           <div className="absolute top-0 left-0 w-full h-1 bg-emerald-600"></div>
           <p className="text-emerald-700 text-base font-bold tracking-wide mb-2">{data.storeName}</p>
           <h1 className="text-2xl sm:text-3xl font-bold text-stone-800 tracking-tight">{data.formTitle}</h1>
         </div>
         
-        {/* 폼 입력 영역 */}
         <div className="p-8 sm:p-10">
           <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
             {data.fields.map((field) => (
@@ -69,6 +101,24 @@ export default function PreviewPage() {
                     <input type="checkbox" className="w-5 h-5 mt-0.5 text-emerald-600 rounded border-stone-300 focus:ring-emerald-600 cursor-pointer" />
                     <span className="text-stone-700 text-sm leading-relaxed">{field.placeholder || '동의합니다.'}</span>
                   </label>
+                ) : field.type === 'address' ? (
+                  <div className="space-y-2">
+                    <input 
+                      type="text" 
+                      readOnly
+                      onClick={() => openPostcode(field.id)}
+                      value={addressValues[field.id] || ''}
+                      className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all duration-200 text-stone-800 placeholder-stone-400 cursor-pointer"
+                      placeholder="클릭하여 주소 검색"
+                    />
+                    {addressValues[field.id] && (
+                      <input 
+                        type="text" 
+                        className="w-full px-4 py-3 bg-stone-50/50 border border-stone-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all duration-200 text-stone-800 placeholder-stone-400"
+                        placeholder="상세 주소를 입력하세요"
+                      />
+                    )}
+                  </div>
                 ) : (
                   <input 
                     type={field.type === 'phone' ? 'tel' : field.type} 
@@ -88,10 +138,26 @@ export default function PreviewPage() {
         </div>
       </div>
       
-      {/* 하단 싹다폼 워터마크 (선택사항) */}
       <div className="mt-8 text-center text-sm text-stone-400 font-medium">
         Powered by <span className="text-emerald-600 font-semibold">싹다폼</span>
       </div>
+
+      {/* 카카오 우편번호 검색 모달 */}
+      {isPostcodeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <h3 className="font-bold text-gray-800">주소 검색</h3>
+              <button onClick={() => setIsPostcodeOpen(false)} className="text-gray-500 hover:text-gray-900 font-bold p-1">
+                닫기 ✕
+              </button>
+            </div>
+            <div className="h-[400px] w-full">
+              <DaumPostcode onComplete={handleComplete} style={{ height: '100%' }} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
