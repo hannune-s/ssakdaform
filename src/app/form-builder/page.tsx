@@ -192,7 +192,7 @@ export default function FormBuilder() {
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-4">
             <h3 className="font-semibold text-gray-800">입력 항목 관리</h3>
-            <p className="text-sm text-gray-500">고객이 입력할 항목의 이름과 설명을 설정하세요. (자동 저장됨)</p>
+            <p className="text-sm text-gray-500">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
           </div>
 
           {fields.length === 0 ? (
