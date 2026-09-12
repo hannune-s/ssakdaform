@@ -47,32 +47,17 @@ export default function DeliveryForm() {
             </div>
           </section>
 
-          {/* 물품 정보 */}
+          {/* 요청 사항 */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">물품 정보</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">물품명 (내용물)</label>
-                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="물품 이름을 입력하세요" />
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">요청 사항</h2>
+            <div className="grid grid-cols-1 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">배송 기사님께 남길 말씀 (배송 메시지)</label>
+                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="예: 문 앞에 놓고 문자 부탁드립니다." />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">박스 크기/무게</label>
-                <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none bg-white">
-                  <option>소형 (2kg 이하)</option>
-                  <option>중형 (5kg 이하)</option>
-                  <option>대형 (15kg 이하)</option>
-                  <option>특대형 (25kg 이하)</option>
-                </select>
-              </div>
-              <div className="flex items-center md:mt-6">
-                <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
-                  <input type="checkbox" className="w-5 h-5 text-green-600 rounded focus:ring-green-500" />
-                  취급 주의 (파손 위험 물품)
-                </label>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">배송 기사님께 남길 말씀</label>
-                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="예: 문 앞에 놓고 문자 부탁드립니다." />
+                <label className="block text-sm font-medium text-gray-700 mb-1">기타 전달하고 싶은 내용 (선택)</label>
+                <textarea className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="사장님께 전달하실 기타 요청사항을 자유롭게 적어주세요." rows={3}></textarea>
               </div>
             </div>
           </section>
