@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function StoreHubPage() {
   const params = useParams();
@@ -40,14 +41,16 @@ export default function StoreHubPage() {
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
 
   useEffect(() => {
-    // 임시 DB(localStorage)에서 계좌 정보 가져오기
-    const stored = localStorage.getItem('ssakdaform_store_accounts');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // 빈 값이 아닌 계좌만 필터링
-      const validAccounts = parsed.filter((acc: any) => acc.bank.trim() !== '' && acc.accountNumber.trim() !== '');
-      setAccounts(validAccounts);
+    async function loadAccounts() {
+      const { data } = await supabase
+        .from('ssakdaform_store_accounts')
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (data && data.length > 0) {
+        setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
+      }
     }
+    loadAccounts();
   }, []);
 
   const handleCopyAccount = (accountNumber: string) => {

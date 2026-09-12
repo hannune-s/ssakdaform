@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function DeliveryListPage() {
   const [responses, setResponses] = useState<any[]>([]);
@@ -11,27 +12,25 @@ export default function DeliveryListPage() {
     loadData();
   }, []);
 
-  const loadData = () => {
-    const stored = localStorage.getItem('ssakdaform_responses');
-    if (stored) {
-      let data = JSON.parse(stored);
-      // 택배 접수 폼(delivery-preset)에서 온 응답만 필터링
-      data = data.filter((d: any) => d.formId === 'delivery-preset');
-      // 최신순 정렬
-      data.sort((a: any, b: any) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+  const loadData = async () => {
+    const { data } = await supabase
+      .from('ssakdaform_responses')
+      .select('*')
+      .eq('form_id', 'delivery-preset')
+      .order('submitted_at', { ascending: false });
+
+    if (data) {
       setResponses(data);
     }
   };
 
-  const toggleStatus = (id: string, currentStatus: string) => {
-    const stored = localStorage.getItem('ssakdaform_responses');
-    if (stored) {
-      let data = JSON.parse(stored);
-      const newStatus = currentStatus === '발송완료' ? '접수대기' : '발송완료';
-      data = data.map((d: any) => d.id === id ? { ...d, status: newStatus } : d);
-      localStorage.setItem('ssakdaform_responses', JSON.stringify(data));
-      loadData();
-    }
+  const toggleStatus = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === '발송완료' ? '접수대기' : '발송완료';
+    await supabase
+      .from('ssakdaform_responses')
+      .update({ status: newStatus })
+      .eq('id', id);
+    loadData();
   };
 
   const openDetails = (res: any) => {
@@ -90,10 +89,10 @@ export default function DeliveryListPage() {
                     <tr key={res.id} className="hover:bg-gray-50/50 transition">
                       <td className="px-5 py-4">
                         <div className="text-sm text-gray-900 font-medium">
-                          {new Date(res.submittedAt).toLocaleDateString('ko-KR')}
+                          {new Date(res.submitted_at).toLocaleDateString('ko-KR')}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          {new Date(res.submittedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
                       <td className="px-5 py-4">
@@ -162,7 +161,7 @@ export default function DeliveryListPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <div className="text-gray-500 mb-1">접수 일시</div>
-                    <div className="font-medium">{new Date(selectedResponse.submittedAt).toLocaleString('ko-KR')}</div>
+                    <div className="font-medium">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</div>
                   </div>
                   <div>
                     <div className="text-gray-500 mb-1">현재 상태</div>

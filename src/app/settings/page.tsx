@@ -2,19 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { Save, Plus, Trash2, Building, CreditCard, User } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
   const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('ssakdaform_store_accounts');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed && parsed.length > 0) {
-        setAccounts(parsed);
+    async function loadAccounts() {
+      const { data } = await supabase
+        .from('ssakdaform_store_accounts')
+        .select('*')
+        .order('created_at', { ascending: true });
+      
+      if (data && data.length > 0) {
+        setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
       }
+      setIsLoading(false);
     }
+    loadAccounts();
   }, []);
 
   const handleAddAccount = () => {
@@ -36,9 +43,24 @@ export default function SettingsPage() {
     setAccounts(newAccounts);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setIsSaved(false);
     const validAccounts = accounts.filter(acc => acc.bank.trim() !== '' || acc.accountNumber.trim() !== '');
-    localStorage.setItem('ssakdaform_store_accounts', JSON.stringify(validAccounts));
+    
+    // 기존 계좌 모두 삭제
+    await supabase.from('ssakdaform_store_accounts').delete().not('id', 'is', null);
+    
+    // 새로 삽입
+    if (validAccounts.length > 0) {
+      await supabase.from('ssakdaform_store_accounts').insert(
+        validAccounts.map(acc => ({
+          bank: acc.bank,
+          account_number: acc.accountNumber,
+          holder: acc.holder
+        }))
+      );
+    }
+    
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };

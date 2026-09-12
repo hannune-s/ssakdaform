@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
 import { CreditCard, Copy, CheckCircle2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function CustomerFormPage() {
   const params = useParams();
@@ -19,10 +20,16 @@ export default function CustomerFormPage() {
   const [addressValues, setAddressValues] = useState<Record<number, string>>({});
 
   useEffect(() => {
-    const storedAccounts = localStorage.getItem('ssakdaform_store_accounts');
-    if (storedAccounts) {
-      setAccounts(JSON.parse(storedAccounts));
+    async function loadAccounts() {
+      const { data } = await supabase
+        .from('ssakdaform_store_accounts')
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (data && data.length > 0) {
+        setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
+      }
     }
+    loadAccounts();
 
     if (id === 'delivery-preset') {
       setData({
@@ -146,20 +153,22 @@ export default function CustomerFormPage() {
     });
 
     const newResponse = {
-      id: Date.now().toString(),
-      formId: id,
-      submittedAt: new Date().toISOString(),
-      status: '접수대기',
-      data: dataObj
+      form_id: id,
+      data: dataObj,
+      status: '접수대기'
     };
 
-    const existingStr = localStorage.getItem('ssakdaform_responses');
-    const existing = existingStr ? JSON.parse(existingStr) : [];
-    existing.push(newResponse);
-    localStorage.setItem('ssakdaform_responses', JSON.stringify(existing));
-
-    alert('신청이 성공적으로 완료되었습니다!\n(어드민의 현황 리스트에서 확인하실 수 있습니다)');
-    window.location.reload();
+    const submitData = async () => {
+      await supabase.from('ssakdaform_responses').insert([newResponse]);
+    };
+    
+    submitData().then(() => {
+      alert('신청이 성공적으로 완료되었습니다!\n(어드민의 현황 리스트에서 확인하실 수 있습니다)');
+      window.location.reload();
+    }).catch(err => {
+      console.error(err);
+      alert('접수 중 오류가 발생했습니다.');
+    });
   };
 
   const handleCopyAccount = async (account: string) => {
