@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag } from 'lucide-react';
+import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2 } from 'lucide-react';
 
 export default function StoreHubPage() {
   const params = useParams();
@@ -35,18 +36,70 @@ export default function StoreHubPage() {
       color: 'bg-orange-50 border-orange-100 group-hover:border-orange-300',
     }
   ];
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 임시 DB(localStorage)에서 계좌 정보 가져오기
+    const stored = localStorage.getItem('ssakdaform_store_accounts');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // 빈 값이 아닌 계좌만 필터링
+      const validAccounts = parsed.filter((acc: any) => acc.bank.trim() !== '' && acc.accountNumber.trim() !== '');
+      setAccounts(validAccounts);
+    }
+  }, []);
+
+  const handleCopyAccount = (accountNumber: string) => {
+    navigator.clipboard.writeText(accountNumber).then(() => {
+      setCopiedAccount(accountNumber);
+      setTimeout(() => setCopiedAccount(null), 2000);
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-12 px-4 font-sans relative">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div className="w-20 h-20 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
             <Store className="w-10 h-10 text-emerald-600" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{storeName}</h1>
           <p className="text-gray-500">원하시는 서비스를 선택해주세요</p>
         </div>
+
+        {/* 무통장 입금 안내 영역 */}
+        {accounts.length > 0 && (
+          <div className="mb-8 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg">
+                <CreditCard className="w-4 h-4" />
+              </div>
+              <h2 className="font-bold text-gray-900">무통장 입금 안내</h2>
+            </div>
+            <div className="space-y-3">
+              {accounts.map((acc, idx) => (
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold px-2 py-0.5 bg-gray-200 text-gray-700 rounded">{acc.bank}</span>
+                      <span className="text-sm font-semibold text-gray-900">{acc.holder}</span>
+                    </div>
+                    <div className="text-sm font-mono text-gray-600">{acc.accountNumber}</div>
+                  </div>
+                  <button 
+                    onClick={() => handleCopyAccount(acc.accountNumber)}
+                    className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 active:scale-95 transition-all w-full sm:w-auto"
+                  >
+                    {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedAccount === acc.accountNumber ? '복사됨' : '복사'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Form Links */}
         <div className="space-y-4">
