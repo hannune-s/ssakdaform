@@ -12,6 +12,23 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
   const [addressValues, setAddressValues] = useState<Record<number, string>>({});
 
   useEffect(() => {
+    if (params.id === 'delivery-preset') {
+      setData({
+        storeName: '내 매장 이름 (기본 설정)',
+        formTitle: '간편한 택배 접수',
+        fields: [
+          { id: 1, type: 'text', label: '보내는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
+          { id: 2, type: 'phone', label: '보내는 분 - 연락처', placeholder: '010-0000-0000', required: true },
+          { id: 4, type: 'text', label: '받는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
+          { id: 5, type: 'phone', label: '받는 분 - 연락처', placeholder: '010-0000-0000', required: true },
+          { id: 6, type: 'address', label: '받는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
+          { id: 7, type: 'text', label: '배송 기사님께 남길 말씀', placeholder: '예: 문 앞에 놓고 문자 부탁드립니다.', required: false },
+          { id: 8, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '사장님께 전달하실 기타 요청사항을 자유롭게 적어주세요.', required: false }
+        ]
+      });
+      return;
+    }
+
     const stored = localStorage.getItem('ssakdaform_draft');
     if (stored) {
       setData(JSON.parse(stored));
@@ -25,7 +42,7 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
         ]
       });
     }
-  }, []);
+  }, [params.id]);
 
   if (!data) {
     return (
@@ -63,6 +80,30 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
     setIsPostcodeOpen(true);
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // 폼에 입력된 데이터들을 수집합니다 (여기서는 간단히 데모용 객체 생성)
+    // 실제로는 각 input의 value를 state로 관리해야 합니다.
+    const newResponse = {
+      id: Date.now().toString(),
+      formId: params.id,
+      submittedAt: new Date().toISOString(),
+      // 임시로 기본 데이터 넣음 (실제 서비스에서는 상태와 연동)
+      status: '접수 완료',
+      receiverName: '홍길동 (테스트)',
+      receiverAddress: addressValues[6] || '서울 강남구 테헤란로 123',
+    };
+
+    const existingStr = localStorage.getItem('ssakdaform_responses');
+    const existing = existingStr ? JSON.parse(existingStr) : [];
+    existing.push(newResponse);
+    localStorage.setItem('ssakdaform_responses', JSON.stringify(existing));
+
+    alert('신청이 성공적으로 완료되었습니다!\n(어드민의 현황 리스트에서 확인하실 수 있습니다)');
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-12 px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
       
@@ -79,7 +120,7 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
         </div>
         
         <div className="p-8 sm:p-10">
-          <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-7" onSubmit={handleSubmit}>
             {data.fields.map((field: any) => {
               const isSender = field.label.includes('보내는 분');
               const isReceiver = field.label.includes('받는 분');
@@ -147,7 +188,7 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
             
             <div className="pt-8">
               <button 
-                onClick={() => alert('신청이 완료되었습니다! (어드민 대시보드로 데이터가 전송됩니다)')}
+                type="submit"
                 className="w-full py-4 bg-emerald-700 text-white rounded-xl font-semibold text-lg hover:bg-emerald-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-emerald-700/20"
               >
                 제출하기
