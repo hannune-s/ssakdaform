@@ -121,11 +121,7 @@ export default function AdminHub() {
                 이 링크를 복사하여 인스타그램 프로필, 카카오톡 채널, 문자 메시지 등으로 고객에게 안내하세요.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium break-all flex items-center">
-                  {storeLink}
-                </div>
-                <div className="flex gap-2 sm:gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <button 
                     onClick={handleCopy}
                     className="flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 shrink-0"
@@ -143,7 +139,6 @@ export default function AdminHub() {
                     고객화면 바로가기
                   </a>
                 </div>
-              </div>
             </div>
           </div>
         )}
