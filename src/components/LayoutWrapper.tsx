@@ -14,13 +14,10 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     return <main className="w-full min-h-screen bg-[#F9F9F8] text-gray-900">{children}</main>;
   }
 
-  // 어드민 페이지인 경우 기존 레이아웃 유지
+  // 어드민 페이지도 사이드바 없이 전체 화면으로 렌더링
   return (
-    <div className="flex min-h-screen bg-gray-50 text-gray-900">
-      <Sidebar />
-      <main className="flex-1 w-full md:ml-64 p-4 pt-24 md:p-8 md:pt-8">
-        {children}
-      </main>
-    </div>
+    <main className="w-full min-h-screen bg-gray-50 text-gray-900">
+      {children}
+    </main>
   );
 }

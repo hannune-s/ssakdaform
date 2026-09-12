@@ -1,88 +1,121 @@
-export default function Dashboard() {
+'use client';
+
+import { useState } from 'react';
+import { Search, Package } from 'lucide-react';
+import DeliveryList from './delivery-list/page';
+import ReservationList from './reservation-list/page';
+import OrderList from './order-list/page';
+import FormBuilder from './form-builder/page';
+
+export default function AdminHub() {
+  const [activeTab, setActiveTab] = useState('all');
+
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">방문자 접속 통계</h1>
-        <p className="text-gray-500">싹다폼 플랫폼의 통합 관리자 시스템입니다.</p>
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col pt-12 sm:pt-16 px-4">
+      
+      {/* 상단 로고 및 타이틀 */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight mb-2">
+          싹다폼
+        </h1>
+        <p className="text-gray-500 font-medium">자영업자 필수 링크 & 서식 종합 허브</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-indigo-500">
-          <h3 className="text-gray-500 font-medium mb-4">오늘 총 방문자</h3>
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-indigo-500">2</span>
-            <span className="text-gray-500">명</span>
-          </div>
-        </div>
+      {/* 탭 및 검색 카드 영역 */}
+      <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8">
         
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-yellow-500">
-          <h3 className="text-gray-500 font-medium mb-4">오늘 신규 가입자</h3>
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-yellow-500">0</span>
-            <span className="text-gray-500">명</span>
+        {/* 검색 바 */}
+        <div className="relative mb-6">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
           </div>
+          <input
+            type="text"
+            className="block w-full pl-11 pr-4 py-3 bg-gray-50/80 border border-gray-100 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium sm:text-sm"
+            placeholder="'보건증', '제로페이', '메뉴판' 등 키워드 검색"
+          />
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-blue-500">
-          <h3 className="text-gray-500 font-medium mb-4">유입 경로 (고유 방문자)</h3>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">App</span>
-              <span className="text-blue-500 font-medium">129명 <span className="text-gray-400 font-normal">(58%)</span></span>
-            </div>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">Mobile Web</span>
-              <span className="text-blue-500 font-medium">60명 <span className="text-gray-400 font-normal">(27%)</span></span>
-            </div>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">PC Web</span>
-              <span className="text-blue-500 font-medium">32명 <span className="text-gray-400 font-normal">(14%)</span></span>
-            </div>
-          </div>
+        {/* 메뉴(카테고리) 탭 버튼 */}
+        <div className="flex flex-wrap justify-center gap-2.5">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              activeTab === 'all' 
+                ? 'bg-blue-600 text-white shadow-md' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            전체
+          </button>
+          <button
+            onClick={() => setActiveTab('delivery')}
+            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              activeTab === 'delivery' 
+                ? 'bg-blue-600 text-white shadow-md' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            택배 신청 현황
+          </button>
+          <button
+            onClick={() => setActiveTab('reservation')}
+            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              activeTab === 'reservation' 
+                ? 'bg-blue-600 text-white shadow-md' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            매장 예약 현황
+          </button>
+          <button
+            onClick={() => setActiveTab('order')}
+            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              activeTab === 'order' 
+                ? 'bg-blue-600 text-white shadow-md' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            상품 주문 현황
+          </button>
+          <button
+            onClick={() => setActiveTab('builder')}
+            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              activeTab === 'builder' 
+                ? 'bg-blue-600 text-white shadow-md' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            맞춤형 폼 만들기
+          </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-800">최근 접속 기록 (최근 10건)</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-gray-600 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 font-medium">접속 시간</th>
-                <th className="px-6 py-4 font-medium">유입 경로</th>
-                <th className="px-6 py-4 font-medium">이메일 / 유저</th>
-                <th className="px-6 py-4 font-medium">인구통계</th>
-                <th className="px-6 py-4 font-medium">접속 상세경로</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              <tr className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-gray-500">2026. 9. 11. 오후 3:51:30</td>
-                <td className="px-6 py-4 text-gray-700 font-medium">Mobile Web</td>
-                <td className="px-6 py-4 text-gray-600">user@example.com</td>
-                <td className="px-6 py-4 text-gray-400">-</td>
-                <td className="px-6 py-4 text-gray-400">/</td>
-              </tr>
-              <tr className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-gray-500">2026. 9. 11. 오전 9:52:40</td>
-                <td className="px-6 py-4 text-gray-700 font-medium">Mobile Web</td>
-                <td className="px-6 py-4 text-gray-600">guest</td>
-                <td className="px-6 py-4 text-gray-400">-</td>
-                <td className="px-6 py-4 text-gray-400">/index.html</td>
-              </tr>
-              <tr className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-gray-500">2026. 9. 9. 오후 10:17:59</td>
-                <td className="px-6 py-4 text-gray-700 font-medium">PC Web</td>
-                <td className="px-6 py-4 text-gray-600">guest</td>
-                <td className="px-6 py-4 text-gray-400">-</td>
-                <td className="px-6 py-4 text-gray-400">/</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      {/* 하단 콘텐츠(기존 컴포넌트 렌더링) 영역 */}
+      <div className="w-full max-w-6xl mx-auto flex-1">
+        {activeTab === 'all' && (
+          <div className="flex flex-col gap-12">
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">📦 택배 신청 현황</h2>
+              <DeliveryList />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">📅 매장 예약 현황</h2>
+              <ReservationList />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">🛍️ 상품 주문 현황</h2>
+              <OrderList />
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'delivery' && <DeliveryList />}
+        {activeTab === 'reservation' && <ReservationList />}
+        {activeTab === 'order' && <OrderList />}
+        {activeTab === 'builder' && <FormBuilder />}
       </div>
+      
     </div>
   );
 }
