@@ -22,7 +22,7 @@ export default function StoreHubPage() {
     },
     {
       id: 'reservation-preset',
-      title: '매장 예약',
+      title: '매장 예약 신청',
       description: '방문 일정과 인원을 미리 예약합니다.',
       icon: <Calendar className="w-6 h-6 text-emerald-600" />,
       color: 'bg-emerald-50 border-emerald-100 group-hover:border-emerald-300',

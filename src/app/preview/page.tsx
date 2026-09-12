@@ -180,7 +180,7 @@ export default function PreviewPage() {
                     <div className="bg-gray-100 border border-gray-300 rounded-2xl p-5 sm:p-7 shadow-sm">
                       <h3 className="font-extrabold text-gray-800 mb-5 text-lg flex items-center gap-2">
                         <span className="w-2 h-6 bg-gray-500 rounded-full inline-block"></span>
-                        기타 정보
+                        {(senderFields.length > 0 || receiverFields.length > 0) ? '기타 정보' : '입력 정보'}
                       </h3>
                       <div>
                         {otherFields.map((f: any) => renderField(f, 'other'))}
