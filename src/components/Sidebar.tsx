@@ -1,26 +1,44 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Package, Calendar, UserPlus, FileText, Settings, LayoutDashboard, Menu, X } from 'lucide-react';
+import { Package, Calendar, UserPlus, FileText, Settings, LayoutDashboard, Menu, X, Link as LinkIcon, CheckCircle2, ExternalLink } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  
+  const [copied, setCopied] = useState(false);
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
+  const storeSlug = 'demo'; 
+  const storeLink = `${origin}/store/${storeSlug}`;
+
+  const handleCopyLink = () => {
+    if (!origin) return;
+    navigator.clipboard.writeText(storeLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
     return isActive
-      ? "flex items-center gap-3 px-4 py-3 text-green-700 bg-green-50 rounded-lg font-medium transition-colors"
-      : "flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors";
+      ? "flex items-center gap-3 px-4 py-3 text-emerald-800 bg-emerald-100 rounded-lg font-bold transition-colors"
+      : "flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg font-medium transition-colors";
   };
 
   return (
     <>
       {/* 모바일 상단 바 (햄버거 메뉴) */}
       <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4 fixed top-0 w-full z-40 shadow-sm">
-        <h1 className="text-xl font-bold text-green-600 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-emerald-600 flex items-center gap-2">
           <Package className="w-5 h-5" />
           싹다폼 Admin
         </h1>
@@ -45,8 +63,8 @@ export default function Sidebar() {
         w-64 bg-white border-r border-gray-200 h-screen flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-green-600 flex items-center gap-2">
+        <div className="p-6 pb-4 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-emerald-600 flex items-center gap-2">
             <Package className="w-6 h-6" />
             싹다폼 Admin
           </h1>
@@ -58,7 +76,30 @@ export default function Sidebar() {
           </button>
         </div>
         
-        <nav className="flex-1 px-4 space-y-2 mt-2 overflow-y-auto">
+        {/* 내 매장 링크 복사 버튼 */}
+        <div className="px-4 pb-4">
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-3 flex flex-col gap-2 shadow-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-bold text-emerald-800">내 매장 통합 접속 링크</span>
+              <Link href={`/store/${storeSlug}`} target="_blank" className="text-emerald-600 hover:text-emerald-800 p-1 hover:bg-emerald-100 rounded transition-colors" title="새 창으로 열기">
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+            <button 
+              onClick={handleCopyLink}
+              className={`flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm ${
+                copied 
+                  ? 'bg-emerald-600 text-white' 
+                  : 'bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50 active:scale-95'
+              }`}
+            >
+              {copied ? <CheckCircle2 className="w-4 h-4" /> : <LinkIcon className="w-4 h-4" />}
+              {copied ? '복사 완료!' : '링크 복사하기'}
+            </button>
+          </div>
+        </div>
+
+        <nav className="flex-1 px-4 space-y-1.5 mt-2 overflow-y-auto">
           <Link href="/" onClick={() => setIsOpen(false)} className={getLinkClass("/")}>
             <LayoutDashboard className="w-5 h-5" />
             대시보드

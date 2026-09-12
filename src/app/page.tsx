@@ -1,10 +1,6 @@
-import StoreLinkBox from "@/components/StoreLinkBox";
-
 export default function Dashboard() {
   return (
     <div className="max-w-6xl mx-auto">
-      <StoreLinkBox />
-      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">방문자 접속 통계</h1>
         <p className="text-gray-500">싹다폼 플랫폼의 통합 관리자 시스템입니다.</p>
