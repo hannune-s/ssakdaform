@@ -122,16 +122,27 @@ export default function CustomerFormPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 폼에 입력된 데이터들을 수집합니다 (여기서는 간단히 데모용 객체 생성)
-    // 실제로는 각 input의 value를 state로 관리해야 합니다.
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const dataObj: Record<string, string> = {};
+    
+    formData.forEach((value, key) => {
+      // 주소 필드의 경우 "라벨명"과 "라벨명 - 상세주소"를 합쳐서 하나로 만듦
+      if (key.includes(' - 상세주소')) {
+        const mainKey = key.replace(' - 상세주소', '');
+        if (dataObj[mainKey]) {
+          dataObj[mainKey] = `${dataObj[mainKey]} ${value.toString()}`;
+        }
+      } else {
+        dataObj[key] = value.toString();
+      }
+    });
+
     const newResponse = {
       id: Date.now().toString(),
       formId: id,
       submittedAt: new Date().toISOString(),
-      // 임시로 기본 데이터 넣음 (실제 서비스에서는 상태와 연동)
-      status: '접수 완료',
-      receiverName: '홍길동 (테스트)',
-      receiverAddress: addressValues[6] || '서울 강남구 테헤란로 123',
+      status: '접수대기',
+      data: dataObj
     };
 
     const existingStr = localStorage.getItem('ssakdaform_responses');
@@ -189,19 +200,21 @@ export default function CustomerFormPage() {
                     
                     {field.type === 'textarea' ? (
                       <textarea 
+                        name={field.label}
                         className={inputClass}
                         placeholder={field.placeholder}
                         rows={3}
                       />
                     ) : field.type === 'checkbox' ? (
                       <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors bg-white shadow-sm ${groupType === 'sender' ? 'border-slate-300 hover:bg-slate-50' : groupType === 'receiver' ? 'border-[#D4C4B1] hover:bg-[#FDFBF7]' : 'border-gray-300 hover:bg-gray-50'}`}>
-                        <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : groupType === 'receiver' ? 'text-[#8B7355] border-[#D4C4B1] focus:ring-[#8B7355]' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
+                        <input name={field.label} type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : groupType === 'receiver' ? 'text-[#8B7355] border-[#D4C4B1] focus:ring-[#8B7355]' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
                         <span className={`text-sm leading-relaxed ${groupType === 'sender' ? 'text-slate-800' : groupType === 'receiver' ? 'text-[#5C4D3C]' : 'text-gray-800'}`}>{field.placeholder || '동의합니다.'}</span>
                       </label>
                     ) : field.type === 'address' ? (
                       <div className="space-y-2">
                         <input 
                           type="text" 
+                          name={field.label}
                           readOnly
                           onClick={() => openPostcode(field.id)}
                           value={addressValues[field.id] || ''}
@@ -211,6 +224,7 @@ export default function CustomerFormPage() {
                         {addressValues[field.id] && (
                           <input 
                             type="text" 
+                            name={`${field.label} - 상세주소`}
                             className={inputClass}
                             placeholder="상세 주소를 입력하세요"
                           />
@@ -218,6 +232,7 @@ export default function CustomerFormPage() {
                       </div>
                     ) : (
                       <input 
+                        name={field.label}
                         type={field.type === 'phone' ? 'tel' : field.type} 
                         className={inputClass}
                         placeholder={field.placeholder}

@@ -112,19 +112,21 @@ export default function PreviewPage() {
                     
                     {field.type === 'textarea' ? (
                       <textarea 
+                        name={field.label}
                         className={inputClass}
                         placeholder={field.placeholder}
                         rows={3}
                       />
                     ) : field.type === 'checkbox' ? (
                       <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors bg-white shadow-sm ${groupType === 'sender' ? 'border-slate-300 hover:bg-slate-50' : groupType === 'receiver' ? 'border-[#D4C4B1] hover:bg-[#FDFBF7]' : 'border-gray-300 hover:bg-gray-50'}`}>
-                        <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : groupType === 'receiver' ? 'text-[#8B7355] border-[#D4C4B1] focus:ring-[#8B7355]' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
+                        <input name={field.label} type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : groupType === 'receiver' ? 'text-[#8B7355] border-[#D4C4B1] focus:ring-[#8B7355]' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
                         <span className={`text-sm leading-relaxed ${groupType === 'sender' ? 'text-slate-800' : groupType === 'receiver' ? 'text-[#5C4D3C]' : 'text-gray-800'}`}>{field.placeholder || '동의합니다.'}</span>
                       </label>
                     ) : field.type === 'address' ? (
                       <div className="space-y-2">
                         <input 
                           type="text" 
+                          name={field.label}
                           readOnly
                           onClick={() => openPostcode(field.id)}
                           value={addressValues[field.id] || ''}
@@ -134,6 +136,7 @@ export default function PreviewPage() {
                         {addressValues[field.id] && (
                           <input 
                             type="text" 
+                            name={`${field.label} - 상세주소`}
                             className={inputClass}
                             placeholder="상세 주소를 입력하세요"
                           />
@@ -141,6 +144,7 @@ export default function PreviewPage() {
                       </div>
                     ) : (
                       <input 
+                        name={field.label}
                         type={field.type === 'phone' ? 'tel' : field.type} 
                         className={inputClass}
                         placeholder={field.placeholder}
