@@ -69,30 +69,28 @@ export default function StoreHubPage() {
           <p className="text-gray-500">원하시는 서비스를 선택해주세요</p>
         </div>
 
-        {/* 무통장 입금 안내 영역 */}
+        {/* 계좌 안내 영역 */}
         {accounts.length > 0 && (
-          <div className="mb-8 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+          <div className="mb-8 bg-indigo-50/60 border border-indigo-100 rounded-2xl p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg">
-                <CreditCard className="w-4 h-4" />
+              <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">
+                <CreditCard className="w-5 h-5" />
               </div>
-              <h2 className="font-bold text-gray-900">무통장 입금 안내</h2>
+              <h2 className="font-extrabold text-indigo-900 text-lg">계좌 안내</h2>
             </div>
             <div className="space-y-3">
               {accounts.map((acc, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-bold px-2 py-0.5 bg-gray-200 text-gray-700 rounded">{acc.bank}</span>
-                      <span className="text-sm font-semibold text-gray-900">{acc.holder}</span>
-                    </div>
-                    <div className="text-sm font-mono text-gray-600">{acc.accountNumber}</div>
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
+                  <div className="flex items-center flex-wrap gap-2.5 flex-1">
+                    <span className="text-sm font-bold px-2.5 py-1 bg-indigo-600 text-white rounded-md whitespace-nowrap shadow-sm">{acc.bank}</span>
+                    <span className="text-base sm:text-lg font-bold font-mono text-gray-900 tracking-tight whitespace-nowrap">{acc.accountNumber}</span>
+                    <span className="text-base font-bold text-gray-700 whitespace-nowrap">{acc.holder}</span>
                   </div>
                   <button 
                     onClick={() => handleCopyAccount(acc.accountNumber)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 active:scale-95 transition-all w-full sm:w-auto"
+                    className="flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-lg text-sm font-bold text-indigo-700 hover:bg-indigo-100 active:scale-95 transition-all w-full sm:w-auto shrink-0"
                   >
-                    {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-4 h-4 text-indigo-600" /> : <Copy className="w-4 h-4" />}
                     {copiedAccount === acc.accountNumber ? '복사됨' : '복사'}
                   </button>
                 </div>
