@@ -44,8 +44,8 @@ export default function PreviewPage() {
         {/* 고급스러운 헤더 영역 (블랙 대신 깨끗한 화이트 & 딥 그린 포인트) */}
         <div className="bg-white px-8 py-10 text-center relative border-b border-stone-100">
           <div className="absolute top-0 left-0 w-full h-1 bg-emerald-600"></div>
-          <p className="text-emerald-700 text-xs font-bold tracking-widest uppercase mb-3">{data.storeName}</p>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-stone-800 tracking-tight">{data.formTitle}</h1>
+          <p className="text-emerald-700 text-base font-bold tracking-wide mb-2">{data.storeName}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-stone-800 tracking-tight">{data.formTitle}</h1>
         </div>
         
         {/* 폼 입력 영역 */}
