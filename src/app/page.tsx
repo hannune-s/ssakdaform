@@ -44,21 +44,21 @@ export default function AdminHub() {
                 이 링크를 복사하여 인스타그램 프로필, 카카오톡 채널, 문자 메시지 등으로 고객에게 안내하세요.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <div className="flex flex-row gap-2 sm:gap-3">
                   <button 
                     onClick={handleCopy}
-                    className="flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 shrink-0"
+                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 text-[14px] sm:text-base"
                   >
-                    {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : <Copy className="w-4 h-4 sm:w-5 sm:h-5" />}
                     {copied ? '복사완료' : '링크 복사'}
                   </button>
                   <a 
                     href={storeLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all shadow-sm active:scale-95 shrink-0"
+                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all shadow-sm active:scale-95 text-[14px] sm:text-base"
                   >
-                    <ExternalLink className="w-5 h-5" />
+                    <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
                     고객화면 바로가기
                   </a>
                 </div>
