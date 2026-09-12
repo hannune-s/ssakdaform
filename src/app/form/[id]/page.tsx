@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
 
-export default function CustomerFormPage({ params }: { params: { id: string } }) {
+export default function CustomerFormPage() {
+  const params = useParams();
+  const id = params?.id as string;
+
   const [data, setData] = useState<any>(null);
   
   // 주소 검색 모달 관련 상태
@@ -12,7 +16,7 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
   const [addressValues, setAddressValues] = useState<Record<number, string>>({});
 
   useEffect(() => {
-    if (params.id === 'delivery-preset') {
+    if (id === 'delivery-preset') {
       setData({
         storeName: '내 매장 이름 (기본 설정)',
         formTitle: '간편한 택배 접수',
@@ -87,7 +91,7 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
     // 실제로는 각 input의 value를 state로 관리해야 합니다.
     const newResponse = {
       id: Date.now().toString(),
-      formId: params.id,
+      formId: id,
       submittedAt: new Date().toISOString(),
       // 임시로 기본 데이터 넣음 (실제 서비스에서는 상태와 연동)
       status: '접수 완료',
