@@ -1,126 +1,141 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Package, Search, Calendar, ChevronRight } from 'lucide-react';
-
-interface DeliveryResponse {
-  id: string;
-  formId: string;
-  submittedAt: string;
-  status: string;
-  receiverName: string;
-  receiverAddress: string;
-}
+import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
 
 export default function DeliveryListPage() {
-  const [responses, setResponses] = useState<DeliveryResponse[]>([]);
+  const [responses, setResponses] = useState<any[]>([]);
+  const [selectedResponse, setSelectedResponse] = useState<any>(null);
 
   useEffect(() => {
-    // 실제로는 Supabase 데이터베이스에서 데이터를 fetch 합니다.
-    // 여기서는 테스트를 위해 localStorage에서 임시로 불러옵니다.
+    loadData();
+  }, []);
+
+  const loadData = () => {
     const stored = localStorage.getItem('ssakdaform_responses');
     if (stored) {
-      // 내림차순 정렬 (최신순)
-      const data = JSON.parse(stored).sort((a: any, b: any) => 
-        new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
-      );
+      let data = JSON.parse(stored);
+      // 택배 접수 폼(delivery-preset)에서 온 응답만 필터링
+      data = data.filter((d: any) => d.formId === 'delivery-preset');
+      // 최신순 정렬
+      data.sort((a: any, b: any) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
       setResponses(data);
     }
-  }, []);
+  };
+
+  const toggleStatus = (id: string, currentStatus: string) => {
+    const stored = localStorage.getItem('ssakdaform_responses');
+    if (stored) {
+      let data = JSON.parse(stored);
+      const newStatus = currentStatus === '발송완료' ? '접수대기' : '발송완료';
+      data = data.map((d: any) => d.id === id ? { ...d, status: newStatus } : d);
+      localStorage.setItem('ssakdaform_responses', JSON.stringify(data));
+      loadData();
+    }
+  };
+
+  const openDetails = (res: any) => {
+    setSelectedResponse(res);
+  };
+
+  const closeDetails = () => {
+    setSelectedResponse(null);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .print-area, .print-area * { visibility: visible; }
+          .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+        }
+      `}</style>
+      
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">택배 신청 현황</h1>
           <p className="text-gray-500">고객들이 제출한 택배 배송 신청서 리스트입니다.</p>
         </div>
-        
-        <div className="flex gap-2">
-          <div className="relative">
-            <input 
-              type="text" 
-              placeholder="수령인 이름 검색..." 
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none w-full md:w-64"
-            />
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-          </div>
-          <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            기간 필터
-          </button>
-        </div>
-      </div>
-
-      {/* 현황 요약 카드 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: '전체 신청', count: responses.length, color: 'bg-blue-50 text-blue-700' },
-          { label: '접수 대기', count: responses.length, color: 'bg-yellow-50 text-yellow-700' },
-          { label: '배송 준비중', count: 0, color: 'bg-indigo-50 text-indigo-700' },
-          { label: '발송 완료', count: 0, color: 'bg-gray-50 text-gray-700' },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
-            <span className="text-gray-500 text-sm font-medium">{stat.label}</span>
-            <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-gray-900">{stat.count}</span>
-              <span className="text-sm text-gray-400">건</span>
-            </div>
-          </div>
-        ))}
       </div>
 
       {/* 리스트 테이블 */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-max">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">접수일시</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">수령인</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">배송 주소</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">상태</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">관리</th>
+                <th className="px-5 py-4 text-sm font-semibold text-gray-600">접수일시</th>
+                <th className="px-5 py-4 text-sm font-semibold text-gray-600">보내는 분 (이름/연락처)</th>
+                <th className="px-5 py-4 text-sm font-semibold text-gray-600">받는 분 (이름/주소)</th>
+                <th className="px-5 py-4 text-sm font-semibold text-gray-600">상태</th>
+                <th className="px-5 py-4 text-sm font-semibold text-gray-600 text-right">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {responses.length > 0 ? (
-                responses.map((res) => (
-                  <tr key={res.id} className="hover:bg-gray-50/50 transition">
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 font-medium">
-                        {new Date(res.submittedAt).toLocaleDateString('ko-KR')}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {new Date(res.submittedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-semibold text-gray-900">{res.receiverName}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-600 truncate max-w-xs" title={res.receiverAddress}>
-                        {res.receiverAddress}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        {res.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="inline-flex items-center text-sm font-medium text-green-600 hover:text-green-700">
-                        상세보기 <ChevronRight className="w-4 h-4 ml-1" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                responses.map((res) => {
+                  const senderName = res.data['보내는 분 - 이름'] || '-';
+                  const senderPhone = res.data['보내는 분 - 연락처'] || '-';
+                  const receiverName = res.data['받는 분 - 이름'] || '-';
+                  const receiverAddress = res.data['받는 분 - 주소'] || '-';
+                  const isCompleted = res.status === '발송완료';
+
+                  return (
+                    <tr key={res.id} className="hover:bg-gray-50/50 transition">
+                      <td className="px-5 py-4">
+                        <div className="text-sm text-gray-900 font-medium">
+                          {new Date(res.submittedAt).toLocaleDateString('ko-KR')}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {new Date(res.submittedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="text-sm font-bold text-slate-800 mb-1">{senderName}</div>
+                        <div className="text-sm text-slate-500 font-mono">{senderPhone}</div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="text-sm font-bold text-[#5C4D3C] mb-1">{receiverName}</div>
+                        <div className="text-sm text-gray-600 truncate max-w-[200px]" title={receiverAddress}>
+                          {receiverAddress}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <button 
+                          onClick={() => toggleStatus(res.id, res.status)}
+                          className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
+                            isCompleted 
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                              : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+                          }`}
+                          title="상태를 변경하려면 클릭하세요"
+                        >
+                          {isCompleted ? <CheckCircle className="w-3.5 h-3.5 mr-1" /> : null}
+                          {isCompleted ? '발송완료' : '접수대기'}
+                        </button>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <button 
+                          onClick={() => openDetails(res)}
+                          className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
+                        >
+                          상세 내용
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
               ) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <h3 className="text-gray-900 font-medium text-lg">아직 접수된 택배가 없습니다</h3>
-                    <p className="text-gray-500 mt-1 text-sm">고객에게 폼 링크를 전달하여 접수를 받아보세요.</p>
+                    <p className="text-gray-500 mt-1 text-sm">고객에게 통합 링크를 전달하여 접수를 받아보세요.</p>
                   </td>
                 </tr>
               )}
@@ -128,6 +143,57 @@ export default function DeliveryListPage() {
           </table>
         </div>
       </div>
+
+      {/* 모달 */}
+      {selectedResponse && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50 rounded-t-2xl">
+              <h2 className="text-lg font-bold text-gray-900">택배 접수 상세 정보</h2>
+              <button onClick={closeDetails} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto print-area bg-white flex-1">
+              <div className="mb-6 pb-6 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-gray-900 mb-4 bg-gray-100 px-3 py-1.5 rounded inline-block">접수 정보</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-gray-500 mb-1">접수 일시</div>
+                    <div className="font-medium">{new Date(selectedResponse.submittedAt).toLocaleString('ko-KR')}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 mb-1">현재 상태</div>
+                    <div className="font-bold text-emerald-600">{selectedResponse.status === '발송완료' ? '발송완료' : '접수대기'}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {Object.entries(selectedResponse.data).map(([key, value]: any) => (
+                  <div key={key}>
+                    <div className="text-xs font-bold text-gray-500 mb-1.5">{key}</div>
+                    <div className="text-sm text-gray-900 font-medium bg-gray-50/50 border border-gray-100 p-3 rounded-xl whitespace-pre-wrap">
+                      {value || '-'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-5 border-t border-gray-100 flex gap-3 bg-gray-50 rounded-b-2xl">
+              <button 
+                onClick={handlePrint}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 active:scale-95 transition-all font-bold shadow-sm"
+              >
+                <Printer className="w-5 h-5" />
+                내용 출력 / PDF 저장
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
