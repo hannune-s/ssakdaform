@@ -172,14 +172,73 @@ export default function DeliveryListPage() {
               </div>
 
               <div className="space-y-6">
-                {Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' }).map(([key, value]: any) => (
-                  <div key={key}>
-                    <div className="text-xs font-bold text-gray-500 mb-1.5">{key}</div>
-                    <div className="text-sm text-gray-900 font-medium bg-gray-50/50 border border-gray-100 p-3 rounded-xl whitespace-pre-wrap">
-                      {value || '-'}
+                {(() => {
+                  const dataEntries = Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' });
+                  const senderEntries = dataEntries.filter(([k]) => k.includes('보내는 분'));
+                  const receiverEntries = dataEntries.filter(([k]) => k.includes('받는 분'));
+                  const otherEntries = dataEntries.filter(([k]) => !k.includes('보내는 분') && !k.includes('받는 분'));
+
+                  return (
+                    <div className="space-y-6">
+                      {senderEntries.length > 0 && (
+                        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                          <h3 className="font-extrabold text-slate-800 mb-4 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-4 bg-slate-600 rounded-full inline-block"></span>
+                            보내는 분 (발송인)
+                          </h3>
+                          <div className="space-y-4">
+                            {senderEntries.map(([key, value]: any) => (
+                              <div key={key}>
+                                <div className="text-xs font-bold text-slate-500 mb-1.5">{key.replace('보내는 분 - ', '')}</div>
+                                <div className="text-sm text-slate-900 font-medium bg-white border border-slate-200 p-3 rounded-xl whitespace-pre-wrap">
+                                  {value || '-'}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {receiverEntries.length > 0 && (
+                        <div className="bg-[#FDFBF7] border border-[#E8DCC9] rounded-2xl p-5">
+                          <h3 className="font-extrabold text-[#5C4D3C] mb-4 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-4 bg-[#8B7355] rounded-full inline-block"></span>
+                            받는 분 (수령인)
+                          </h3>
+                          <div className="space-y-4">
+                            {receiverEntries.map(([key, value]: any) => (
+                              <div key={key}>
+                                <div className="text-xs font-bold text-[#8B7355] mb-1.5">{key.replace('받는 분 - ', '')}</div>
+                                <div className="text-sm text-[#5C4D3C] font-medium bg-white border border-[#E8DCC9] p-3 rounded-xl whitespace-pre-wrap">
+                                  {value || '-'}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {otherEntries.length > 0 && (
+                        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                          <h3 className="font-extrabold text-gray-800 mb-4 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-4 bg-gray-400 rounded-full inline-block"></span>
+                            기타 / 상세 입력 정보
+                          </h3>
+                          <div className="space-y-4">
+                            {otherEntries.map(([key, value]: any) => (
+                              <div key={key}>
+                                <div className="text-xs font-bold text-gray-500 mb-1.5">{key}</div>
+                                <div className="text-sm text-gray-900 font-medium bg-white border border-gray-200 p-3 rounded-xl whitespace-pre-wrap">
+                                  {value || '-'}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })()}
               </div>
             </div>
 
