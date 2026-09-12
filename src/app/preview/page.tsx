@@ -199,6 +199,7 @@ export default function PreviewPage() {
                         className={inputClass}
                         placeholder={field.placeholder}
                         defaultValue={field.defaultValue}
+                        step={field.type === 'time' ? '600' : undefined}
                       />
                     )}
                   </div>

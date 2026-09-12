@@ -301,6 +301,8 @@ export default function CustomerFormPage() {
                         className={inputClass}
                         placeholder={field.placeholder}
                         defaultValue={field.defaultValue}
+                        required={field.required}
+                        step={field.type === 'time' ? '600' : undefined}
                       />
                     )}
                   </div>
