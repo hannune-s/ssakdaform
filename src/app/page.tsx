@@ -54,10 +54,10 @@ export default function AdminHub() {
         </div>
 
         {/* 메뉴(카테고리) 탭 버튼 */}
-        <div className="flex flex-wrap justify-center gap-2.5">
+        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'all' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -67,7 +67,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('delivery')}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'delivery' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -77,7 +77,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('reservation')}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'reservation' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -87,7 +87,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('order')}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'order' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -97,7 +97,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('builder')}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'builder' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
