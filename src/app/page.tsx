@@ -140,7 +140,7 @@ export default function AdminHub() {
                     className="flex items-center justify-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all shadow-sm active:scale-95 shrink-0"
                   >
                     <ExternalLink className="w-5 h-5" />
-                    폼 접속하기
+                    고객화면 바로가기
                   </a>
                 </div>
               </div>
