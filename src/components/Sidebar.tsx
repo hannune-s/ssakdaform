@@ -63,6 +63,10 @@ export default function Sidebar() {
             <LayoutDashboard className="w-5 h-5" />
             대시보드
           </Link>
+          <Link href="/form-builder" onClick={() => setIsOpen(false)} className={getLinkClass("/form-builder")}>
+            <Package className="w-5 h-5" />
+            맞춤형 폼 만들기
+          </Link>
           <Link href="/form-delivery" onClick={() => setIsOpen(false)} className={getLinkClass("/form-delivery")}>
             <Package className="w-5 h-5" />
             간편한 택배 접수
