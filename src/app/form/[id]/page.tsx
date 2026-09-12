@@ -3,12 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
+import { CreditCard, Copy, CheckCircle2 } from 'lucide-react';
 
 export default function CustomerFormPage() {
   const params = useParams();
   const id = params?.id as string;
 
   const [data, setData] = useState<any>(null);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
   
   // 주소 검색 모달 관련 상태
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
@@ -16,6 +19,11 @@ export default function CustomerFormPage() {
   const [addressValues, setAddressValues] = useState<Record<number, string>>({});
 
   useEffect(() => {
+    const storedAccounts = localStorage.getItem('ssakdaform_store_accounts');
+    if (storedAccounts) {
+      setAccounts(JSON.parse(storedAccounts));
+    }
+
     if (id === 'delivery-preset') {
       setData({
         storeName: '내 매장 이름 (기본 설정)',
@@ -154,6 +162,16 @@ export default function CustomerFormPage() {
     window.location.reload();
   };
 
+  const handleCopyAccount = async (account: string) => {
+    try {
+      await navigator.clipboard.writeText(account);
+      setCopiedAccount(account);
+      setTimeout(() => setCopiedAccount(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy account', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
       
@@ -170,6 +188,36 @@ export default function CustomerFormPage() {
         </div>
         
         <div className="px-4 sm:px-10 py-6 sm:py-10">
+          {accounts.length > 0 && (
+            <div className="mb-8 bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <h2 className="font-extrabold text-indigo-900 text-lg">계좌 안내</h2>
+              </div>
+              <div className="space-y-3">
+                {accounts.map((acc, idx) => (
+                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center flex-wrap gap-2 sm:gap-2.5 flex-1">
+                      <span className="text-sm font-bold px-2.5 py-1 bg-indigo-600 text-white rounded-md shadow-sm self-start sm:self-auto shrink-0">{acc.bank}</span>
+                      <span className="text-base sm:text-lg font-bold font-mono text-gray-900 tracking-tight break-all">{acc.accountNumber}</span>
+                      <span className="text-base font-bold text-gray-700">{acc.holder}</span>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => handleCopyAccount(acc.accountNumber)}
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-lg text-sm font-bold text-indigo-700 hover:bg-indigo-100 active:scale-95 transition-all w-full sm:w-auto shrink-0"
+                    >
+                      {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-4 h-4 text-indigo-600" /> : <Copy className="w-4 h-4" />}
+                      {copiedAccount === acc.accountNumber ? '복사됨' : '복사'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <form className="space-y-7" onSubmit={handleSubmit}>
             {(() => {
               const senderFields = data.fields.filter((f: any) => f.label.includes('보내는 분'));

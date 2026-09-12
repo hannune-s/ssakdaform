@@ -81,10 +81,10 @@ export default function StoreHubPage() {
             <div className="space-y-3">
               {accounts.map((acc, idx) => (
                 <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
-                  <div className="flex items-center flex-wrap gap-2.5 flex-1">
-                    <span className="text-sm font-bold px-2.5 py-1 bg-indigo-600 text-white rounded-md whitespace-nowrap shadow-sm">{acc.bank}</span>
-                    <span className="text-base sm:text-lg font-bold font-mono text-gray-900 tracking-tight whitespace-nowrap">{acc.accountNumber}</span>
-                    <span className="text-base font-bold text-gray-700 whitespace-nowrap">{acc.holder}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center flex-wrap gap-2 sm:gap-2.5 flex-1">
+                    <span className="text-sm font-bold px-2.5 py-1 bg-indigo-600 text-white rounded-md shadow-sm self-start sm:self-auto shrink-0">{acc.bank}</span>
+                    <span className="text-base sm:text-lg font-bold font-mono text-gray-900 tracking-tight break-all">{acc.accountNumber}</span>
+                    <span className="text-base font-bold text-gray-700">{acc.holder}</span>
                   </div>
                   <button 
                     onClick={() => handleCopyAccount(acc.accountNumber)}
