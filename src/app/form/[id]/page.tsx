@@ -211,19 +211,20 @@ export default function CustomerFormPage() {
               </div>
               <div className="space-y-3">
                 {accounts.map((acc, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
-                    <div className="flex flex-col sm:flex-row sm:items-center flex-wrap gap-2 sm:gap-2.5 flex-1">
-                      <span className="text-sm font-bold px-2.5 py-1 bg-indigo-600 text-white rounded-md shadow-sm self-start sm:self-auto shrink-0">{acc.bank}</span>
-                      <span className="text-base sm:text-lg font-bold font-mono text-gray-900 tracking-tight break-all">{acc.accountNumber}</span>
-                      <span className="text-base font-bold text-gray-700">{acc.holder}</span>
+                  <div key={idx} className="flex items-center justify-between gap-2 p-3 sm:p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 flex-1">
+                      <span className="text-xs sm:text-sm font-bold px-2 py-0.5 sm:py-1 bg-indigo-600 text-white rounded-md shadow-sm">{acc.bank}</span>
+                      <span className="text-sm sm:text-base font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">{acc.holder}</span>
                     </div>
                     <button 
                       type="button"
                       onClick={() => handleCopyAccount(acc.accountNumber)}
-                      className="flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-lg text-sm font-bold text-indigo-700 hover:bg-indigo-100 active:scale-95 transition-all w-full sm:w-auto shrink-0"
+                      className="flex items-center justify-center p-2 sm:px-3 sm:py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg text-xs sm:text-sm font-bold text-indigo-700 hover:bg-indigo-100 active:scale-95 transition-all shrink-0"
                     >
-                      {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-4 h-4 text-indigo-600" /> : <Copy className="w-4 h-4" />}
-                      {copiedAccount === acc.accountNumber ? '복사됨' : '복사'}
+                      {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" /> : <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                      <span className="hidden sm:inline ml-1.5">{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
+                      <span className="inline sm:hidden ml-1">{copiedAccount === acc.accountNumber ? '완료' : '복사'}</span>
                     </button>
                   </div>
                 ))}
