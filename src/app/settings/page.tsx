@@ -117,7 +117,7 @@ export default function SettingsPage() {
                 </div>
                 
                 <h3 className="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs">
+                  <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs">
                     {index + 1}
                   </div>
                   입금 계좌 {index + 1}
@@ -132,7 +132,7 @@ export default function SettingsPage() {
                         type="text" 
                         value={account.bank}
                         onChange={(e) => handleChange(index, 'bank', e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                         placeholder="예: 국민은행"
                       />
                     </div>
@@ -146,7 +146,7 @@ export default function SettingsPage() {
                         type="text" 
                         value={account.accountNumber}
                         onChange={(e) => handleChange(index, 'accountNumber', e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-mono"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-mono"
                         placeholder="예: 123-456-789012"
                       />
                     </div>
@@ -160,7 +160,7 @@ export default function SettingsPage() {
                         type="text" 
                         value={account.holder}
                         onChange={(e) => handleChange(index, 'holder', e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                         placeholder="예: 홍길동 (싹다상점)"
                       />
                     </div>
@@ -176,8 +176,8 @@ export default function SettingsPage() {
             onClick={handleSave}
             className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all shadow-sm w-full sm:w-auto ${
               isSaved 
-                ? 'bg-emerald-100 text-emerald-800' 
-                : 'bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95'
+                ? 'bg-indigo-100 text-indigo-800' 
+                : 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95'
             }`}
           >
             <Save className="w-4 h-4" />

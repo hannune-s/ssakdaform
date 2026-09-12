@@ -115,7 +115,7 @@ export default function DeliveryListPage() {
                           onClick={() => toggleStatus(res.id, res.status)}
                           className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
                             isCompleted 
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
                               : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
                           }`}
                           title="상태를 변경하려면 클릭하세요"
@@ -170,7 +170,7 @@ export default function DeliveryListPage() {
                   </div>
                   <div>
                     <div className="text-gray-500 mb-1">현재 상태</div>
-                    <div className="font-bold text-emerald-600">{selectedResponse.status === '발송완료' ? '발송완료' : '접수대기'}</div>
+                    <div className="font-bold text-indigo-600">{selectedResponse.status === '발송완료' ? '발송완료' : '접수대기'}</div>
                   </div>
                 </div>
               </div>

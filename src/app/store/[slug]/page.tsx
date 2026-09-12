@@ -26,8 +26,8 @@ export default function StoreHubPage() {
       id: 'reservation-preset',
       title: '매장 예약 신청',
       description: '방문 일정과 인원을 미리 예약합니다.',
-      icon: <Calendar className="w-6 h-6 text-emerald-600" />,
-      color: 'bg-emerald-50 border-emerald-100 group-hover:border-emerald-300',
+      icon: <Calendar className="w-6 h-6 text-indigo-600" />,
+      color: 'bg-indigo-50 border-indigo-100 group-hover:border-indigo-300',
     },
     {
       id: 'order-preset',
@@ -66,7 +66,7 @@ export default function StoreHubPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
-            <Store className="w-10 h-10 text-emerald-600" />
+            <Store className="w-10 h-10 text-indigo-600" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{storeName}</h1>
           <p className="text-gray-500">원하시는 서비스를 선택해주세요</p>
@@ -136,7 +136,7 @@ export default function StoreHubPage() {
         </div>
 
         <div className="mt-12 text-center text-sm text-stone-400 font-medium">
-          Powered by <span className="text-emerald-600 font-semibold">싹다폼</span>
+          Powered by <span className="text-indigo-600 font-semibold">싹다폼</span>
         </div>
       </div>
     </div>

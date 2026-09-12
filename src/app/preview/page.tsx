@@ -89,12 +89,12 @@ export default function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-emerald-100 selection:text-emerald-900 relative">
+    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-indigo-100 selection:text-indigo-900 relative">
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
         <div className="bg-white px-5 sm:px-8 py-8 sm:py-10 text-center relative border-b border-stone-100">
-          <div className="absolute top-0 left-0 w-full h-1 bg-emerald-600"></div>
-          <p className="text-emerald-700 text-base font-bold tracking-wide mb-2">{data.storeName}</p>
+          <div className="absolute top-0 left-0 w-full h-1 bg-indigo-600"></div>
+          <p className="text-indigo-700 text-base font-bold tracking-wide mb-2">{data.storeName}</p>
           <h1 className="text-2xl sm:text-3xl font-bold text-stone-800 tracking-tight">{data.formTitle}</h1>
         </div>
         
@@ -247,7 +247,7 @@ export default function PreviewPage() {
             })()}
             
             <div className="pt-8">
-              <button className="w-full py-4 bg-emerald-700 text-white rounded-xl font-semibold text-lg hover:bg-emerald-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-emerald-700/20">
+              <button className="w-full py-4 bg-indigo-700 text-white rounded-xl font-semibold text-lg hover:bg-indigo-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-indigo-700/20">
                 제출하기
               </button>
             </div>
@@ -256,7 +256,7 @@ export default function PreviewPage() {
       </div>
       
       <div className="mt-8 text-center text-sm text-stone-400 font-medium">
-        Powered by <span className="text-emerald-600 font-semibold">싹다폼</span>
+        Powered by <span className="text-indigo-600 font-semibold">싹다폼</span>
       </div>
 
       {/* 카카오 우편번호 검색 모달 */}

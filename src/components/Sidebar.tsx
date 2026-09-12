@@ -30,7 +30,7 @@ export default function Sidebar() {
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
     return isActive
-      ? "flex items-center gap-3 px-4 py-3 text-emerald-800 bg-emerald-100 rounded-lg font-bold transition-colors"
+      ? "flex items-center gap-3 px-4 py-3 text-indigo-800 bg-indigo-100 rounded-lg font-bold transition-colors"
       : "flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg font-medium transition-colors";
   };
 
@@ -38,7 +38,7 @@ export default function Sidebar() {
     <>
       {/* 모바일 상단 바 (햄버거 메뉴) */}
       <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4 fixed top-0 w-full z-40 shadow-sm">
-        <h1 className="text-xl font-bold text-emerald-600 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-indigo-600 flex items-center gap-2">
           <Package className="w-5 h-5" />
           싹다폼 Admin
         </h1>
@@ -64,7 +64,7 @@ export default function Sidebar() {
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-6 pb-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-emerald-600 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-indigo-600 flex items-center gap-2">
             <Package className="w-6 h-6" />
             싹다폼 Admin
           </h1>
@@ -78,10 +78,10 @@ export default function Sidebar() {
         
         {/* 내 매장 링크 복사 버튼 */}
         <div className="px-4 pb-4">
-          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-3 flex flex-col gap-2 shadow-sm">
+          <div className="bg-gradient-to-r from-indigo-50 to-indigo-50 border border-indigo-100 rounded-xl p-3 flex flex-col gap-2 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] font-bold text-emerald-800">내 매장 통합 접속 링크</span>
-              <Link href={`/store/${storeSlug}`} target="_blank" className="text-emerald-600 hover:text-emerald-800 p-1 hover:bg-emerald-100 rounded transition-colors" title="새 창으로 열기">
+              <span className="text-[13px] font-bold text-indigo-800">내 매장 통합 접속 링크</span>
+              <Link href={`/store/${storeSlug}`} target="_blank" className="text-indigo-600 hover:text-indigo-800 p-1 hover:bg-indigo-100 rounded transition-colors" title="새 창으로 열기">
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -89,8 +89,8 @@ export default function Sidebar() {
               onClick={handleCopyLink}
               className={`flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm ${
                 copied 
-                  ? 'bg-emerald-600 text-white' 
-                  : 'bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50 active:scale-95'
+                  ? 'bg-indigo-600 text-white' 
+                  : 'bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50 active:scale-95'
               }`}
             >
               {copied ? <CheckCircle2 className="w-4 h-4" /> : <LinkIcon className="w-4 h-4" />}
