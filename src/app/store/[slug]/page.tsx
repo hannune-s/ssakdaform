@@ -64,7 +64,7 @@ export default function StoreHubPage() {
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col font-sans relative">
       
       {/* 상단 테마 컬러 배너 */}
-      <div className="w-full bg-gradient-to-b from-indigo-700 to-indigo-900 pt-14 pb-20 px-4 text-center relative overflow-hidden flex-shrink-0 shadow-lg rounded-b-[2.5rem]">
+      <div className="w-full bg-gradient-to-b from-indigo-700 to-indigo-900 pt-12 pb-12 px-4 text-center relative overflow-hidden flex-shrink-0 shadow-md">
         {/* 고급스러운 패턴 배경 */}
         <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.08]"></div>
         
@@ -77,7 +77,7 @@ export default function StoreHubPage() {
         </div>
       </div>
 
-      <div className="w-full max-w-md mx-auto px-4 -mt-8 relative z-20 flex-1 pb-16">
+      <div className="w-full max-w-md mx-auto px-4 mt-6 relative z-20 flex-1 pb-16">
 
         {/* 계좌 안내 영역 */}
         {accounts.length > 0 && (
