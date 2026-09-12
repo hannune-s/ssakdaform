@@ -109,10 +109,10 @@ export default function FormBuilder() {
   // --- 어드민용 '맞춤형 폼 만들기' 화면 ---
   return (
     <div className="max-w-5xl mx-auto pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-5">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">맞춤형 폼 만들기</h1>
-          <p className="text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
+          <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">맞춤형 폼 만들기</h1>
+          <p className="text-[13px] text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
         </div>
         <div className="flex flex-row items-center gap-2 w-full md:w-auto">
           <button 
