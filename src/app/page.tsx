@@ -11,11 +11,11 @@ export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('delivery');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
-  const storeLink = typeof window !== 'undefined' ? `${window.location.origin}/store/demo` : 'http://localhost:3000/store/demo';
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(storeLink);
+      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
+      await navigator.clipboard.writeText(`${currentOrigin}/store/demo`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -52,7 +52,7 @@ export default function AdminHub() {
                     {copied ? '복사완료' : '링크 복사'}
                   </button>
                   <a 
-                    href={storeLink}
+                    href="/store/demo"
                     target="_blank"
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all shadow-sm active:scale-95 text-[14px] sm:text-base"
