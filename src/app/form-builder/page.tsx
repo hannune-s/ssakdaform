@@ -19,7 +19,6 @@ export default function FormBuilder() {
   const [fields, setFields] = useState<FormField[]>([
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
-  const [showPreview, setShowPreview] = useState(false);
 
   const addField = (type: FieldType) => {
     setFields([...fields, { 
@@ -39,66 +38,15 @@ export default function FormBuilder() {
     setFields(fields.map(f => f.id === id ? { ...f, [key]: value } : f));
   };
 
-  // --- 고객에게 보여질 '고급스러운 미리보기' 화면 ---
-  if (showPreview) {
-    return (
-      <div className="fixed inset-0 z-[100] bg-slate-50 overflow-y-auto">
-        <button 
-          onClick={() => setShowPreview(false)}
-          className="fixed top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 shadow-md rounded-full text-gray-700 hover:bg-gray-50 transition z-[110]"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          어드민으로 돌아가기
-        </button>
-
-        <div className="w-full max-w-lg mx-auto mt-24 mb-20 bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-          <div className="bg-gray-900 px-8 py-10 text-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-500"></div>
-            <p className="text-gray-400 text-sm font-medium tracking-widest uppercase mb-3">{storeName}</p>
-            <h1 className="text-3xl font-light text-white tracking-tight">{formTitle}</h1>
-          </div>
-          
-          <div className="p-8">
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-              {fields.map((field) => (
-                <div key={field.id} className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {field.label || '제목 없는 항목'}
-                    {field.required && <span className="text-green-500 ml-1">*</span>}
-                  </label>
-                  
-                  {field.type === 'textarea' ? (
-                    <textarea 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all duration-200"
-                      placeholder={field.placeholder}
-                      rows={3}
-                    />
-                  ) : field.type === 'checkbox' ? (
-                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                      <input type="checkbox" className="w-5 h-5 text-gray-900 rounded focus:ring-gray-900" />
-                      <span className="text-gray-700">{field.placeholder || '체크박스 설명'}</span>
-                    </div>
-                  ) : (
-                    <input 
-                      type={field.type === 'phone' ? 'tel' : field.type} 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all duration-200"
-                      placeholder={field.placeholder}
-                    />
-                  )}
-                </div>
-              ))}
-              
-              <div className="pt-6">
-                <button className="w-full py-4 bg-gray-900 text-white rounded-xl font-medium text-lg hover:bg-gray-800 transition-colors shadow-lg shadow-gray-900/20">
-                  제출하기
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handlePreview = () => {
+    // 미리보기 데이터를 로컬 스토리지에 임시 저장하고 새 창 열기
+    localStorage.setItem('ssakdaform_preview', JSON.stringify({
+      storeName,
+      formTitle,
+      fields
+    }));
+    window.open('/preview', '_blank');
+  };
 
   // --- 어드민용 '맞춤형 폼 만들기' 화면 ---
   return (
@@ -109,11 +57,11 @@ export default function FormBuilder() {
           <p className="text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
         </div>
         <button 
-          onClick={() => setShowPreview(true)}
+          onClick={handlePreview}
           className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md"
         >
           <Eye className="w-5 h-5" />
-          고객 화면 미리보기
+          새 창에서 미리보기
         </button>
       </div>
 
