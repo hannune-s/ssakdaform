@@ -18,7 +18,7 @@ export default function AdminHub() {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight mb-2">
           싹다폼
         </h1>
-        <p className="text-gray-500 font-medium">자영업자 필수 링크 & 서식 종합 허브</p>
+        <p className="text-gray-500 font-medium">복잡한 접수와 주문, 싹다폼으로 싹 다.</p>
       </div>
 
       {/* 탭 및 검색 카드 영역 */}
