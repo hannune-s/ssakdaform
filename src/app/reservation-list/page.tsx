@@ -196,14 +196,20 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                             예약자 (발송인)
                           </h3>
                           <div className="space-y-4">
-                            {senderEntries.map(([key, value]: any) => (
-                              <div key={key}>
-                                <div className="text-xs font-bold text-slate-500 mb-1.5">{key.replace('예약자 - ', '')}</div>
-                                <div className="text-sm text-slate-900 font-medium bg-white border border-slate-200 p-3 rounded-xl whitespace-pre-wrap">
-                                  {value || '-'}
-                                </div>
-                              </div>
-                            ))}
+                            {senderEntries.map(([key, value]: any) => {
+                                const isHighlight = /이름|고객명|연락처|입금자명|전화번호|상품명|예약 날짜|예약 시간/.test(key);
+                                return (
+                                  <div key={key} className="flex flex-col mb-1.5">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <div className="w-1 h-3.5 bg-indigo-500 rounded-full"></div>
+                                      <div className="text-[14px] font-extrabold text-gray-800">{key.replace('예약자 - ', '')}</div>
+                                    </div>
+                                    <div className={`p-3.5 rounded-xl border ${isHighlight ? 'bg-indigo-50 border-indigo-200 text-indigo-900 text-[15px] font-extrabold shadow-sm' : 'bg-gray-50/80 border-gray-100 text-gray-800 text-[14px]'} whitespace-pre-wrap`}>
+                                      {value || '-'}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                           </div>
                         </div>
                       )}
@@ -215,14 +221,20 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                             예약 일정 (수령인)
                           </h3>
                           <div className="space-y-4">
-                            {receiverEntries.map(([key, value]: any) => (
-                              <div key={key}>
-                                <div className="text-xs font-bold text-[#8B7355] mb-1.5">{key.replace('예약 일정 - ', '')}</div>
-                                <div className="text-sm text-[#5C4D3C] font-medium bg-white border border-[#E8DCC9] p-3 rounded-xl whitespace-pre-wrap">
-                                  {value || '-'}
-                                </div>
-                              </div>
-                            ))}
+                            {receiverEntries.map(([key, value]: any) => {
+                                const isHighlight = /이름|고객명|연락처|입금자명|전화번호|상품명|예약 날짜|예약 시간/.test(key);
+                                return (
+                                  <div key={key} className="flex flex-col mb-1.5">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <div className="w-1 h-3.5 bg-indigo-500 rounded-full"></div>
+                                      <div className="text-[14px] font-extrabold text-gray-800">{key.replace('예약 일정 - ', '')}</div>
+                                    </div>
+                                    <div className={`p-3.5 rounded-xl border ${isHighlight ? 'bg-indigo-50 border-indigo-200 text-indigo-900 text-[15px] font-extrabold shadow-sm' : 'bg-gray-50/80 border-gray-100 text-gray-800 text-[14px]'} whitespace-pre-wrap`}>
+                                      {value || '-'}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                           </div>
                         </div>
                       )}
@@ -234,14 +246,20 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                             기타 / 상세 입력 정보
                           </h3>
                           <div className="space-y-4">
-                            {otherEntries.map(([key, value]: any) => (
-                              <div key={key}>
-                                <div className="text-xs font-bold text-gray-500 mb-1.5">{key}</div>
-                                <div className="text-sm text-gray-900 font-medium bg-white border border-gray-200 p-3 rounded-xl whitespace-pre-wrap">
-                                  {value || '-'}
-                                </div>
-                              </div>
-                            ))}
+                            {otherEntries.map(([key, value]: any) => {
+                                const isHighlight = /이름|고객명|연락처|입금자명|전화번호|상품명|예약 날짜|예약 시간/.test(key);
+                                return (
+                                  <div key={key} className="flex flex-col mb-1.5">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <div className="w-1 h-3.5 bg-indigo-500 rounded-full"></div>
+                                      <div className="text-[14px] font-extrabold text-gray-800">{key}</div>
+                                    </div>
+                                    <div className={`p-3.5 rounded-xl border ${isHighlight ? 'bg-indigo-50 border-indigo-200 text-indigo-900 text-[15px] font-extrabold shadow-sm' : 'bg-gray-50/80 border-gray-100 text-gray-800 text-[14px]'} whitespace-pre-wrap`}>
+                                      {value || '-'}
+                                    </div>
+                                  </div>
+                                );
+                              })}
                           </div>
                         </div>
                       )}
