@@ -1,9 +1,66 @@
+"use client";
+
+import { Eye, Link as LinkIcon } from 'lucide-react';
+
 export default function ReservationForm() {
+  const handlePreview = () => {
+    const fields = [
+      { id: 1, type: 'text', label: '예약자 이름', placeholder: '이름을 입력하세요', required: true },
+      { id: 2, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
+      { id: 3, type: 'date', label: '예약 희망 날짜', placeholder: '연도-월-일', required: true },
+      { id: 4, type: 'text', label: '예약 희망 시간', placeholder: '예: 오후 6시 30분', required: true },
+      { id: 5, type: 'number', label: '방문 인원', placeholder: '예: 2', required: true },
+      { id: 6, type: 'textarea', label: '추가 요청 사항', placeholder: '알레르기 정보나 특별한 요청사항을 적어주세요.', required: false }
+    ];
+
+    localStorage.setItem('ssakdaform_preview', JSON.stringify({
+      storeName: '내 매장 이름 (기본 설정)',
+      formTitle: '예약 신청서',
+      fields
+    }));
+
+    const width = 480;
+    const height = 850;
+    const left = (window.screen.width / 2) - (width / 2);
+    const top = (window.screen.height / 2) - (height / 2);
+    
+    window.open(
+      '/preview', 
+      'PreviewPopup', 
+      `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+    );
+  };
+
+  const handleCopyLink = () => {
+    const dummyLink = "https://ssakdaform.vercel.app/form/reservation-preset";
+    navigator.clipboard.writeText(dummyLink).then(() => {
+      alert(`고객에게 전송할 예약 신청서 링크가 복사되었습니다!\n\n${dummyLink}`);
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">예약 신청서</h1>
-        <p className="text-gray-500">원하시는 날짜와 시간을 선택해 예약을 진행해주세요.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">예약 신청서</h1>
+          <p className="text-gray-500">방문하실 날짜와 인원을 입력하여 예약을 신청해주세요.</p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <button 
+            onClick={handleCopyLink}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 transition shadow-sm font-medium"
+          >
+            <LinkIcon className="w-5 h-5" />
+            고객링크 발행
+          </button>
+          <button 
+            onClick={handlePreview}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md"
+          >
+            <Eye className="w-5 h-5" />
+            고객화면 미리보기
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-5 md:p-8 rounded-xl border border-gray-200 shadow-sm">
