@@ -37,31 +37,36 @@ export default function AdminHub() {
 
       {/* 매장 통합 링크 (고객 전송용) - 최상단 고정 */}
       <div className="w-full max-w-4xl mx-auto mb-6">
-        <div className="bg-gradient-to-br from-[#EEF2FF] via-[#F5F3FF] to-[#E0E7FF] rounded-3xl p-6 sm:p-8 shadow-lg border-2 border-indigo-200/80">
-              <h2 className="text-xl font-extrabold text-indigo-950 mb-2">우리 매장 통합 링크</h2>
-              <p className="text-indigo-900/70 text-sm mb-5 font-medium">
-                이 링크를 복사하여 인스타그램 프로필, 카카오톡 채널, 문자 메시지 등으로 고객에게 안내하세요.
+        <div className="bg-gradient-to-br from-[#EEF2FF] via-[#F5F3FF] to-[#E0E7FF] rounded-[20px] sm:rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-indigo-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            
+            {/* 텍스트 영역 */}
+            <div className="flex-1">
+              <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 mb-1.5 tracking-tight">우리 매장 통합 링크</h2>
+              <p className="text-indigo-900/70 text-[13px] sm:text-sm font-medium leading-snug">
+                인스타그램, 카카오톡 등에 이 링크를 공유하여 고객에게 안내하세요.
               </p>
-              
-              <div className="flex flex-row gap-2 sm:gap-3">
-                  <button 
-                    onClick={handleCopy}
-                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 text-[14px] sm:text-base"
-                  >
-                    {copied ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : <Copy className="w-4 h-4 sm:w-5 sm:h-5" />}
-                    {copied ? '복사완료' : '링크 복사'}
-                  </button>
-                  <a 
-                    href="/store/demo"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all shadow-sm active:scale-95 text-[14px] sm:text-base"
-                  >
-                    <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
-                    고객화면 바로가기
-                  </a>
-                </div>
             </div>
+            
+            {/* 버튼 영역 */}
+            <div className="flex flex-row gap-2 w-full md:w-auto shrink-0">
+                <button 
+                  onClick={handleCopy}
+                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px]"
+                >
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copied ? '복사완료' : '링크 복사'}
+                </button>
+                <a 
+                  href="/store/demo"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-white border border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-50 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px]"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  고객화면 가기
+                </a>
+            </div>
+        </div>
       </div>
 
 
