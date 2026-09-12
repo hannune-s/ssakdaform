@@ -145,19 +145,6 @@ export default function AdminHub() {
                 </div>
               </div>
             </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">📦 택배 신청 현황</h2>
-              <DeliveryList searchQuery={searchQuery} />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">📅 매장 예약 현황</h2>
-              <ReservationList searchQuery={searchQuery} />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">🛍️ 상품 주문 현황</h2>
-              <OrderList searchQuery={searchQuery} />
-            </div>
           </div>
         )}
         
