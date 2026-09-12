@@ -159,7 +159,11 @@ export default function CustomerFormPage() {
     };
 
     const submitData = async () => {
-      await supabase.from('ssakdaform_responses').insert([newResponse]);
+      const { error } = await supabase.from('ssakdaform_responses').insert([newResponse]);
+      if (error) {
+        console.error('Supabase Insert Error:', error);
+        throw new Error(error.message);
+      }
     };
     
     submitData().then(() => {

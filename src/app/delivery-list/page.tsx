@@ -13,11 +13,16 @@ export default function DeliveryListPage() {
   }, []);
 
   const loadData = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('ssakdaform_responses')
       .select('*')
       .eq('form_id', 'delivery-preset')
       .order('submitted_at', { ascending: false });
+
+    if (error) {
+      console.error('Load Data Error:', error);
+      alert('목록 불러오기 실패: ' + error.message);
+    }
 
     if (data) {
       setResponses(data);
