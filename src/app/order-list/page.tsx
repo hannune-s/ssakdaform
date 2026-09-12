@@ -67,10 +67,10 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
         }
       `}</style>
       
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">상품 주문 현황</h1>
-          <p className="text-gray-500">고객들이 제출한 상품 주문서 리스트입니다.</p>
+          <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">상품 주문 현황</h1>
+          <p className="text-[13px] text-gray-500">고객들이 제출한 상품 주문서 리스트입니다.</p>
         </div>
       </div>
 
@@ -79,12 +79,12 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
-              <tr className="bg-indigo-50 border-b border-indigo-100">
-                <th className="px-5 py-4 text-sm font-bold text-indigo-900">주문일시</th>
-                <th className="px-5 py-4 text-sm font-bold text-indigo-900">주문자 (이름/연락처)</th>
-                <th className="px-5 py-4 text-sm font-bold text-indigo-900">주문상품 (상품명/입금자명)</th>
-                <th className="px-5 py-4 text-sm font-bold text-indigo-900">상태</th>
-                <th className="px-5 py-4 text-sm font-bold text-indigo-900 text-right">관리</th>
+              <tr className="bg-indigo-50/70 border-b border-indigo-100">
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">주문일시</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">주문자 (이름/연락처)</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">주문상품 (상품명/입금자명)</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">상태</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 text-right">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -98,41 +98,41 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
                   const isCompleted = res.status === '결제완료';
 
                   return (
-                    <tr key={res.id} className="hover:bg-gray-50/50 transition">
-                      <td className="px-5 py-4">
-                        <div className="text-sm text-gray-900 font-medium">
+                    <tr key={res.id} className="hover:bg-gray-50 transition-colors group">
+                      <td className="px-4 py-3 align-middle">
+                        <div className="font-semibold text-gray-900 text-[13px]">
                           {new Date(res.submitted_at).toLocaleDateString('ko-KR')}
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-[12px] text-gray-500 mt-0.5">
                           {new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
-                      <td className="px-5 py-4">
-                        <div className="text-sm font-bold text-slate-800 mb-1">{customerName}</div>
-                        <div className="text-sm text-slate-500 font-mono">{customerPhone}</div>
+                      <td className="px-4 py-3 align-middle">
+                        <div className="font-bold text-gray-900 text-[13px]">{customerName}</div>
+                        <div className="text-[12px] text-gray-500 mt-0.5">{customerPhone}</div>
                       </td>
-                      <td className="px-5 py-4">
-                        <div className="text-sm font-bold text-[#5C4D3C] mb-1">{productName}</div>
-                        <div className="text-sm text-gray-600">{depositorName}</div>
+                      <td className="px-4 py-3 align-middle">
+                        <div className="font-bold text-gray-900 text-[13px]">{productName}</div>
+                        <div className="text-[12px] text-gray-500 mt-0.5">{depositorName}</div>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-4 py-3 align-middle">
                         <button 
                           onClick={() => toggleStatus(res.id, res.status)}
-                          className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
                             isCompleted 
                               ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
                               : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
                           }`}
-                          title="상태를 변경하려면 클릭하세요"
+                          title="상태를 변경하시려면 클릭하세요"
                         >
-                          {isCompleted ? <CheckCircle className="w-3.5 h-3.5 mr-1" /> : null}
+                          {isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
                           {isCompleted ? '결제완료' : '접수대기'}
                         </button>
                       </td>
-                      <td className="px-5 py-4 text-right">
+                      <td className="px-4 py-3 text-right align-middle">
                         <button 
                           onClick={() => openDetails(res)}
-                          className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
+                          className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
                         >
                           상세 내용
                         </button>
