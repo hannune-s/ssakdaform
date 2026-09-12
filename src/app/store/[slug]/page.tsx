@@ -61,16 +61,23 @@ export default function StoreHubPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-12 px-4 font-sans relative">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
-            <Store className="w-10 h-10 text-indigo-600" />
+    <div className="min-h-screen bg-[#F9F9F8] flex flex-col font-sans relative">
+      
+      {/* 상단 테마 컬러 배너 */}
+      <div className="w-full bg-gradient-to-b from-indigo-700 to-indigo-900 pt-14 pb-20 px-4 text-center relative overflow-hidden flex-shrink-0 shadow-lg rounded-b-[2.5rem]">
+        {/* 고급스러운 패턴 배경 */}
+        <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.08]"></div>
+        
+        <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
+          <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mx-auto mb-5 border-4 border-indigo-400/20 transform rotate-3 transition-transform hover:rotate-0 duration-300">
+            <Store className="w-10 h-10 text-indigo-700" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{storeName}</h1>
-          <p className="text-gray-500">원하시는 서비스를 선택해주세요</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md">{storeName}</h1>
+          <p className="text-indigo-100 font-medium tracking-wide">원하시는 서비스를 선택해주세요</p>
         </div>
+      </div>
+
+      <div className="w-full max-w-md mx-auto px-4 -mt-8 relative z-20 flex-1 pb-16">
 
         {/* 계좌 안내 영역 */}
         {accounts.length > 0 && (

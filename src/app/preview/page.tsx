@@ -92,10 +92,10 @@ export default function PreviewPage() {
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-indigo-100 selection:text-indigo-900 relative">
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        <div className="bg-white px-5 sm:px-8 py-8 sm:py-10 text-center relative border-b border-stone-100">
-          <div className="absolute top-0 left-0 w-full h-1 bg-indigo-600"></div>
-          <p className="text-indigo-700 text-base font-bold tracking-wide mb-2">{data.storeName}</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-stone-800 tracking-tight">{data.formTitle}</h1>
+        <div className="bg-gradient-to-r from-indigo-700 to-indigo-900 px-5 sm:px-8 py-10 sm:py-12 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
+          <p className="relative z-10 text-indigo-100 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">{data.storeName}</p>
+          <h1 className="relative z-10 text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">{data.formTitle}</h1>
         </div>
         
         <div className="px-4 sm:px-10 py-6 sm:py-10">
