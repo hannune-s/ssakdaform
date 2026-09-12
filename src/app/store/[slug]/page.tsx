@@ -69,7 +69,7 @@ export default function StoreHubPage() {
         <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.08]"></div>
         
         <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
-          <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mx-auto mb-5 border-4 border-indigo-400/20 transform rotate-3 transition-transform hover:rotate-0 duration-300">
+          <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mx-auto mb-5 border-4 border-indigo-400/20">
             <Store className="w-10 h-10 text-indigo-700" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md">{storeName}</h1>
