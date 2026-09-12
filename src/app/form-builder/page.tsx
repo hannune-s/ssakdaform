@@ -259,17 +259,17 @@ export default function FormBuilder() {
           )}
           
           {fields.length > 0 && (
-            <div className="pt-6 flex flex-col sm:flex-row justify-end gap-3 mt-4 border-t border-gray-200">
+            <div className="pt-6 flex flex-row gap-2 mt-4 border-t border-gray-200">
               <button 
                 onClick={handleCopyLink}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium shadow-sm"
+                className="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-6 py-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium shadow-sm text-[12px] sm:text-base whitespace-nowrap"
               >
-                <LinkIcon className="w-5 h-5" />
+                <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                 고객링크 발행 (복사)
               </button>
               <button 
                 onClick={handleSave}
-                className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-sm"
+                className="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-sm text-[13px] sm:text-base whitespace-nowrap"
               >
                 폼 저장하기
               </button>
