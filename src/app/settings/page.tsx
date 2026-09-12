@@ -47,22 +47,37 @@ export default function SettingsPage() {
     setIsSaved(false);
     const validAccounts = accounts.filter(acc => acc.bank.trim() !== '' || acc.accountNumber.trim() !== '');
     
-    // 기존 계좌 모두 삭제
-    await supabase.from('ssakdaform_store_accounts').delete().not('id', 'is', null);
-    
-    // 새로 삽입
-    if (validAccounts.length > 0) {
-      await supabase.from('ssakdaform_store_accounts').insert(
-        validAccounts.map(acc => ({
-          bank: acc.bank,
-          account_number: acc.accountNumber,
-          holder: acc.holder
-        }))
-      );
+    try {
+      // 기존 계좌 모두 삭제
+      const { error: delError } = await supabase.from('ssakdaform_store_accounts').delete().not('id', 'is', null);
+      if (delError) {
+        console.error('Delete Error:', delError);
+        alert('삭제 오류: ' + delError.message);
+        return;
+      }
+      
+      // 새로 삽입
+      if (validAccounts.length > 0) {
+        const { error: insError } = await supabase.from('ssakdaform_store_accounts').insert(
+          validAccounts.map(acc => ({
+            bank: acc.bank,
+            account_number: acc.accountNumber,
+            holder: acc.holder
+          }))
+        );
+        if (insError) {
+          console.error('Insert Error:', insError);
+          alert('저장 오류: ' + insError.message);
+          return;
+        }
+      }
+      
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
+    } catch (err: any) {
+      console.error(err);
+      alert('연결 오류: ' + (err.message || '알 수 없는 오류'));
     }
-    
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
   };
 
   return (
