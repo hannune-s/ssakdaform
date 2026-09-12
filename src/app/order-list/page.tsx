@@ -72,12 +72,12 @@ export default function OrderListPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">주문일시</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">주문자 (이름/연락처)</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">주문상품 (상품명/입금자명)</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">상태</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600 text-right">관리</th>
+              <tr className="bg-indigo-50 border-b border-indigo-100">
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">주문일시</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">주문자 (이름/연락처)</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">주문상품 (상품명/입금자명)</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">상태</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900 text-right">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">

@@ -72,12 +72,12 @@ export default function DeliveryListPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">접수일시</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">보내는 분 (이름/연락처)</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">받는 분 (이름/주소)</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600">상태</th>
-                <th className="px-5 py-4 text-sm font-semibold text-gray-600 text-right">관리</th>
+              <tr className="bg-indigo-50 border-b border-indigo-100">
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">접수일시</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">보내는 분 (이름/연락처)</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">받는 분 (이름/주소)</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900">상태</th>
+                <th className="px-5 py-4 text-sm font-bold text-indigo-900 text-right">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
