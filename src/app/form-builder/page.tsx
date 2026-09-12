@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { Plus, Trash2, Eye, ArrowLeft, Type, Hash, Calendar, Phone, CheckSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Trash2, Eye, ArrowLeft, Type, Hash, Calendar, Phone, CheckSquare, Link as LinkIcon, RotateCcw } from 'lucide-react';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox';
 
@@ -14,11 +14,39 @@ interface FormField {
 }
 
 export default function FormBuilder() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [storeName, setStoreName] = useState('내 매장 이름');
   const [formTitle, setFormTitle] = useState('새로운 맞춤형 신청서');
   const [fields, setFields] = useState<FormField[]>([
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
+
+  // 로컬 스토리지에서 자동 저장된 초안 불러오기
+  useEffect(() => {
+    const draft = localStorage.getItem('ssakdaform_draft');
+    if (draft) {
+      try {
+        const parsed = JSON.parse(draft);
+        if (parsed.storeName) setStoreName(parsed.storeName);
+        if (parsed.formTitle) setFormTitle(parsed.formTitle);
+        if (parsed.fields && parsed.fields.length > 0) setFields(parsed.fields);
+      } catch (e) {
+        console.error("Draft parsing error", e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // 값이 변경될 때마다 로컬 스토리지에 자동 저장 (새로고침 방지)
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('ssakdaform_draft', JSON.stringify({
+        storeName,
+        formTitle,
+        fields
+      }));
+    }
+  }, [storeName, formTitle, fields, isLoaded]);
 
   const addField = (type: FieldType) => {
     setFields([...fields, { 
@@ -39,14 +67,33 @@ export default function FormBuilder() {
   };
 
   const handlePreview = () => {
-    // 미리보기 데이터를 로컬 스토리지에 임시 저장하고 새 창 열기
-    localStorage.setItem('ssakdaform_preview', JSON.stringify({
-      storeName,
-      formTitle,
-      fields
-    }));
+    localStorage.setItem('ssakdaform_preview', JSON.stringify({ storeName, formTitle, fields }));
     window.open('/preview', '_blank');
   };
+
+  const handleReset = () => {
+    if (window.confirm('작성 중인 폼을 정말 초기화하시겠습니까? (모든 항목이 지워집니다)')) {
+      setStoreName('내 매장 이름');
+      setFormTitle('새로운 맞춤형 신청서');
+      setFields([{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]);
+    }
+  };
+
+  const handleCopyLink = () => {
+    // 향후 실제 DB ID로 대체될 가짜 링크
+    const dummyLink = "https://ssakdaform.vercel.app/form/demo-12345";
+    navigator.clipboard.writeText(dummyLink).then(() => {
+      alert(`고객에게 전송할 폼 링크가 복사되었습니다!\n\n${dummyLink}\n\n(아직 DB 연동 전이라 가상의 링크가 복사됩니다)`);
+    });
+  };
+
+  const handleSave = () => {
+    alert('폼이 성공적으로 저장되었습니다! (추후 데이터베이스와 연동됩니다)');
+  };
+
+  if (!isLoaded) {
+    return <div className="p-10 text-center text-gray-500">에디터 불러오는 중...</div>;
+  }
 
   // --- 어드민용 '맞춤형 폼 만들기' 화면 ---
   return (
@@ -56,13 +103,22 @@ export default function FormBuilder() {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">맞춤형 폼 만들기</h1>
           <p className="text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
         </div>
-        <button 
-          onClick={handlePreview}
-          className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md"
-        >
-          <Eye className="w-5 h-5" />
-          새 창에서 미리보기
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <button 
+            onClick={handleReset}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm"
+          >
+            <RotateCcw className="w-5 h-5 text-gray-500" />
+            초기화
+          </button>
+          <button 
+            onClick={handlePreview}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md"
+          >
+            <Eye className="w-5 h-5" />
+            고객화면 미리보기
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -122,7 +178,7 @@ export default function FormBuilder() {
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-4">
             <h3 className="font-semibold text-gray-800">입력 항목 관리</h3>
-            <p className="text-sm text-gray-500">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
+            <p className="text-sm text-gray-500">고객이 입력할 항목의 이름과 설명을 설정하세요. (자동 저장됨)</p>
           </div>
 
           {fields.length === 0 ? (
@@ -139,6 +195,7 @@ export default function FormBuilder() {
                 <button 
                   onClick={() => removeField(field.id)}
                   className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                  title="삭제"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -177,9 +234,9 @@ export default function FormBuilder() {
                         type="checkbox" 
                         checked={field.required}
                         onChange={(e) => updateField(field.id, 'required', e.target.checked)}
-                        className="w-4 h-4 text-green-600 rounded focus:ring-green-500" 
+                        className="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer" 
                       />
-                      <span className="text-sm font-medium text-gray-700">필수 항목으로 설정</span>
+                      <span className="text-sm font-medium text-gray-700 select-none">필수 항목으로 설정</span>
                     </label>
                   </div>
                 </div>
@@ -188,10 +245,17 @@ export default function FormBuilder() {
           )}
           
           {fields.length > 0 && (
-            <div className="pt-4 flex justify-end">
+            <div className="pt-6 flex flex-col sm:flex-row justify-end gap-3 mt-4 border-t border-gray-200">
               <button 
-                onClick={() => alert('폼이 성공적으로 저장되었습니다! (추후 데이터베이스와 연동됩니다)')}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-sm"
+                onClick={handleCopyLink}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium shadow-sm"
+              >
+                <LinkIcon className="w-5 h-5" />
+                고객링크 발행 (복사)
+              </button>
+              <button 
+                onClick={handleSave}
+                className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-sm"
               >
                 폼 저장하기
               </button>
