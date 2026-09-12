@@ -2,18 +2,26 @@
 
 import { Eye, Link as LinkIcon } from 'lucide-react';
 
-export default function BasicForm() {
+export default function OrderForm() {
   const handlePreview = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+      
     const fields = [
-      { id: 1, type: 'text', label: '신청자 이름', placeholder: '이름을 입력하세요', required: true },
-      { id: 2, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
-      { id: 3, type: 'text', label: '신청 목적', placeholder: '예: 상담 신청, 견적 문의 등', required: true },
-      { id: 4, type: 'textarea', label: '상세 내용', placeholder: '궁금하신 점이나 요청사항을 자세히 적어주세요.', required: true }
+      { id: 1, type: 'date', label: '주문 날짜', defaultValue: todayStr, required: true },
+      { id: 2, type: 'text', label: '상품명', placeholder: '주문하실 상품명을 입력하세요', required: true },
+      { id: 3, type: 'text', label: '고객명', placeholder: '주문자 성함을 입력하세요', required: true },
+      { id: 4, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
+      { id: 5, type: 'text', label: '입금자명', placeholder: '입금하실 분의 성함을 입력하세요', required: true },
+      { id: 6, type: 'textarea', label: '기타 전달 내용', placeholder: '배송 메시지 등 기타 요청사항을 적어주세요.', required: false }
     ];
 
     localStorage.setItem('ssakdaform_preview', JSON.stringify({
       storeName: '내 매장 이름 (기본 설정)',
-      formTitle: '기본 신청서 폼',
+      formTitle: '간편한 상품 주문서',
       fields
     }));
 
@@ -30,9 +38,9 @@ export default function BasicForm() {
   };
 
   const handleCopyLink = () => {
-    const dummyLink = `${window.location.origin}/form/basic-preset`;
+    const dummyLink = `${window.location.origin}/form/order-preset`;
     navigator.clipboard.writeText(dummyLink).then(() => {
-      alert(`고객에게 전송할 기본 신청서 링크가 복사되었습니다!\n\n${dummyLink}`);
+      alert(`고객에게 전송할 상품 주문서 링크가 복사되었습니다!\n\n${dummyLink}`);
     });
   };
 
@@ -40,8 +48,8 @@ export default function BasicForm() {
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">기본 신청서 폼</h1>
-          <p className="text-gray-500">가장 기본적인 형태의 다목적 신청서입니다.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">상품 주문서</h1>
+          <p className="text-gray-500">원하시는 상품을 쉽고 빠르게 주문받을 수 있는 폼입니다.</p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <button 

@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Calendar, FileText, ChevronRight, Store } from 'lucide-react';
+import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag } from 'lucide-react';
 
 export default function StoreHubPage() {
   const params = useParams();
@@ -28,11 +28,11 @@ export default function StoreHubPage() {
       color: 'bg-emerald-50 border-emerald-100 group-hover:border-emerald-300',
     },
     {
-      id: 'basic-preset',
-      title: '기타 신청 / 문의',
-      description: '회원가입 및 기타 문의사항을 남겨주세요.',
-      icon: <FileText className="w-6 h-6 text-purple-600" />,
-      color: 'bg-purple-50 border-purple-100 group-hover:border-purple-300',
+      id: 'order-preset',
+      title: '상품 주문서',
+      description: '원하시는 상품을 쉽고 빠르게 주문하세요.',
+      icon: <ShoppingBag className="w-6 h-6 text-orange-600" />,
+      color: 'bg-orange-50 border-orange-100 group-hover:border-orange-300',
     }
   ];
 

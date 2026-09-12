@@ -144,6 +144,7 @@ export default function PreviewPage() {
                         type={field.type === 'phone' ? 'tel' : field.type} 
                         className={inputClass}
                         placeholder={field.placeholder}
+                        defaultValue={field.defaultValue}
                       />
                     )}
                   </div>

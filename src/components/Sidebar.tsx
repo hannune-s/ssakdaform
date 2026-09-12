@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Package, Calendar, UserPlus, FileText, Settings, LayoutDashboard, Menu, X, Link as LinkIcon, CheckCircle2, ExternalLink } from 'lucide-react';
+import { Package, Calendar, UserPlus, FileText, Settings, LayoutDashboard, Menu, X, Link as LinkIcon, CheckCircle2, ExternalLink, ShoppingBag } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Sidebar() {
@@ -124,9 +124,9 @@ export default function Sidebar() {
             <UserPlus className="w-5 h-5" />
             회원가입 신청서
           </Link>
-          <Link href="/form-basic" onClick={() => setIsOpen(false)} className={getLinkClass("/form-basic")}>
-            <FileText className="w-5 h-5" />
-            기본 신청서 폼
+          <Link href="/form-order" onClick={() => setIsOpen(false)} className={getLinkClass("/form-order")}>
+            <ShoppingBag className="w-5 h-5" />
+            상품 주문서
           </Link>
         </nav>
         

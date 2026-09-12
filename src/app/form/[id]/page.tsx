@@ -45,6 +45,26 @@ export default function CustomerFormPage() {
         ]
       });
       return;
+    } else if (id === 'order-preset') {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+      
+      setData({
+        storeName: '내 매장 이름 (기본 설정)',
+        formTitle: '간편한 상품 주문서',
+        fields: [
+          { id: 1, type: 'date', label: '주문 날짜', defaultValue: todayStr, required: true },
+          { id: 2, type: 'text', label: '상품명', placeholder: '주문하실 상품명을 입력하세요', required: true },
+          { id: 3, type: 'text', label: '고객명', placeholder: '주문자 성함을 입력하세요', required: true },
+          { id: 4, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
+          { id: 5, type: 'text', label: '입금자명', placeholder: '입금하실 분의 성함을 입력하세요', required: true },
+          { id: 6, type: 'textarea', label: '기타 전달 내용', placeholder: '배송 메시지 등 기타 요청사항을 적어주세요.', required: false }
+        ]
+      });
+      return;
     }
 
     const stored = localStorage.getItem('ssakdaform_draft');
@@ -200,6 +220,7 @@ export default function CustomerFormPage() {
                         type={field.type === 'phone' ? 'tel' : field.type} 
                         className={inputClass}
                         placeholder={field.placeholder}
+                        defaultValue={field.defaultValue}
                       />
                     )}
                   </div>
