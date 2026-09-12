@@ -88,21 +88,21 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
               let inputClass = "w-full px-4 py-3 rounded-xl border focus:bg-white focus:outline-none transition-all duration-200 ";
 
               if (isSender) {
-                labelClass += "text-indigo-800";
-                inputClass += "bg-indigo-50/40 border-indigo-200 focus:ring-2 focus:ring-indigo-500 text-indigo-900 placeholder-indigo-300";
+                labelClass += "text-slate-600";
+                inputClass += "bg-slate-50 border-slate-200 focus:ring-2 focus:ring-slate-300 text-slate-800 placeholder-slate-400";
               } else if (isReceiver) {
-                labelClass += "text-emerald-800";
-                inputClass += "bg-emerald-50/40 border-emerald-200 focus:ring-2 focus:ring-emerald-500 text-emerald-900 placeholder-emerald-300";
+                labelClass += "text-emerald-700";
+                inputClass += "bg-emerald-50/50 border-emerald-200/60 focus:ring-2 focus:ring-emerald-300 text-emerald-900 placeholder-emerald-400/70";
               } else {
-                labelClass += "text-stone-700 font-semibold";
-                inputClass += "bg-stone-50/50 border-stone-200 focus:ring-2 focus:ring-emerald-600 text-stone-800 placeholder-stone-400";
+                labelClass += "text-stone-600";
+                inputClass += "bg-stone-50 border-stone-200 focus:ring-2 focus:ring-stone-300 text-stone-800 placeholder-stone-400";
               }
 
               return (
                 <div key={field.id} className="relative">
                   <label className={labelClass}>
                     {field.label || '제목 없는 항목'}
-                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                    {field.required && <span className="text-red-400 ml-1">*</span>}
                   </label>
                   
                   {field.type === 'textarea' ? (
@@ -112,9 +112,9 @@ export default function CustomerFormPage({ params }: { params: { id: string } })
                       rows={3}
                     />
                   ) : field.type === 'checkbox' ? (
-                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isSender ? 'bg-indigo-50/40 border-indigo-200 hover:bg-indigo-50' : isReceiver ? 'bg-emerald-50/40 border-emerald-200 hover:bg-emerald-50' : 'bg-stone-50/50 border-stone-200 hover:bg-stone-50'}`}>
-                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-indigo-600 border-indigo-300 focus:ring-indigo-500' : isReceiver ? 'text-emerald-600 border-emerald-300 focus:ring-emerald-500' : 'text-emerald-600 border-stone-300 focus:ring-emerald-600'}`} />
-                      <span className={`text-sm leading-relaxed ${isSender ? 'text-indigo-800' : isReceiver ? 'text-emerald-800' : 'text-stone-700'}`}>{field.placeholder || '동의합니다.'}</span>
+                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isSender ? 'bg-slate-50 border-slate-200 hover:bg-slate-100' : isReceiver ? 'bg-emerald-50/50 border-emerald-200/60 hover:bg-emerald-50' : 'bg-stone-50 border-stone-200 hover:bg-stone-100'}`}>
+                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-slate-600 border-slate-300 focus:ring-slate-400' : isReceiver ? 'text-emerald-600 border-emerald-300 focus:ring-emerald-400' : 'text-stone-600 border-stone-300 focus:ring-stone-400'}`} />
+                      <span className={`text-sm leading-relaxed ${isSender ? 'text-slate-700' : isReceiver ? 'text-emerald-800' : 'text-stone-700'}`}>{field.placeholder || '동의합니다.'}</span>
                     </label>
                   ) : field.type === 'address' ? (
                     <div className="space-y-2">
