@@ -91,21 +91,21 @@ export default function PreviewPage() {
               let inputClass = "w-full px-4 py-3 rounded-xl border focus:bg-white focus:outline-none transition-all duration-200 ";
 
               if (isSender) {
-                labelClass += "text-slate-600";
-                inputClass += "bg-slate-50 border-slate-200 focus:ring-2 focus:ring-slate-300 text-slate-800 placeholder-slate-400";
+                labelClass += "text-blue-700";
+                inputClass += "bg-blue-50 border-blue-200 focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-blue-300";
               } else if (isReceiver) {
-                labelClass += "text-emerald-700";
-                inputClass += "bg-emerald-50/50 border-emerald-200/60 focus:ring-2 focus:ring-emerald-300 text-emerald-900 placeholder-emerald-400/70";
+                labelClass += "text-teal-700";
+                inputClass += "bg-teal-50 border-teal-200 focus:ring-2 focus:ring-teal-500 text-gray-900 placeholder-teal-300";
               } else {
-                labelClass += "text-stone-600";
-                inputClass += "bg-stone-50 border-stone-200 focus:ring-2 focus:ring-stone-300 text-stone-800 placeholder-stone-400";
+                labelClass += "text-gray-700";
+                inputClass += "bg-gray-50 border-gray-200 focus:ring-2 focus:ring-gray-400 text-gray-900 placeholder-gray-400";
               }
 
               return (
                 <div key={field.id} className="relative">
                   <label className={labelClass}>
                     {field.label || '제목 없는 항목'}
-                    {field.required && <span className="text-red-400 ml-1">*</span>}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
                   </label>
                   
                   {field.type === 'textarea' ? (
@@ -115,9 +115,9 @@ export default function PreviewPage() {
                       rows={3}
                     />
                   ) : field.type === 'checkbox' ? (
-                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isSender ? 'bg-slate-50 border-slate-200 hover:bg-slate-100' : isReceiver ? 'bg-emerald-50/50 border-emerald-200/60 hover:bg-emerald-50' : 'bg-stone-50 border-stone-200 hover:bg-stone-100'}`}>
-                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-slate-600 border-slate-300 focus:ring-slate-400' : isReceiver ? 'text-emerald-600 border-emerald-300 focus:ring-emerald-400' : 'text-stone-600 border-stone-300 focus:ring-stone-400'}`} />
-                      <span className={`text-sm leading-relaxed ${isSender ? 'text-slate-700' : isReceiver ? 'text-emerald-800' : 'text-stone-700'}`}>{field.placeholder || '동의합니다.'}</span>
+                    <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isSender ? 'bg-blue-50 border-blue-200 hover:bg-blue-100' : isReceiver ? 'bg-teal-50 border-teal-200 hover:bg-teal-100' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>
+                      <input type="checkbox" className={`w-5 h-5 mt-0.5 rounded cursor-pointer ${isSender ? 'text-blue-600 border-blue-300 focus:ring-blue-500' : isReceiver ? 'text-teal-600 border-teal-300 focus:ring-teal-500' : 'text-gray-600 border-gray-300 focus:ring-gray-500'}`} />
+                      <span className={`text-sm leading-relaxed ${isSender ? 'text-blue-800' : isReceiver ? 'text-teal-800' : 'text-gray-800'}`}>{field.placeholder || '동의합니다.'}</span>
                     </label>
                   ) : field.type === 'address' ? (
                     <div className="space-y-2">
