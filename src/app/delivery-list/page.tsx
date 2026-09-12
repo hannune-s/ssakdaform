@@ -4,9 +4,16 @@ import { useEffect, useState } from 'react';
 import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-export default function DeliveryListPage() {
+export default function DeliveryList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
+
+  const filteredResponses = responses.filter(res => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    const dataStr = JSON.stringify(res.data || {}).toLowerCase();
+    return dataStr.includes(q);
+  });
 
   useEffect(() => {
     loadData();
@@ -81,8 +88,8 @@ export default function DeliveryListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {responses.length > 0 ? (
-                responses.map((res) => {
+              {filteredResponses.length > 0 ? (
+                filteredResponses.map((res) => {
                   const data = res.data || {};
                   const senderName = data['보내는 분 - 이름'] || res.senderName || '-';
                   const senderPhone = data['보내는 분 - 연락처'] || res.senderPhone || '-';

@@ -9,6 +9,7 @@ import FormBuilder from './form-builder/page';
 
 export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col pt-12 sm:pt-16 px-4">
@@ -26,21 +27,25 @@ export default function AdminHub() {
         
         {/* 검색 바 */}
         <div className="relative mb-6">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
           <input
             type="text"
-            className="block w-full pl-11 pr-4 py-3 bg-gray-50/80 border border-gray-100 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium sm:text-sm"
-            placeholder="'보건증', '제로페이', '메뉴판' 등 키워드 검색"
+            className="block w-full pl-5 pr-14 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium sm:text-base outline-none"
+            placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <div className="absolute inset-y-0 right-2 flex items-center">
+            <button className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
+              <Search className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* 메뉴(카테고리) 탭 버튼 */}
         <div className="flex flex-wrap justify-center gap-2.5">
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
               activeTab === 'all' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -50,7 +55,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('delivery')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
               activeTab === 'delivery' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -60,7 +65,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('reservation')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
               activeTab === 'reservation' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -70,7 +75,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('order')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
               activeTab === 'order' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -80,7 +85,7 @@ export default function AdminHub() {
           </button>
           <button
             onClick={() => setActiveTab('builder')}
-            className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
               activeTab === 'builder' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -97,22 +102,22 @@ export default function AdminHub() {
           <div className="flex flex-col gap-12">
             <div>
               <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">📦 택배 신청 현황</h2>
-              <DeliveryList />
+              <DeliveryList searchQuery={searchQuery} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">📅 매장 예약 현황</h2>
-              <ReservationList />
+              <ReservationList searchQuery={searchQuery} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800 mb-4 px-2">🛍️ 상품 주문 현황</h2>
-              <OrderList />
+              <OrderList searchQuery={searchQuery} />
             </div>
           </div>
         )}
         
-        {activeTab === 'delivery' && <DeliveryList />}
-        {activeTab === 'reservation' && <ReservationList />}
-        {activeTab === 'order' && <OrderList />}
+        {activeTab === 'delivery' && <DeliveryList searchQuery={searchQuery} />}
+        {activeTab === 'reservation' && <ReservationList searchQuery={searchQuery} />}
+        {activeTab === 'order' && <OrderList searchQuery={searchQuery} />}
         {activeTab === 'builder' && <FormBuilder />}
       </div>
       

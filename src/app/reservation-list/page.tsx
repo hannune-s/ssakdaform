@@ -4,9 +4,16 @@ import { useEffect, useState } from 'react';
 import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-export default function ReservationListPage() {
+export default function ReservationList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
+
+  const filteredResponses = responses.filter(res => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    const dataStr = JSON.stringify(res.data || {}).toLowerCase();
+    return dataStr.includes(q);
+  });
 
   useEffect(() => {
     loadData();
@@ -81,8 +88,8 @@ export default function ReservationListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {responses.length > 0 ? (
-                responses.map((res) => {
+              {filteredResponses.length > 0 ? (
+                filteredResponses.map((res) => {
                   const data = res.data || {};
                   const resName = data['예약자 이름'] || '-';
                   const resPhone = data['연락처'] || '-';
