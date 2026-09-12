@@ -7,7 +7,6 @@ export default function DeliveryForm() {
     const fields = [
       { id: 1, type: 'text', label: '보내는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
       { id: 2, type: 'phone', label: '보내는 분 - 연락처', placeholder: '010-0000-0000', required: true },
-      { id: 3, type: 'address', label: '보내는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
       { id: 4, type: 'text', label: '받는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
       { id: 5, type: 'phone', label: '받는 분 - 연락처', placeholder: '010-0000-0000', required: true },
       { id: 6, type: 'address', label: '받는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
@@ -68,8 +67,8 @@ export default function DeliveryForm() {
       <div className="bg-white p-5 md:p-8 rounded-xl border border-gray-200 shadow-sm">
         <form className="space-y-8">
           
-          {/* 보내는 사람 */}
-          <section>
+          {/* 보내는 분 */}
+          <section className="mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">보내는 분 (발송인)</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -79,10 +78,6 @@ export default function DeliveryForm() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">연락처</label>
                 <input type="tel" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="010-0000-0000" />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">주소</label>
-                <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="상세 주소를 포함하여 입력해주세요" />
               </div>
             </div>
           </section>
