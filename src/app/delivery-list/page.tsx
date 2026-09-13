@@ -214,9 +214,9 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto print-area bg-[#F8FAFC] flex-1">
+            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1">
               {/* 상단 상태 티켓 */}
-              <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100 flex justify-between items-center">
+              <div className="bg-white rounded-2xl p-5 mb-6 shadow-md shadow-gray-200/50 flex justify-between items-center">
                 <div>
                   <p className="text-xs font-medium text-gray-500 mb-1">접수 일시</p>
                   <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
@@ -240,7 +240,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                   const renderSection = (title: string, entries: any[], isReceiver: boolean) => {
                     if (entries.length === 0) return null;
                     return (
-                      <div className={`bg-white border ${isReceiver ? 'border-indigo-100' : 'border-gray-200'} rounded-2xl p-6 shadow-sm`}>
+                      <div className={`bg-white rounded-2xl p-6 shadow-md ${isReceiver ? "shadow-indigo-100/50 border border-indigo-100" : "shadow-gray-200/50 border border-transparent"}`}>
                         <h3 className={`text-sm font-extrabold mb-5 pb-3 border-b-2 ${isReceiver ? 'text-indigo-900 border-indigo-900' : 'text-gray-900 border-gray-900'} flex items-center gap-2`}>
                            {title}
                         </h3>
