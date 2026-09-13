@@ -214,6 +214,11 @@ export default function CustomerFormPage() {
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
           <p className="relative z-10 text-indigo-100 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">{data.storeName}</p>
           <h1 className="relative z-10 text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-md">{data.formTitle}</h1>
+          {data.formDescription && (
+            <div className="relative z-10 mt-5 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 text-indigo-50 text-[13.5px] leading-relaxed whitespace-pre-wrap text-left shadow-sm">
+              {data.formDescription}
+            </div>
+          )}
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
