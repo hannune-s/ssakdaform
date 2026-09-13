@@ -24,7 +24,9 @@ export default function AdminHub() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col pt-12 sm:pt-16 px-4 pb-24">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col px-4 pb-24">
+      {activeTab !== 'my' && (
+        <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
       <div className="text-center mb-10">
@@ -168,6 +170,9 @@ export default function AdminHub() {
         </button>
       </div>
       
+      </div>
+      )}
+
       {/* 마이 메뉴 컨텐츠 */}
       {activeTab === 'my' && (
         <div className="w-full max-w-4xl mx-auto mt-6 px-2 sm:px-0 pb-10">
