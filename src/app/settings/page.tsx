@@ -201,46 +201,46 @@ export default function SettingsPage() {
 
           <div className="space-y-3">
             {accounts.map((account, index) => (
-              <div key={index} className="p-4 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-col md:flex-row md:items-end gap-3 relative group">
-                <div className="flex-1">
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">은행명</label>
+              <div key={index} className="p-3 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-row items-end gap-1.5 relative group w-full">
+                <div className="w-[25%] shrink-0">
+                  <label className="block text-[10px] sm:text-[11px] font-semibold text-gray-500 mb-1">은행명</label>
                   <input 
                     type="text" 
                     value={account.bank}
                     onChange={(e) => handleChange(index, 'bank', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
                     placeholder="국민은행"
                   />
                 </div>
                 
-                <div className="flex-[1.5]">
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">계좌번호</label>
+                <div className="flex-1 min-w-0">
+                  <label className="block text-[10px] sm:text-[11px] font-semibold text-gray-500 mb-1">계좌번호</label>
                   <input 
                     type="text" 
                     value={account.accountNumber}
                     onChange={(e) => handleChange(index, 'accountNumber', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-mono"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm font-mono"
                     placeholder="123-456-7890"
                   />
                 </div>
                 
-                <div className="flex-1">
-                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">예금주</label>
+                <div className="w-[22%] sm:w-[25%] shrink-0">
+                  <label className="block text-[10px] sm:text-[11px] font-semibold text-gray-500 mb-1">예금주</label>
                   <input 
                     type="text" 
                     value={account.holder}
                     onChange={(e) => handleChange(index, 'holder', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
                     placeholder="홍길동"
                   />
                 </div>
 
                 <button 
                   onClick={() => handleRemoveAccount(index)}
-                  className="p-2 md:mb-[2px] text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-1.5 mb-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                   title="계좌 삭제"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             ))}
