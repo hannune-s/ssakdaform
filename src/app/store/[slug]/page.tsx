@@ -84,7 +84,7 @@ export default function StoreHubPage() {
           <div className="mb-8 bg-[#F0F4FF] rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-3.5">
               <CreditCard className="w-4 h-4 text-indigo-400" />
-              <h2 className="font-bold text-indigo-900 text-[14px]">무통장 입금 계좌안내</h2>
+              <h2 className="font-bold text-indigo-900 text-[14px]">계좌 안내</h2>
             </div>
             
             <div className="space-y-3">
