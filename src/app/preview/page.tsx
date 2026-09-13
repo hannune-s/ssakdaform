@@ -100,29 +100,27 @@ export default function PreviewPage() {
         
         <div className="px-4 sm:px-10 py-6 sm:py-10">
           {accounts.length > 0 && (
-            <div className="mb-8 bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 sm:p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">
-                  <CreditCard className="w-5 h-5" />
-                </div>
-                <h2 className="font-extrabold text-indigo-900 text-lg">계좌 안내</h2>
+            <div className="mb-8 bg-[#F0F4FF] border border-indigo-200 rounded-2xl p-5">
+              <div className="flex items-center gap-2 mb-3.5">
+                <CreditCard className="w-4 h-4 text-indigo-400" />
+                <h2 className="font-bold text-indigo-900 text-[14px]">계좌 안내</h2>
               </div>
+              
               <div className="space-y-3">
                 {accounts.map((acc, idx) => (
-                  <div key={idx} className="flex items-center justify-between gap-2 p-3 sm:p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 flex-1">
-                      <span className="text-xs sm:text-sm font-bold px-2 py-0.5 sm:py-1 bg-indigo-600 text-white rounded-md shadow-sm">{acc.bank}</span>
-                      <span className="text-sm sm:text-base font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
-                      <span className="text-xs sm:text-sm font-medium text-gray-600">{acc.holder}</span>
+                  <div key={idx} className="flex items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 flex-1">
+                      <span className="text-[13px] font-bold text-indigo-600">{acc.bank}</span>
+                      <span className="text-[17px] font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
+                      <span className="text-[13px] font-medium text-gray-500">{acc.holder}</span>
                     </div>
                     <button 
                       type="button"
                       onClick={() => handleCopyAccount(acc.accountNumber)}
-                      className="flex items-center justify-center p-2 sm:px-3 sm:py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg text-xs sm:text-sm font-bold text-indigo-700 hover:bg-indigo-100 active:scale-95 transition-all shrink-0"
+                      className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-[13px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-indigo-50"
                     >
-                      {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" /> : <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                      <span className="hidden sm:inline ml-1.5">{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
-                      <span className="inline sm:hidden ml-1">{copiedAccount === acc.accountNumber ? '완료' : '복사'}</span>
+                      {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
+                      <span>{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
                     </button>
                   </div>
                 ))}
