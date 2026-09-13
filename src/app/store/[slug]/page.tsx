@@ -81,7 +81,7 @@ export default function StoreHubPage() {
 
         {/* 계좌 안내 영역 (전체 배경색 적용, 크기 축소) */}
         {accounts.length > 0 && (
-          <div className="mb-8 bg-[#F0F4FF] rounded-2xl p-5">
+          <div className="mb-8 bg-[#F0F4FF] border border-indigo-200 rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-3.5">
               <CreditCard className="w-4 h-4 text-indigo-400" />
               <h2 className="font-bold text-indigo-900 text-[14px]">계좌 안내</h2>
