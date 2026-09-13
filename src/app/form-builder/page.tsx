@@ -181,34 +181,36 @@ export default function FormBuilder() {
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-3">
-              <div className="flex items-center gap-1.5 sm:gap-3 bg-gray-50/80 px-2 sm:px-4 py-2.5 border-b border-gray-200">
-                <div className="flex-1 text-[11px] sm:text-[12px] font-semibold text-gray-600 text-center">항목 이름</div>
-                <div className="flex-1 text-[11px] sm:text-[12px] font-semibold text-gray-600 text-center">안내 문구</div>
-                <div className="w-6 sm:w-8 shrink-0"></div>
-              </div>
+              
               <div className="divide-y divide-gray-100">
                 {fields.map((field) => (
-                  <div key={field.id} className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-2.5 sm:py-3 group hover:bg-gray-50/50 transition-colors">
-                    <input 
-                      type="text" 
-                      value={field.label}
-                      onChange={(e) => updateField(field.id, 'label', e.target.value)}
-                      placeholder="예: 연락처"
-                      className="flex-1 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[12px] sm:text-[13px] bg-white transition-shadow" 
-                    />
-                    <input 
-                      type="text" 
-                      value={field.placeholder}
-                      onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
-                      placeholder="희미하게 보일 문구"
-                      className="flex-1 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[12px] sm:text-[13px] bg-white transition-shadow" 
-                    />
+                  <div key={field.id} className="flex items-end gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 group hover:bg-gray-50/50 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">항목 이름</label>
+                      <input 
+                        type="text" 
+                        value={field.label}
+                        onChange={(e) => updateField(field.id, 'label', e.target.value)}
+                        placeholder="예: 연락처"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">안내 문구</label>
+                      <input 
+                        type="text" 
+                        value={field.placeholder}
+                        onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
+                        placeholder="희미하게 보일 문구"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
+                      />
+                    </div>
                     <button 
                       onClick={() => removeField(field.id)}
-                      className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="w-8 h-8 shrink-0 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors mb-0.5"
                       title="삭제"
                     >
-                      <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <X className="w-5 h-5" />
                     </button>
                   </div>
                 ))}
