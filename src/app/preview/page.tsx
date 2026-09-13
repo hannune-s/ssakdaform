@@ -90,15 +90,15 @@ export default function PreviewPage() {
 
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-indigo-100 selection:text-indigo-900 relative">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        <div className="bg-gradient-to-r from-indigo-700 to-indigo-900 px-5 sm:px-8 py-10 sm:py-12 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-r from-indigo-700 to-indigo-900 px-5 sm:px-6 py-8 sm:py-9 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
           <p className="relative z-10 text-indigo-100 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">{data.storeName}</p>
           <h1 className="relative z-10 text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">{data.formTitle}</h1>
         </div>
         
-        <div className="px-4 sm:px-10 py-6 sm:py-10">
+        <div className="px-4 sm:px-6 py-5 sm:py-7">
           {accounts.length > 0 && (
             <div className="mb-8 bg-[#F0F4FF] border border-indigo-200 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-3.5">
@@ -152,7 +152,7 @@ export default function PreviewPage() {
                 const displayLabel = field.label ? field.label.replace('보내는 분 - ', '').replace('받는 분 - ', '') : '제목 없는 항목';
 
                 return (
-                  <div key={field.id} className="relative mb-5 last:mb-0">
+                  <div key={field.id} className="relative mb-4 last:mb-0">
                     <label className={labelClass}>
                       {displayLabel}
                       {field.required && <span className="text-red-500 ml-1">*</span>}
@@ -221,10 +221,10 @@ export default function PreviewPage() {
               };
 
               return (
-                <div className="space-y-8">
+                <div className="space-y-5">
                   {senderFields.length > 0 && (
-                    <div className="bg-slate-100 border border-slate-300 rounded-2xl p-4 sm:p-7 shadow-sm">
-                      <h3 className="font-extrabold text-slate-800 mb-5 text-lg flex items-center gap-2">
+                    <div className="bg-slate-100 border border-slate-300 rounded-2xl p-4 sm:p-5 shadow-sm">
+                      <h3 className="font-extrabold text-slate-800 mb-3.5 text-base flex items-center gap-2">
                         <span className="w-2 h-6 bg-slate-600 rounded-full inline-block"></span>
                         보내는 분 (발송인)
                       </h3>
@@ -235,8 +235,8 @@ export default function PreviewPage() {
                   )}
 
                   {receiverFields.length > 0 && (
-                    <div className="bg-[#F6F1EA] border border-[#E8DCC9] rounded-2xl p-4 sm:p-7 shadow-sm">
-                      <h3 className="font-extrabold text-[#5C4D3C] mb-5 text-lg flex items-center gap-2">
+                    <div className="bg-[#F6F1EA] border border-[#E8DCC9] rounded-2xl p-4 sm:p-5 shadow-sm">
+                      <h3 className="font-extrabold text-[#5C4D3C] mb-3.5 text-base flex items-center gap-2">
                         <span className="w-2 h-6 bg-[#8B7355] rounded-full inline-block"></span>
                         받는 분 (수령인)
                       </h3>
@@ -247,8 +247,8 @@ export default function PreviewPage() {
                   )}
 
                   {otherFields.length > 0 && (
-                    <div className="bg-gray-100 border border-gray-300 rounded-2xl p-4 sm:p-7 shadow-sm">
-                      <h3 className="font-extrabold text-gray-800 mb-5 text-lg flex items-center gap-2">
+                    <div className="bg-gray-100 border border-gray-300 rounded-2xl p-4 sm:p-5 shadow-sm">
+                      <h3 className="font-extrabold text-gray-800 mb-3.5 text-base flex items-center gap-2">
                         <span className="w-2 h-6 bg-gray-500 rounded-full inline-block"></span>
                         {(senderFields.length > 0 || receiverFields.length > 0) ? '기타 정보' : '입력 정보'}
                       </h3>
