@@ -68,7 +68,7 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto pb-12">
       <style>{`
         @media print {
           body * { visibility: hidden; }
@@ -85,8 +85,8 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
       </div>
 
       {/* 리스트 테이블 */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+        <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
               <tr className="bg-indigo-50/70 border-b border-indigo-100">
