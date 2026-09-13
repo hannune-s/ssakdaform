@@ -187,15 +187,15 @@ export default function FormBuilder() {
                   <Trash2 className="w-4 h-4" />
                 </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1 pr-6">
+                <div className="grid grid-cols-2 gap-3 mt-1 pr-6">
                   <div>
                     <label className="block text-[11px] font-semibold text-gray-500 mb-0.5">항목 이름</label>
                     <input 
                       type="text" 
                       value={field.label}
                       onChange={(e) => updateField(field.id, 'label', e.target.value)}
-                      placeholder="예: 연락처, 방문일자 등"
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                      placeholder="예: 연락처"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                     />
                   </div>
                   <div>
@@ -204,12 +204,12 @@ export default function FormBuilder() {
                       type="text" 
                       value={field.placeholder}
                       onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
-                      placeholder="입력칸 안에 희미하게 보일 문구"
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                      placeholder="희미하게 보일 문구"
+                      className="w-full px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                     />
                   </div>
                   
-                  <div className="md:col-span-2 flex items-center justify-between bg-gray-50 p-2 sm:px-3 sm:py-2 rounded-lg border border-gray-100 mt-1">
+                  <div className="col-span-2 flex items-center justify-between bg-gray-50 p-2 sm:px-3 sm:py-2 rounded-lg border border-gray-100 mt-1">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[12px] text-gray-500 font-medium">일반 텍스트 입력칸</span>
                     </div>
