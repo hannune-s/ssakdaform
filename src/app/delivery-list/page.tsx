@@ -119,7 +119,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{receiverName}</p>
-                        <p className="text-[12px] text-gray-500 truncate max-w-[200px] mt-0.5" title={receiverAddress}>{receiverAddress}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 truncate max-w-[200px] mt-0.5" title={receiverAddress}>{receiverAddress}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <button 
