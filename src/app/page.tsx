@@ -42,7 +42,7 @@ export default function AdminHub() {
             {/* 텍스트 영역 */}
             <div className="flex-1">
               <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 mb-1.5 tracking-tight">우리 매장 통합 링크</h2>
-              <p className="text-indigo-900/70 text-[11px] sm:text-[13px] font-medium leading-snug tracking-tighter sm:tracking-normal whitespace-nowrap overflow-hidden text-ellipsis">
+              <p className="text-indigo-900/70 text-[13px] sm:text-[14px] font-medium leading-snug tracking-tighter sm:tracking-normal whitespace-nowrap overflow-hidden text-ellipsis">
                 인스타그램, 카카오톡 등에 이 링크를 공유하여 고객에게 안내하세요.
               </p>
             </div>
@@ -78,7 +78,7 @@ export default function AdminHub() {
           {/* 1번 줄: 맞춤형 폼 만들기 */}
           <button
             onClick={() => setActiveTab('builder')}
-            className={`px-6 py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
+            className={`px-6 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'builder' 
                 ? 'bg-blue-600 text-white shadow-md' 
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -88,10 +88,10 @@ export default function AdminHub() {
           </button>
           
           {/* 2번 줄: 현황 3종 */}
-          <div className="flex flex-row justify-center gap-1.5 sm:gap-2 w-full">
+          <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
             <button
               onClick={() => setActiveTab('delivery')}
-              className={`flex-1 max-w-[130px] px-1 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11.5px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'delivery' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -101,7 +101,7 @@ export default function AdminHub() {
             </button>
             <button
               onClick={() => setActiveTab('reservation')}
-              className={`flex-1 max-w-[130px] px-1 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11.5px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'reservation' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -111,7 +111,7 @@ export default function AdminHub() {
             </button>
             <button
               onClick={() => setActiveTab('order')}
-              className={`flex-1 max-w-[130px] px-1 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11.5px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'order' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
