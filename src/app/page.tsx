@@ -114,9 +114,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >
-              택배 신청 현황
-            </button>
+            >택배현황</button>
             <button
               onClick={() => setActiveTab('reservation')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
@@ -124,9 +122,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >
-              매장 예약 현황
-            </button>
+            >예약현황</button>
             <button
               onClick={() => setActiveTab('order')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
@@ -134,9 +130,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >
-              상품 주문 현황
-            </button>
+            >주문현황</button>
             <button
               onClick={() => setActiveTab('custom')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
@@ -144,9 +138,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >
-              맞춤 주문 현황
-            </button>
+            >맞춤현황</button>
           </div>
         </div>
         
