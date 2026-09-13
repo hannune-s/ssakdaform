@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Package, Copy, ExternalLink, Check } from 'lucide-react';
+import { Search, Package, Copy, ExternalLink, Check, Home, User } from 'lucide-react';
 import DeliveryList from './delivery-list/page';
 import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
@@ -24,7 +24,7 @@ export default function AdminHub() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col pt-12 sm:pt-16 px-4">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col pt-12 sm:pt-16 px-4 pb-24">
       
       {/* 상단 로고 및 타이틀 */}
       <div className="text-center mb-10">
