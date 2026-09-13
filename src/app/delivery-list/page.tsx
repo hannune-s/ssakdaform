@@ -214,7 +214,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1">
+            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0">
               {/* 상단 상태 티켓 */}
               <div className="bg-white rounded-2xl p-5 mb-6 shadow-md shadow-gray-200/50 flex justify-between items-center">
                 <div>

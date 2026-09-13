@@ -218,7 +218,7 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1">
+            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0">
               <div className="bg-white rounded-2xl p-5 mb-6 shadow-md shadow-gray-200/50 flex justify-between items-center">
                 <div>
                   <p className="text-xs font-medium text-gray-500 mb-1">접수 일시</p>
