@@ -6,6 +6,7 @@ import DeliveryList from './delivery-list/page';
 import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
 import FormBuilder from './form-builder/page';
+import SettingsPage from './settings/page';
 
 export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('builder');
@@ -25,7 +26,7 @@ export default function AdminHub() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col px-4 pb-24">
-      {activeTab !== 'my' && (
+      {activeTab !== 'my' && activeTab !== 'settings' && (
         <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
@@ -174,6 +175,19 @@ export default function AdminHub() {
       )}
 
       {/* 마이 메뉴 컨텐츠 */}
+      {activeTab === 'settings' && (
+        <div className="pt-12 sm:pt-16 pb-10 w-full">
+          <div className="px-4 flex items-center gap-2 mb-4">
+            <button onClick={() => setActiveTab('my')} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h2 className="text-xl font-bold">설정 (계좌 정보)</h2>
+          </div>
+          <SettingsPage />
+        </div>
+      )}
+
+      {/* 마이 메뉴 컨텐츠 */}
       {activeTab === 'my' && (
         <div className="w-full max-w-4xl mx-auto mt-6 px-2 sm:px-0 pb-10">
           <div className="mb-6 flex items-start sm:items-center gap-1 sm:gap-3">
@@ -203,9 +217,10 @@ export default function AdminHub() {
                 color: 'bg-purple-900'
               },
               {
-                title: '설정',
-                desc: '가게 정보(영업시간, 주소 등) 관리',
-                color: 'bg-purple-900'
+                title: '설정 (가게/계좌 정보)',
+                desc: '가게 기본 정보 및 무통장 입금 계좌 관리',
+                color: 'bg-purple-900',
+                onClick: () => setActiveTab('settings')
               },
               {
                 title: '고객 홍보 (링크 & QR)',
@@ -215,6 +230,7 @@ export default function AdminHub() {
             ].map((menu, idx) => (
               <div 
                 key={idx} 
+                onClick={menu.onClick}
                 className="bg-white rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.03)] border border-gray-100/80 flex items-center p-5 cursor-pointer hover:bg-gray-50 transition-colors relative overflow-hidden group"
               >
                 <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${menu.color}`}></div>
