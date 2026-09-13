@@ -42,7 +42,7 @@ export default function AdminHub() {
             {/* 텍스트 영역 */}
             <div className="flex-1">
               <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 mb-1.5 tracking-tight">우리 매장 통합 링크</h2>
-              <p className="text-indigo-900/70 text-[13px] sm:text-sm font-medium leading-snug">
+              <p className="text-indigo-900/70 text-[11px] sm:text-[13px] font-medium leading-snug tracking-tighter sm:tracking-normal whitespace-nowrap overflow-hidden text-ellipsis">
                 인스타그램, 카카오톡 등에 이 링크를 공유하여 고객에게 안내하세요.
               </p>
             </div>
@@ -73,22 +73,6 @@ export default function AdminHub() {
       {/* 탭 및 검색 카드 영역 */}
       <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8">
         
-        {/* 검색 바 */}
-        <div className="relative mb-6">
-          <input
-            type="text"
-            className="block w-full pl-5 pr-14 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium sm:text-base outline-none"
-            placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="absolute inset-y-0 right-2 flex items-center">
-            <button className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
-              <Search className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
         {/* 메뉴(카테고리) 탭 버튼 */}
         <div className="flex flex-col items-center gap-2 sm:gap-3 w-full px-1">
           {/* 1번 줄: 맞춤형 폼 만들기 */}
@@ -137,6 +121,24 @@ export default function AdminHub() {
             </button>
           </div>
         </div>
+        
+        {/* 검색창 (맞춤형 폼 만들기 탭에서는 숨김) */}
+        {activeTab !== 'builder' && (
+          <div className="relative mt-5 sm:mt-6">
+            <input
+              type="text"
+              className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
+              placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="absolute inset-y-0 right-1.5 flex items-center">
+              <button className="p-1.5 sm:p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
+                <Search className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 하단 콘텐츠(기존 컴포넌트 렌더링) 영역 */}
