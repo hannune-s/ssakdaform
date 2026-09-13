@@ -226,7 +226,7 @@ export default function CustomerFormPage() {
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
-          {storeInfo && (
+          {storeInfo && (storeInfo.name || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
             <div className="mb-6">
               <button 
                 onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}

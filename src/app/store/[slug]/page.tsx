@@ -83,7 +83,7 @@ export default function StoreHubPage() {
 
       <div className="w-full max-w-md mx-auto px-4 mt-6 relative z-20 flex-1 pb-16">
         
-        {storeInfo && (
+        {storeInfo && (storeInfo.name || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
           <div className="mb-6">
             <button 
               onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
