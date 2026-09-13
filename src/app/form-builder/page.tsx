@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, X, Eye, ArrowLeft, Type, Hash, Calendar, Phone, CheckSquare, Link as LinkIcon, RotateCcw } from 'lucide-react';
 
-type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
+type FieldType = 'text' | 'number' | 'phone' | 'date' | 'time' | 'textarea' | 'checkbox' | 'address';
 
 interface FormField {
   id: number;
@@ -63,7 +63,29 @@ export default function FormBuilder() {
   };
 
   const updateField = (id: number, key: keyof FormField, value: any) => {
-    setFields(fields.map(f => f.id === id ? { ...f, [key]: value } : f));
+    setFields(fields.map(f => {
+      if (f.id !== id) return f;
+      
+      const updatedField = { ...f, [key]: value };
+      
+      // 스마트 감지: 항목 이름(label)을 분석하여 폼 타입 자동 변환
+      if (key === 'label' && typeof value === 'string') {
+        const text = value.replace(/\s+/g, ''); // 공백 제거 후 검사
+        if (text.includes('날짜') || text.includes('방문일') || text.includes('예약일') || text.includes('생일')) {
+          updatedField.type = 'date';
+        } else if (text.includes('연락처') || text.includes('전화번호') || text.includes('휴대폰') || text.includes('번호')) {
+          updatedField.type = 'phone';
+        } else if (text.includes('주소')) {
+          updatedField.type = 'address';
+        } else if (text.includes('시간')) {
+          updatedField.type = 'time';
+        } else {
+          updatedField.type = 'text'; // 기본값
+        }
+      }
+      
+      return updatedField;
+    }));
   };
 
   const handlePreview = () => {
