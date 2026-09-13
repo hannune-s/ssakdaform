@@ -7,6 +7,7 @@ import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
 import FormBuilder from './form-builder/page';
 import SettingsPage from './settings/page';
+import AccountPage from './account/page';
 
 export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('builder');
@@ -26,7 +27,7 @@ export default function AdminHub() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col px-4 pb-24">
-      {activeTab !== 'my' && activeTab !== 'settings' && (
+      {activeTab !== 'my' && activeTab !== 'settings' && activeTab !== 'account' && (
         <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
@@ -174,6 +175,19 @@ export default function AdminHub() {
       </div>
       )}
 
+      {/* 계정 정보 페이지 */}
+      {activeTab === 'account' && (
+        <div className="pt-12 sm:pt-16 pb-10 w-full">
+          <div className="px-4 flex items-center gap-2 mb-4">
+            <button onClick={() => setActiveTab('my')} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h2 className="text-xl font-bold">계정 정보</h2>
+          </div>
+          <AccountPage />
+        </div>
+      )}
+
       {/* 마이 메뉴 컨텐츠 */}
       {activeTab === 'settings' && (
         <div className="pt-12 sm:pt-16 pb-10 w-full">
@@ -209,7 +223,8 @@ export default function AdminHub() {
               {
                 title: '계정 정보',
                 desc: '관리자 아이디 및 비밀번호 변경',
-                color: 'bg-purple-900'
+                color: 'bg-purple-900',
+                onClick: () => setActiveTab('account')
               },
               {
                 title: '구독 및 결제 관리',
