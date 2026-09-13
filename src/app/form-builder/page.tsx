@@ -114,22 +114,7 @@ export default function FormBuilder() {
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">맞춤형 폼 만들기</h1>
           <p className="text-[13px] text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
         </div>
-        <div className="flex flex-row items-center gap-2 w-full md:w-auto">
-          <button 
-            onClick={handleReset}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-2 sm:px-5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-base whitespace-nowrap"
-          >
-            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
-            초기화
-          </button>
-          <button 
-            onClick={handlePreview}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-2 sm:px-5 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition shadow-md text-[13px] sm:text-base whitespace-nowrap"
-          >
-            <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-            고객화면 미리보기
-          </button>
-        </div>
+        
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
@@ -218,23 +203,46 @@ export default function FormBuilder() {
             <span className="text-xl leading-none">+</span> 새 입력 칸 추가
           </button>
           
-          {fields.length > 0 && (
-            <div className="pt-6 flex flex-row gap-2 mt-4 border-t border-gray-200">
+          
+          {/* 하단 액션 버튼 그룹 */}
+          <div className="pt-6 mt-4 border-t border-gray-200 flex flex-col gap-2.5">
+            {/* 윗줄: 보조 액션 (초기화, 미리보기) */}
+            <div className="flex flex-row gap-2">
               <button 
-                onClick={handleCopyLink}
-                className="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-6 py-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium shadow-sm text-[12px] sm:text-base whitespace-nowrap"
+                onClick={handleReset}
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-[14px] font-medium"
               >
-                <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-                고객링크 발행 (복사)
+                <RotateCcw className="w-4 h-4 text-gray-500" />
+                초기화
               </button>
               <button 
-                onClick={handleSave}
-                className="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-sm text-[13px] sm:text-base whitespace-nowrap"
+                onClick={handlePreview}
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-[14px] font-medium"
               >
-                폼 저장하기
+                <Eye className="w-4 h-4 text-gray-500" />
+                고객화면 미리보기
               </button>
             </div>
-          )}
+            
+            {/* 아랫줄: 주요 액션 (링크 복사, 저장) */}
+            {fields.length > 0 && (
+              <div className="flex flex-row gap-2">
+                <button 
+                  onClick={handleCopyLink}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium shadow-sm text-[13px] sm:text-[14px]"
+                >
+                  <LinkIcon className="w-4 h-4" />
+                  고객링크 복사
+                </button>
+                <button 
+                  onClick={handleSave}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm text-[13px] sm:text-[14px]"
+                >
+                  폼 저장하기
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
