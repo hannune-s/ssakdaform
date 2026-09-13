@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft, LogOut } from 'lucide-react';
 import DeliveryList from './delivery-list/page';
 import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
@@ -227,16 +227,45 @@ export default function AdminHub() {
             ))}
           </div>
 
-          <div className="mt-10 mb-4">
-            <h3 className="text-lg font-bold text-gray-900">고객 서비스</h3>
+          <div className="mt-10 mb-3">
+            <h3 className="text-lg font-extrabold text-gray-900 tracking-tight px-1">고객 서비스</h3>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.03)] border border-gray-100/80 flex items-center p-5 cursor-pointer hover:bg-gray-50 transition-colors">
-            <div className="ml-2 flex-1">
-              <h3 className="font-extrabold text-gray-900 text-[15px] sm:text-[16px] tracking-tight">고객 센터</h3>
-              <p className="text-[13px] text-gray-500 mt-0.5">자주 묻는 질문 및 1:1 문의</p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-gray-300 transition-colors" />
+          <div className="bg-white rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.03)] border border-gray-100/80 overflow-hidden divide-y divide-gray-100/80">
+            {[
+              { title: '이용 가이드', type: 'normal' },
+              { title: '1:1 문의', type: 'normal' },
+              { title: '본사 공지사항', type: 'notice' },
+              { title: '로그아웃', type: 'logout' }
+            ].map((menu, idx) => (
+              <div 
+                key={idx}
+                className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`font-bold text-[15px] sm:text-[16px] ${menu.type === 'logout' ? 'text-red-500' : 'text-gray-900'}`}>
+                    {menu.title}
+                  </span>
+                  {menu.type === 'notice' && (
+                    <span className="flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[10px] font-black rounded-full leading-none mt-0.5">
+                      N
+                    </span>
+                  )}
+                </div>
+                {menu.type === 'logout' ? (
+                  <LogOut className="w-5 h-5 text-gray-300 group-hover:text-red-400 transition-colors" />
+                ) : (
+                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 mb-20 flex flex-col items-center justify-center space-y-2">
+            <span className="text-[12px] font-medium text-gray-400 tracking-wide">싹다폼 v1.0.0</span>
+            <button className="text-[12px] font-medium text-gray-400 hover:text-gray-600 transition-colors border-b border-gray-300 hover:border-gray-500 pb-0.5">
+              서비스 탈퇴하기
+            </button>
           </div>
         </div>
       )}
