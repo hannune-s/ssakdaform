@@ -78,6 +78,67 @@ export default function AdminHub() {
       {/* 탭 및 검색 카드 영역 */}
       <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8">
         
+        {/* 메뉴(카테고리) 탭 버튼 */}
+        <div className="flex flex-col items-center gap-2 sm:gap-3 w-full px-1">
+          {/* 1번 줄: 맞춤형 폼 만들기 */}
+          <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                activeTab === 'dashboard' 
+                  ? 'bg-indigo-600 text-white shadow-md' 
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              대시보드
+            </button>
+            <button
+              onClick={() => setActiveTab('builder')}
+              className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                activeTab === 'builder' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              맞춤형 폼 만들기
+            </button>
+          </div>
+          
+          {/* 2번 줄: 현황 3종 */}
+          <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
+            <button
+              onClick={() => setActiveTab('delivery')}
+              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+                activeTab === 'delivery' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              택배 신청 현황
+            </button>
+            <button
+              onClick={() => setActiveTab('reservation')}
+              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+                activeTab === 'reservation' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              매장 예약 현황
+            </button>
+            <button
+              onClick={() => setActiveTab('order')}
+              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+                activeTab === 'order' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              상품 주문 현황
+            </button>
+          </div>
+        </div>
+        
         {/* 검색창 */}
         <div className="relative mt-5 sm:mt-6">
           <input
@@ -110,8 +171,8 @@ export default function AdminHub() {
       {/* 🔹 하단 네비게이션바 (홈 / 마이) */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around pb-safe shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.05)] z-50 h-16 sm:h-16">
         <button 
-          onClick={() => setActiveTab('dashboard')}
-          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab !== 'my' && activeTab !== 'account' && activeTab !== 'settings' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
+          onClick={() => setActiveTab('builder')}
+          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab !== 'my' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <Home className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[10px] sm:text-[11px] font-bold">홈</span>
