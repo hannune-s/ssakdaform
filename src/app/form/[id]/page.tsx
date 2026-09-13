@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
 import { CreditCard, Copy, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getSmartPlaceholder } from '@/lib/formUtils';
 
 export default function CustomerFormPage() {
   const params = useParams();
@@ -278,7 +279,7 @@ export default function CustomerFormPage() {
                       <textarea 
                         name={field.label}
                         className={inputClass}
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || getSmartPlaceholder(field.label)}
                         rows={3}
                       />
                     ) : field.type === 'checkbox' ? (
@@ -348,7 +349,7 @@ export default function CustomerFormPage() {
                         name={field.label}
                         type={field.type === 'phone' ? 'tel' : field.type} 
                         className={inputClass}
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || getSmartPlaceholder(field.label)}
                         defaultValue={field.defaultValue}
                         required={field.required}
                       />

@@ -1,4 +1,5 @@
 "use client";
+import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
@@ -175,7 +176,7 @@ export default function PreviewPage() {
                       <textarea 
                         name={field.label}
                         className={inputClass}
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || getSmartPlaceholder(field.label)}
                         rows={3}
                       />
                     ) : field.type === 'checkbox' ? (
@@ -245,7 +246,7 @@ export default function PreviewPage() {
                         name={field.label}
                         type={field.type === 'phone' ? 'tel' : field.type} 
                         className={inputClass}
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || getSmartPlaceholder(field.label)}
                         defaultValue={field.defaultValue}
                       />
                     )}

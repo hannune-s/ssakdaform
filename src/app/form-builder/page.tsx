@@ -1,4 +1,5 @@
 "use client";
+import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useState, useEffect } from 'react';
 import { Plus, X, Eye, ArrowLeft, Type, Hash, Calendar, Phone, CheckSquare, Link as LinkIcon, RotateCcw } from 'lucide-react';
@@ -201,7 +202,7 @@ export default function FormBuilder() {
                         type="text" 
                         value={field.placeholder}
                         onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
-                        placeholder="희미하게 보일 문구"
+                        placeholder={getSmartPlaceholder(field.label)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
                       />
                     </div>
