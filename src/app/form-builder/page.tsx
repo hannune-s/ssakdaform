@@ -147,8 +147,8 @@ export default function FormBuilder() {
         
         {/* 왼쪽: 폼 기본 정보 설정 */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="font-semibold text-[15px] text-gray-800 mb-3 border-b pb-2">기본 정보 설정</h3>
+          <div className="bg-indigo-50/50 p-4 sm:p-5 rounded-xl border border-indigo-100 shadow-sm">
+            <h3 className="font-semibold text-[15px] text-indigo-900 mb-3 border-b border-indigo-100 pb-2">기본 정보 설정</h3>
             <div className="space-y-3">
               <div>
                 <label className="block text-[13px] font-medium text-gray-700 mb-1">상호명 (스토어 이름)</label>
@@ -166,6 +166,16 @@ export default function FormBuilder() {
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-gray-700 mb-1">사장님 안내글 (고객에게 전달할 내용)</label>
+                <textarea 
+                  value={formDescription}
+                  onChange={(e) => setFormDescription(e.target.value)}
+                  placeholder="예: 주문 전 필독사항, 제작 기간 안내 등을 적어주세요."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y" 
+                  rows={3}
                 />
               </div>
             </div>
