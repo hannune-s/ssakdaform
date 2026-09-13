@@ -8,7 +8,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
     { id: 'delivery', name: '택배', count: 12, newCount: 3, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
     { id: 'reservation', name: '예약', count: 8, newCount: 2, icon: Calendar, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
     { id: 'order', name: '주문', count: 24, newCount: 5, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { id: 'builder', name: '맞춤', count: 0, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' }
+    { id: 'custom', name: '맞춤', count: 0, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' }
   ];
 
   const recentActivities = [
