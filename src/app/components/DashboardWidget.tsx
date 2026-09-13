@@ -1,14 +1,49 @@
 "use client";
 
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+
 import { Package, Calendar, ShoppingBag, FileText, Bell, BarChart3, ChevronRight } from 'lucide-react';
 
 export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: string) => void }) {
-  // Demo data for today
+  const [counts, setCounts] = useState({ delivery: 0, reservation: 0, order: 0, custom: 0 });
+
+  useEffect(() => {
+    async function fetchCounts() {
+      // Get today's start and end in local time
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const startOfDay = today.toISOString();
+      
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const endOfDay = tomorrow.toISOString();
+
+      const { data, error } = await supabase
+        .from('ssakdaform_responses')
+        .select('form_id')
+        .gte('submitted_at', startOfDay)
+        .lt('submitted_at', endOfDay);
+      
+      if (data) {
+        const newCounts = { delivery: 0, reservation: 0, order: 0, custom: 0 };
+        data.forEach(row => {
+          if (row.form_id === 'delivery-preset') newCounts.delivery++;
+          else if (row.form_id === 'reservation-preset') newCounts.reservation++;
+          else if (row.form_id === 'order-preset') newCounts.order++;
+          else newCounts.custom++;
+        });
+        setCounts(newCounts);
+      }
+    }
+    fetchCounts();
+  }, []);
+
   const stats = [
-    { id: 'delivery', name: '택배', count: 12, newCount: 3, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { id: 'reservation', name: '예약', count: 8, newCount: 2, icon: Calendar, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
-    { id: 'order', name: '주문', count: 24, newCount: 5, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { id: 'custom', name: '맞춤', count: 0, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' }
+    { id: 'delivery', name: '택배', count: counts.delivery, newCount: 0, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { id: 'reservation', name: '예약', count: counts.reservation, newCount: 0, icon: Calendar, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+    { id: 'order', name: '주문', count: counts.order, newCount: 0, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+    { id: 'custom', name: '맞춤', count: counts.custom, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' }
   ];
 
   const recentActivities = [

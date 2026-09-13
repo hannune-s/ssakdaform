@@ -249,9 +249,8 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
               <div className="space-y-6">
                 {(() => {
                   const dataEntries = Object.entries(selectedResponse.data || { '안내': '내용이 없습니다.' });
-                  const orderEntries = dataEntries.filter(([k]) => k.includes('상품명') || k.includes('주문 날짜'));
-                  const customerEntries = dataEntries.filter(([k]) => k.includes('고객명') || k.includes('연락처') || k.includes('입금자명') || k.includes('주소'));
-                  const otherEntries = dataEntries.filter(([k]) => !k.includes('상품명') && !k.includes('주문 날짜') && !k.includes('고객명') && !k.includes('연락처') && !k.includes('입금자명') && !k.includes('주소'));
+                  const customerEntries = dataEntries.filter(([k]) => k.includes('고객') || k.includes('이름') || k.includes('성함') || k.includes('연락처') || k.includes('전화번호') || k.includes('휴대폰') || k.includes('주소'));
+                    const otherEntries = dataEntries.filter(([k]) => !customerEntries.some(e => e[0] === k));
 
                   const renderSection = (title: string, entries: any[], isHighlightStyle: boolean) => {
                     if (entries.length === 0) return null;
@@ -281,9 +280,8 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
 
                   return (
                     <div className="space-y-6">
-                      {renderSection('상품 및 주문 정보', orderEntries, true)}
-                      {renderSection('고객 정보', customerEntries, false)}
-                      {renderSection('기타 요청사항', otherEntries, false)}
+                      {renderSection("고객 정보", customerEntries, true)}
+                        {renderSection("상세 입력 내용", otherEntries, false)}
                     </div>
                   );
                 })()}
