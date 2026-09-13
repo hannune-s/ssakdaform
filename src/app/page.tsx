@@ -122,23 +122,21 @@ export default function AdminHub() {
           </div>
         </div>
         
-        {/* 검색창 (맞춤형 폼 만들기 탭에서는 숨김) */}
-        {activeTab !== 'builder' && (
-          <div className="relative mt-5 sm:mt-6">
-            <input
-              type="text"
-              className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
-              placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="absolute inset-y-0 right-1.5 flex items-center">
-              <button className="p-1.5 sm:p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
-                <Search className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
-            </div>
+        {/* 검색창 */}
+        <div className="relative mt-5 sm:mt-6">
+          <input
+            type="text"
+            className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
+            placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="absolute inset-y-0 right-1.5 flex items-center">
+            <button className="p-1.5 sm:p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
+              <Search className="h-4 w-4 sm:h-5 sm:w-5" />
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {/* 하단 콘텐츠(기존 컴포넌트 렌더링) 영역 */}
