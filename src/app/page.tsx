@@ -42,8 +42,8 @@ export default function AdminHub() {
             {/* 텍스트 영역 */}
             <div className="flex-1">
               <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 mb-1.5 tracking-tight">우리 매장 통합 링크</h2>
-              <p className="text-indigo-900/70 text-[13px] sm:text-[14px] font-medium leading-snug tracking-tighter sm:tracking-normal whitespace-nowrap overflow-hidden text-ellipsis">
-                인스타그램, 카카오톡 등에 이 링크를 공유하여 고객에게 안내하세요.
+              <p className="text-indigo-900/70 text-[12.5px] sm:text-[14px] font-medium leading-snug tracking-tighter whitespace-nowrap">
+                인스타, 카톡 등에 링크를 공유해 고객에게 안내해 보세요.
               </p>
             </div>
             
