@@ -217,10 +217,10 @@ export default function FormBuilder() {
           )}
           
           
-          {/* 간단한 항목 추가 버튼 */}
+          {/* 간단한 칸 추가 버튼 */}
           <button 
             onClick={() => addField('text')}
-            className="w-full mt-2 py-3.5 border-2 border-dashed border-gray-300 text-gray-500 rounded-xl hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2 font-medium text-[14px]"
+            className="w-full mt-2 py-3.5 border-2 border-dashed border-indigo-200 bg-indigo-50/50 text-indigo-600 rounded-xl hover:bg-indigo-100 hover:border-indigo-400 transition-all flex items-center justify-center gap-2 font-bold text-[14px]"
           >
             <span className="text-xl leading-none">+</span> 새 입력 칸 추가
           </button>
