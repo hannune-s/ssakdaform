@@ -85,6 +85,7 @@ export default function CustomerFormPage() {
       setData({
         storeName: '내 매장 이름 (기본 설정)',
         formTitle: '간편한 상품 주문서',
+          formDescription: '주문 전에 반드시 공지사항을 확인해주세요. 제작 기간은 영업일 기준 3~5일 소요됩니다.',
         fields: [
           { id: 1, type: 'date', label: '주문 날짜', defaultValue: todayStr, required: true },
           { id: 2, type: 'textarea', label: '상품명', placeholder: '주문하실 상품명, 수량, 옵션 등을 자유롭게 적어주세요', required: true },

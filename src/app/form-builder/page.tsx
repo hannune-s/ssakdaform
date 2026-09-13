@@ -18,6 +18,7 @@ export default function FormBuilder() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [storeName, setStoreName] = useState('내 매장 이름');
   const [formTitle, setFormTitle] = useState('새로운 맞춤형 신청서');
+  const [formDescription, setFormDescription] = useState('');
   const [fields, setFields] = useState<FormField[]>([
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
@@ -30,6 +31,7 @@ export default function FormBuilder() {
         const parsed = JSON.parse(draft);
         if (parsed.storeName) setStoreName(parsed.storeName);
         if (parsed.formTitle) setFormTitle(parsed.formTitle);
+        if (parsed.formDescription !== undefined) setFormDescription(parsed.formDescription);
         if (parsed.fields && parsed.fields.length > 0) setFields(parsed.fields);
       } catch (e) {
         console.error("Draft parsing error", e);
@@ -47,7 +49,7 @@ export default function FormBuilder() {
         fields
       }));
     }
-  }, [storeName, formTitle, fields, isLoaded]);
+  }, [storeName, formTitle, formDescription, fields, isLoaded]);
 
   const addField = (type: FieldType) => {
     setFields([...fields, { 
@@ -90,7 +92,7 @@ export default function FormBuilder() {
   };
 
   const handlePreview = () => {
-    localStorage.setItem('ssakdaform_preview', JSON.stringify({ storeName, formTitle, fields }));
+    localStorage.setItem('ssakdaform_preview', JSON.stringify({ storeName, formTitle, formDescription, fields }));
     
     // 모바일 크기에 맞춘 팝업창 띄우기 (화면 중앙 정렬)
     const width = 480;
@@ -109,6 +111,7 @@ export default function FormBuilder() {
     if (window.confirm('작성 중인 폼을 정말 초기화하시겠습니까? (모든 항목이 지워집니다)')) {
       setStoreName('내 매장 이름');
       setFormTitle('새로운 맞춤형 신청서');
+      setFormDescription('');
       setFields([{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]);
     }
   };
