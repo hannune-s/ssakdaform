@@ -113,17 +113,17 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
                         <div className="font-semibold text-gray-900 text-[13px]">
                           {new Date(res.submitted_at).toLocaleDateString('ko-KR')}
                         </div>
-                        <div className="text-[12px] text-gray-500 mt-0.5">
+                        <div className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">
                           {new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <div className="font-bold text-gray-900 text-[13px]">{customerName}</div>
-                        <div className="text-[12px] text-gray-500 mt-0.5">{customerPhone}</div>
+                        <div className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{customerPhone}</div>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <div className="font-bold text-gray-900 text-[13px]">{productName}</div>
-                        <div className="text-[12px] text-gray-500 mt-0.5">{depositorName}</div>
+                        <div className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{depositorName}</div>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <button 

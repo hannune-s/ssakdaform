@@ -111,15 +111,15 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                     <tr key={res.id} className="hover:bg-gray-50 transition-colors group">
                       <td className="px-4 py-3 align-middle">
                         <p className="font-semibold text-gray-900 text-[13px]">{new Date(res.submitted_at).toLocaleDateString('ko-KR')}</p>
-                        <p className="text-[12px] text-gray-500 mt-0.5">{new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute:'2-digit' })}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute:'2-digit' })}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{resName}</p>
-                        <p className="text-[12px] text-gray-500 mt-0.5">{resPhone}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{resPhone}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{resDate}</p>
-                        <p className="text-[12px] text-gray-500 mt-0.5">{resTime}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{resTime}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <button 

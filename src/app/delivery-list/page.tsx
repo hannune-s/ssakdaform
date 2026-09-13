@@ -111,11 +111,11 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                     <tr key={res.id} className="hover:bg-gray-50 transition-colors group">
                       <td className="px-4 py-3 align-middle">
                         <p className="font-semibold text-gray-900 text-[13px]">{new Date(res.submitted_at).toLocaleDateString('ko-KR')}</p>
-                        <p className="text-[12px] text-gray-500 mt-0.5">{new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute:'2-digit' })}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute:'2-digit' })}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{senderName}</p>
-                        <p className="text-[12px] text-gray-500 mt-0.5">{senderPhone}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{senderPhone}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{receiverName}</p>
