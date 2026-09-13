@@ -1,16 +1,24 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Building, CreditCard, User } from 'lucide-react';
+import { Save, Plus, Trash2, Building, CreditCard, User, Store, MapPin, Phone, Clock, CalendarX } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
+  const [storeInfo, setStoreInfo] = useState({ name: '', address: '', phone: '', hours: '', closedDays: '' });
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function loadAccounts() {
+    async function loadData() {
+      // Load Store Info from localStorage
+      const savedInfo = localStorage.getItem('ssakdaform_store_details');
+      if (savedInfo) {
+        setStoreInfo(JSON.parse(savedInfo));
+      }
+
+      // Load Accounts from Supabase
       const { data } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
@@ -21,12 +29,12 @@ export default function SettingsPage() {
       }
       setIsLoading(false);
     }
-    loadAccounts();
+    loadData();
   }, []);
 
   const handleAddAccount = () => {
     if (accounts.length >= 3) {
-      alert('계좌는 최대 3개까지 등록할 수 있습니다.');
+      alert('계좌는 최대 3개까지 등록 가능합니다.');
       return;
     }
     setAccounts([...accounts, { bank: '', accountNumber: '', holder: '' }]);
@@ -43,12 +51,20 @@ export default function SettingsPage() {
     setAccounts(newAccounts);
   };
 
+  const handleStoreChange = (field: string, value: string) => {
+    setStoreInfo({ ...storeInfo, [field]: value });
+  };
+
   const handleSave = async () => {
     setIsSaved(false);
+    
+    // Save Store Info to localStorage
+    localStorage.setItem('ssakdaform_store_details', JSON.stringify(storeInfo));
+
     const validAccounts = accounts.filter(acc => acc.bank.trim() !== '' || acc.accountNumber.trim() !== '');
     
     try {
-      // 기존 계좌 모두 삭제
+      // Delete existing
       const { error: delError } = await supabase.from('ssakdaform_store_accounts').delete().not('id', 'is', null);
       if (delError) {
         console.error('Delete Error:', delError);
@@ -56,7 +72,7 @@ export default function SettingsPage() {
         return;
       }
       
-      // 새로 삽입
+      // Insert new
       if (validAccounts.length > 0) {
         const { error: insError } = await supabase.from('ssakdaform_store_accounts').insert(
           validAccounts.map(acc => ({
@@ -81,17 +97,97 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">환경 설정</h1>
-        <p className="text-gray-500">매장 운영에 필요한 기본 정보와 입금 계좌를 설정합니다.</p>
+    <div className="max-w-4xl mx-auto pb-10">
+      {/* 가게 정보 설정 */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+        <div className="p-6 md:p-8">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-gray-900">가게 정보 설정</h2>
+            <p className="text-sm text-gray-500 mt-1">고객 화면 상단에 표시될 매장 기본 정보를 입력하세요.</p>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5">상호명</label>
+              <div className="relative">
+                <Store className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input 
+                  type="text" 
+                  value={storeInfo.name}
+                  onChange={(e) => handleStoreChange('name', e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  placeholder="예) 싹다상점"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5">주소</label>
+              <div className="relative">
+                <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input 
+                  type="text" 
+                  value={storeInfo.address}
+                  onChange={(e) => handleStoreChange('address', e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  placeholder="예) 서울특별시 강남구 테헤란로 123"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">전화번호</label>
+                <div className="relative">
+                  <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input 
+                    type="text" 
+                    value={storeInfo.phone}
+                    onChange={(e) => handleStoreChange('phone', e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    placeholder="예) 02-1234-5678"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">영업시간</label>
+                <div className="relative">
+                  <Clock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input 
+                    type="text" 
+                    value={storeInfo.hours}
+                    onChange={(e) => handleStoreChange('hours', e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    placeholder="예) 09:00 ~ 18:00"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5">휴무일</label>
+                <div className="relative">
+                  <CalendarX className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input 
+                    type="text" 
+                    value={storeInfo.closedDays}
+                    onChange={(e) => handleStoreChange('closedDays', e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    placeholder="예) 매주 일요일"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      {/* 계좌 설정 */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">무통장 입금 계좌 설정</h2>
+              <h2 className="text-xl font-bold text-gray-900">계좌 설정</h2>
               <p className="text-sm text-gray-500 mt-1">등록된 계좌는 고객 통합 접속 링크 메인 화면에 자동으로 노출됩니다.</p>
             </div>
             <button 
@@ -103,85 +199,61 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {accounts.map((account, index) => (
-              <div key={index} className="p-5 border border-gray-200 rounded-xl bg-gray-50/50 relative group">
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
-                    onClick={() => handleRemoveAccount(index)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    title="계좌 삭제"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+              <div key={index} className="p-4 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-col md:flex-row md:items-end gap-3 relative group">
+                <div className="flex-1">
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">은행명</label>
+                  <input 
+                    type="text" 
+                    value={account.bank}
+                    onChange={(e) => handleChange(index, 'bank', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    placeholder="국민은행"
+                  />
                 </div>
                 
-                <h3 className="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs">
-                    {index + 1}
-                  </div>
-                  입금 계좌 {index + 1}
-                </h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">은행명</label>
-                    <div className="relative">
-                      <Building className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input 
-                        type="text" 
-                        value={account.bank}
-                        onChange={(e) => handleChange(index, 'bank', e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
-                        placeholder="예: 국민은행"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">계좌번호</label>
-                    <div className="relative">
-                      <CreditCard className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input 
-                        type="text" 
-                        value={account.accountNumber}
-                        onChange={(e) => handleChange(index, 'accountNumber', e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-mono"
-                        placeholder="예: 123-456-789012"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">예금주</label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input 
-                        type="text" 
-                        value={account.holder}
-                        onChange={(e) => handleChange(index, 'holder', e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
-                        placeholder="예: 홍길동 (싹다상점)"
-                      />
-                    </div>
-                  </div>
+                <div className="flex-[1.5]">
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">계좌번호</label>
+                  <input 
+                    type="text" 
+                    value={account.accountNumber}
+                    onChange={(e) => handleChange(index, 'accountNumber', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-mono"
+                    placeholder="123-456-7890"
+                  />
                 </div>
+                
+                <div className="flex-1">
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">예금주</label>
+                  <input 
+                    type="text" 
+                    value={account.holder}
+                    onChange={(e) => handleChange(index, 'holder', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    placeholder="홍길동"
+                  />
+                </div>
+
+                <button 
+                  onClick={() => handleRemoveAccount(index)}
+                  className="p-2 md:mb-[2px] text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  title="계좌 삭제"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
               </div>
             ))}
           </div>
         </div>
         
-        <div className="p-6 bg-gray-50 border-t border-gray-200 flex justify-end">
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
           <button 
             onClick={handleSave}
-            className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-bold transition-all shadow-sm w-full sm:w-auto ${
-              isSaved 
-                ? 'bg-indigo-100 text-indigo-800' 
-                : 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95'
-            }`}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
           >
-            <Save className="w-4 h-4" />
-            {isSaved ? '저장 완료!' : '변경사항 저장'}
+            {isSaved ? <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">✓</div>저장됨</span> : <><Save className="w-4 h-4" />저장하기</>}
           </button>
         </div>
       </div>
