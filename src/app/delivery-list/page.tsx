@@ -201,14 +201,14 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       {selectedResponse && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6">
           <div className="bg-white rounded-[20px] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden ring-1 ring-black/5">
-            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white">
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                <Package className="w-5 h-5 text-indigo-600" />
+            <div className="px-6 py-5 flex items-center justify-between bg-gradient-to-r from-indigo-700 to-indigo-900 text-white shadow-md">
+              <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
+                <Package className="w-5 h-5 text-indigo-200" />
                 택배 접수 상세 정보
               </h2>
               <button 
                 onClick={() => setSelectedResponse(null)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors"
+                className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
