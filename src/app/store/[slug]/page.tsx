@@ -79,30 +79,27 @@ export default function StoreHubPage() {
 
       <div className="w-full max-w-md mx-auto px-4 mt-6 relative z-20 flex-1 pb-16">
 
-        {/* 계좌 안내 영역 */}
+        {/* 계좌 안내 영역 (버튼 같은 효과 제거하고 차분한 정보성 박스로 변경) */}
         {accounts.length > 0 && (
-          <div className="mb-8 bg-indigo-50/60 border border-indigo-100 rounded-2xl p-5 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg">
-                <CreditCard className="w-5 h-5" />
-              </div>
-              <h2 className="font-extrabold text-indigo-900 text-lg">계좌 안내</h2>
+          <div className="mb-8 bg-gray-100/80 rounded-2xl p-5 sm:p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <CreditCard className="w-4 h-4 text-gray-500" />
+              <h2 className="font-bold text-gray-700 text-[15px]">무통장 입금 계좌안내</h2>
             </div>
             <div className="space-y-3">
               {accounts.map((acc, idx) => (
-                <div key={idx} className="flex items-center justify-between gap-2 p-3 sm:p-4 bg-white rounded-xl border border-indigo-50 shadow-sm">
+                <div key={idx} className="flex items-center justify-between gap-3 bg-transparent">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1 flex-1">
-                    <span className="text-xs sm:text-sm font-bold px-2 py-0.5 sm:py-1 bg-indigo-600 text-white rounded-md shadow-sm">{acc.bank}</span>
-                    <span className="text-sm sm:text-base font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">{acc.holder}</span>
+                    <span className="text-sm font-bold text-gray-600">{acc.bank}</span>
+                    <span className="text-[15px] sm:text-base font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
+                    <span className="text-sm font-medium text-gray-500">{acc.holder}</span>
                   </div>
                   <button 
                     onClick={() => handleCopyAccount(acc.accountNumber)}
-                    className="flex items-center justify-center p-2 sm:px-3 sm:py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg text-xs sm:text-sm font-bold text-indigo-700 hover:bg-indigo-100 active:scale-95 transition-all shrink-0"
+                    className="flex items-center justify-center px-3 py-1.5 bg-white border border-gray-200 rounded-md text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors shrink-0"
                   >
-                    {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" /> : <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                    <span className="hidden sm:inline ml-1.5">{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
-                    <span className="inline sm:hidden ml-1">{copiedAccount === acc.accountNumber ? '완료' : '복사'}</span>
+                    {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
+                    <span className="ml-1.5">{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
                   </button>
                 </div>
               ))}
