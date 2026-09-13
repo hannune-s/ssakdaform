@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Building, CreditCard, User, Store, MapPin, Phone, Clock, CalendarX } from 'lucide-react';
+import { Save, Plus, Trash2, Building, CreditCard, User, Store, MapPin, Phone, Clock, CalendarX, Link as LinkIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
-  const [storeInfo, setStoreInfo] = useState({ name: '', address: '', phone: '', hours: '', closedDays: '' });
+  const [storeInfo, setStoreInfo] = useState<any>({ name: '', address: '', phone: '', hours: '', closedDays: '', paymentLink: '' });
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -244,6 +244,25 @@ export default function SettingsPage() {
                 </button>
               </div>
             ))}
+          </div>
+          
+          {/* 비대면 링크 결제 설정 */}
+          <div className="mt-8 border-t border-gray-100 pt-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-1">비대면 링크 결제 설정</h2>
+            <p className="text-sm text-gray-500 mb-4">고객이 결제할 수 있는 비대면 카드 결제 링크(토스, 페이앱 등)를 입력하세요.</p>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5">결제 링크 URL</label>
+              <div className="relative">
+                <LinkIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input 
+                  type="url" 
+                  value={storeInfo.paymentLink || ''}
+                  onChange={(e) => handleStoreChange('paymentLink', e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  placeholder="https://toss.me/..."
+                />
+              </div>
+            </div>
           </div>
         </div>
         

@@ -100,8 +100,22 @@ export default function StoreHubPage() {
                   <div className="flex gap-2">
                     <Store className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                     <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
-                  </div>
-                )}
+            {storeInfo && storeInfo.paymentLink && (
+              <div className="mt-4 pt-4 border-t border-indigo-200/50">
+                <h3 className="text-[12px] font-bold text-indigo-900 mb-2">비대면 카드 결제</h3>
+                <a 
+                  href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  결제하러 가기
+                </a>
+              </div>
+            )}
+          </div>
+        )}
                 {storeInfo.address && (
                   <div className="flex gap-2">
                     <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
@@ -132,11 +146,11 @@ export default function StoreHubPage() {
         )}
 
         {/* 계좌 안내 영역 (전체 배경색 적용, 크기 축소) */}
-        {accounts.length > 0 && (
+        {(accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
           <div className="mb-8 bg-[#F0F4FF] border border-indigo-200 rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-3.5">
               <CreditCard className="w-4 h-4 text-indigo-400" />
-              <h2 className="font-bold text-indigo-900 text-[14px]">계좌 안내</h2>
+              <h2 className="font-bold text-indigo-900 text-[14px]">결제 및 계좌 안내</h2>
             </div>
             
             <div className="space-y-3">
