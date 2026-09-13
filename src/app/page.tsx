@@ -8,7 +8,7 @@ import OrderList from './order-list/page';
 import FormBuilder from './form-builder/page';
 
 export default function AdminHub() {
-  const [activeTab, setActiveTab] = useState('delivery');
+  const [activeTab, setActiveTab] = useState('builder');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -93,6 +93,16 @@ export default function AdminHub() {
         <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
           
           <button
+            onClick={() => setActiveTab('builder')}
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
+              activeTab === 'builder' 
+                ? 'bg-blue-600 text-white shadow-md' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            맞춤형 폼 만들기
+          </button>
+          <button
             onClick={() => setActiveTab('delivery')}
             className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
               activeTab === 'delivery' 
@@ -122,16 +132,7 @@ export default function AdminHub() {
           >
             상품 주문 현황
           </button>
-          <button
-            onClick={() => setActiveTab('builder')}
-            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-sm font-bold transition-all whitespace-nowrap tracking-tight ${
-              activeTab === 'builder' 
-                ? 'bg-blue-600 text-white shadow-md' 
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
-            }`}
-          >
-            맞춤형 폼 만들기
-          </button>
+          
         </div>
       </div>
 
@@ -139,10 +140,11 @@ export default function AdminHub() {
       <div className="w-full max-w-6xl mx-auto flex-1">
         
         
+        {activeTab === 'builder' && <FormBuilder />}
         {activeTab === 'delivery' && <DeliveryList searchQuery={searchQuery} />}
         {activeTab === 'reservation' && <ReservationList searchQuery={searchQuery} />}
         {activeTab === 'order' && <OrderList searchQuery={searchQuery} />}
-        {activeTab === 'builder' && <FormBuilder />}
+        
       </div>
       
     </div>

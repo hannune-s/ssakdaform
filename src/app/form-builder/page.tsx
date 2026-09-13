@@ -159,33 +159,6 @@ export default function FormBuilder() {
               </div>
             </div>
           </div>
-
-          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="font-semibold text-[15px] text-gray-800 mb-3 border-b pb-2">항목 추가하기</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => addField('text')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
-                <Type className="w-3.5 h-3.5" /> 텍스트
-              </button>
-              <button onClick={() => addField('number')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
-                <Hash className="w-3.5 h-3.5" /> 숫자
-              </button>
-              <button onClick={() => addField('phone')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
-                <Phone className="w-3.5 h-3.5" /> 연락처
-              </button>
-              <button onClick={() => addField('date')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition text-[13px] font-medium text-gray-700 shadow-sm">
-                <Calendar className="w-3.5 h-3.5" /> 날짜
-              </button>
-              <button onClick={() => addField('textarea')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2 text-[13px] font-medium text-gray-700 shadow-sm">
-                <Type className="w-3.5 h-3.5" /> 장문 텍스트
-              </button>
-              <button onClick={() => addField('address')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2 text-[13px] font-medium text-gray-700 shadow-sm">
-                <Hash className="w-3.5 h-3.5" /> 주소 (우편번호 검색)
-              </button>
-              <button onClick={() => addField('checkbox')} className="flex items-center justify-center gap-1.5 py-2 px-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition col-span-2 text-[13px] font-medium text-gray-700 shadow-sm">
-                <CheckSquare className="w-3.5 h-3.5" /> 체크박스(동의)
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* 오른쪽: 입력 항목 리스트 (빌더) */}
@@ -197,7 +170,7 @@ export default function FormBuilder() {
 
           {fields.length === 0 ? (
             <div className="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-              <p className="text-[13px] text-gray-500">아직 추가된 항목이 없습니다.<br/>왼쪽 메뉴에서 항목을 추가해주세요.</p>
+              <p className="text-[13px] text-gray-500">아직 추가된 입력 칸이 없습니다.<br/>아래의 [새 입력 칸 추가] 버튼을 눌러주세요.</p>
             </div>
           ) : (
             fields.map((field, index) => (
@@ -238,10 +211,7 @@ export default function FormBuilder() {
                   
                   <div className="md:col-span-2 flex items-center justify-between bg-gray-50 p-2 sm:px-3 sm:py-2 rounded-lg border border-gray-100 mt-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold text-gray-500 bg-white px-1.5 py-0.5 rounded border border-gray-200 uppercase tracking-wider">
-                        {field.type}
-                      </span>
-                      <span className="text-[12px] text-gray-600 font-medium">입력 타입</span>
+                      <span className="text-[12px] text-gray-500 font-medium">일반 텍스트 입력칸</span>
                     </div>
                     <label className="flex items-center gap-1.5 cursor-pointer">
                       <input 
@@ -257,6 +227,15 @@ export default function FormBuilder() {
               </div>
             ))
           )}
+          
+          
+          {/* 간단한 항목 추가 버튼 */}
+          <button 
+            onClick={() => addField('text')}
+            className="w-full mt-2 py-3.5 border-2 border-dashed border-gray-300 text-gray-500 rounded-xl hover:bg-gray-50 hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2 font-medium text-[14px]"
+          >
+            <span className="text-xl leading-none">+</span> 새 입력 칸 추가
+          </button>
           
           {fields.length > 0 && (
             <div className="pt-6 flex flex-row gap-2 mt-4 border-t border-gray-200">
