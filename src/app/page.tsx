@@ -30,7 +30,7 @@ export default function AdminHub() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col px-4 pb-24">
-      {activeTab !== 'my' && activeTab !== 'settings' && activeTab !== 'account' && (
+      {activeTab !== 'my' && activeTab !== 'settings' && activeTab !== 'account' && activeTab !== 'subscription' && (
         <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
@@ -190,6 +190,19 @@ export default function AdminHub() {
           <span className="text-[10px] sm:text-[11px] font-bold">마이</span>
         </button>
       </div>
+
+      {/* 구독 및 결제 관리 페이지 */}
+      {activeTab === 'subscription' && (
+        <div className="pt-12 sm:pt-16 pb-10 w-full">
+          <div className="px-4 flex items-center gap-2 mb-4">
+            <button onClick={() => setActiveTab('my')} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h2 className="text-xl font-bold">구독 및 결제 관리</h2>
+          </div>
+          <SubscriptionPage />
+        </div>
+      )}
 
       {/* 계정 정보 페이지 */}
       {activeTab === 'account' && (
