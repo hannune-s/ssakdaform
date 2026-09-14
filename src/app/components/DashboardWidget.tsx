@@ -50,7 +50,8 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
     { type: '택배', name: '홍길동 님', desc: '서울 강남구 테헤란로 123', time: '10분 전', isNew: true, tab: 'delivery' },
     { type: '상품', name: '김철수 님', desc: '한우 특수부위 세트 외 1건', time: '1시간 전', isNew: true, tab: 'order' },
     { type: '예약', name: '이영희 님', desc: '10/25 (금) 19:00 - 4명 방문', time: '3시간 전', isNew: false, tab: 'reservation' },
-    { type: '간편폼', name: '박지민 님', desc: '이벤트 참여 신청서', time: '5시간 전', isNew: false, tab: 'custom' }
+    { type: '간편폼', name: '박지민 님', desc: '이벤트 참여 신청서', time: '5시간 전', isNew: false, tab: 'custom' },
+    { type: '택배', name: '이순신 님', desc: '제주 서귀포시 중문관광로 72', time: '6시간 전', isNew: false, tab: 'delivery' }
   ];
 
   return (
@@ -97,9 +98,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
             <Bell className="w-4 h-4 text-indigo-600" />
             최근 들어온 알림
           </h3>
-          <button className="text-[11px] sm:text-[12px] text-gray-500 font-medium flex items-center hover:text-gray-900">
-            전체보기 <ChevronRight className="w-3 h-3 ml-0.5" />
-          </button>
+          
         </div>
         
         <div className="divide-y divide-gray-100/80 flex flex-col">
