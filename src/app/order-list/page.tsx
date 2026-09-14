@@ -72,8 +72,24 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
       <style>{`
         @media print {
           body * { visibility: hidden; }
+          .fixed.inset-0 {
+            position: absolute !important;
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+          }
           .print-area, .print-area * { visibility: visible; }
-          .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+          .print-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+          }
         }
       `}</style>
       
