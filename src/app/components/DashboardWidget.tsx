@@ -40,10 +40,10 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
   }, []);
 
   const stats = [
-    { id: 'delivery', name: '택배', count: counts.delivery, newCount: 0, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { id: 'reservation', name: '예약', count: counts.reservation, newCount: 0, icon: Calendar, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
-    { id: 'order', name: '주문', count: counts.order, newCount: 0, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { id: 'custom', name: '맞춤', count: counts.custom, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' }
+    { id: 'delivery', name: '택배접수', count: counts.delivery, newCount: 0, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { id: 'reservation', name: '예약접수', count: counts.reservation, newCount: 0, icon: Calendar, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+    { id: 'order', name: '상품접수', count: counts.order, newCount: 0, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+    { id: 'custom', name: '간편폼접수', count: counts.custom, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' }
   ];
 
   const recentActivities = [

@@ -79,7 +79,7 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
       
       <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">상품 주문 현황</h1>
+          <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">상품접수</h1>
           <p className="text-[13px] text-gray-500">고객들이 제출한 상품 주문서 리스트입니다.</p>
         </div>
       </div>

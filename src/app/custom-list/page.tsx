@@ -79,8 +79,8 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
       
       <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">맞춤 주문 현황</h1>
-          <p className="text-[13px] text-gray-500">고객들이 제출한 맞춤 폼(설문/주문) 리스트입니다.</p>
+          <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">간편폼접수</h1>
+          <p className="text-[13px] text-gray-500">고객들이 제출한 간편폼(설문/주문) 리스트입니다.</p>
         </div>
       </div>
 

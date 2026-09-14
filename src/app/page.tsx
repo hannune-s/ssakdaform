@@ -100,9 +100,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >
-              맞춤형 폼 만들기
-            </button>
+            >간편폼 만들기</button>
           </div>
           
           {/* 2번 줄: 현황 3종 */}
@@ -114,7 +112,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >택배현황</button>
+            >택배접수</button>
             <button
               onClick={() => setActiveTab('reservation')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
@@ -122,7 +120,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >예약현황</button>
+            >예약접수</button>
             <button
               onClick={() => setActiveTab('order')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
@@ -130,7 +128,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >주문현황</button>
+            >상품접수</button>
             <button
               onClick={() => setActiveTab('custom')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
@@ -138,7 +136,7 @@ export default function AdminHub() {
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
-            >맞춤현황</button>
+            >간편폼접수</button>
           </div>
         </div>
         
