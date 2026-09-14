@@ -57,7 +57,7 @@ export default function AdminHub() {
             <div className="flex flex-row gap-2 w-full md:w-auto shrink-0">
                 <button 
                   onClick={handleCopy}
-                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px]"
+                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px]"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? '복사완료' : '링크 복사'}
@@ -87,8 +87,8 @@ export default function AdminHub() {
               onClick={() => setActiveTab('dashboard')}
               className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'dashboard' 
-                  ? 'bg-indigo-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-indigo-600 font-bold border-2 border-indigo-600 shadow-md text-white shadow-md' 
+                  : 'bg-white text-gray-700 font-bold border-2 border-gray-300 hover:bg-gray-50 shadow-sm border-2 border-gray-300'
               }`}
             >
               대시보드
@@ -97,8 +97,8 @@ export default function AdminHub() {
               onClick={() => setActiveTab('builder')}
               className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'builder' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white shadow-md' 
+                  : 'bg-white text-gray-700 font-bold border-2 border-gray-300 hover:bg-gray-50 shadow-sm border-2 border-gray-300'
               }`}
             >간편폼 만들기</button>
           </div>
@@ -109,32 +109,32 @@ export default function AdminHub() {
               onClick={() => setActiveTab('delivery')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'delivery' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white shadow-md' 
+                  : 'bg-white text-gray-700 font-bold border-2 border-gray-300 hover:bg-gray-50 shadow-sm border-2 border-gray-300'
               }`}
             >택배접수</button>
             <button
               onClick={() => setActiveTab('reservation')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'reservation' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white shadow-md' 
+                  : 'bg-white text-gray-700 font-bold border-2 border-gray-300 hover:bg-gray-50 shadow-sm border-2 border-gray-300'
               }`}
             >예약접수</button>
             <button
               onClick={() => setActiveTab('order')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'order' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white shadow-md' 
+                  : 'bg-white text-gray-700 font-bold border-2 border-gray-300 hover:bg-gray-50 shadow-sm border-2 border-gray-300'
               }`}
             >상품접수</button>
             <button
               onClick={() => setActiveTab('custom')}
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'custom' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white shadow-md' 
+                  : 'bg-white text-gray-700 font-bold border-2 border-gray-300 hover:bg-gray-50 shadow-sm border-2 border-gray-300'
               }`}
             >간편폼접수</button>
           </div>
@@ -144,13 +144,13 @@ export default function AdminHub() {
         <div className="relative mt-5 sm:mt-6">
           <input
             type="text"
-            className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
+            className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
             placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <div className="absolute inset-y-0 right-1.5 flex items-center">
-            <button className="p-1.5 sm:p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
+            <button className="p-1.5 sm:p-2 bg-blue-600 font-bold border-2 border-blue-600 shadow-md hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
               <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>

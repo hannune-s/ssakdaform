@@ -46,7 +46,7 @@ export default function AccountPage() {
 
   return (
     <div className="max-w-4xl mx-auto pb-10">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-300 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">기본 정보</h2>
@@ -62,7 +62,7 @@ export default function AccountPage() {
                   type="text" 
                   value={accountInfo.id}
                   onChange={(e) => handleInfoChange('id', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="admin"
                 />
               </div>
@@ -76,7 +76,7 @@ export default function AccountPage() {
                   type="text" 
                   value={accountInfo.name}
                   onChange={(e) => handleInfoChange('name', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="관리자"
                 />
               </div>
@@ -85,7 +85,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-300 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">비밀번호 변경</h2>
@@ -101,7 +101,7 @@ export default function AccountPage() {
                   type="password" 
                   value={passwords.current}
                   onChange={(e) => handlePasswordChange('current', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="현재 비밀번호 입력"
                 />
               </div>
@@ -115,7 +115,7 @@ export default function AccountPage() {
                   type="password" 
                   value={passwords.new}
                   onChange={(e) => handlePasswordChange('new', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="새 비밀번호 입력"
                 />
               </div>
@@ -129,7 +129,7 @@ export default function AccountPage() {
                   type="password" 
                   value={passwords.confirm}
                   onChange={(e) => handlePasswordChange('confirm', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="새 비밀번호 다시 입력"
                 />
               </div>
@@ -141,7 +141,7 @@ export default function AccountPage() {
           <button 
             onClick={handleSave}
             disabled={isLoading}
-            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
+            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 font-bold border-2 border-indigo-600 shadow-md text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
           >
             {isSaved ? <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">✓</div>저장됨</span> : <><Save className="w-4 h-4" />변경사항 저장</>}
           </button>

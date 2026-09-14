@@ -56,7 +56,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
     <div className="w-full max-w-4xl mx-auto space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 mb-8 mt-2">
       
       {/* 1 Row 4 Columns Grid Status */}
-      <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+      <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-2 border-gray-200 shadow-sm">
         <div className="flex items-center justify-between mb-3 px-1">
           <h3 className="font-bold text-gray-900 flex items-center gap-2 text-[14px] sm:text-[15px]">
             <BarChart3 className="w-4 h-4 text-indigo-600" />
@@ -70,7 +70,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
             <button 
               key={stat.id}
               onClick={() => setActiveTab(stat.id)}
-              className="flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors active:scale-95 relative border border-gray-100/50"
+              className="flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors active:scale-95 relative border-2 border-gray-200 shadow-sm/50"
             >
               {stat.newCount > 0 && (
                 <div className="absolute top-1.5 right-1.5 flex h-2 w-2">
@@ -90,7 +90,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+      <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-2 border-gray-200 shadow-sm">
         <div className="flex items-center justify-between mb-3 px-1">
           <h3 className="font-bold text-gray-900 flex items-center gap-2 text-[14px] sm:text-[15px]">
             <Bell className="w-4 h-4 text-indigo-600" />
@@ -103,7 +103,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
         
         <div className="space-y-2.5">
           {recentActivities.map((activity, i) => (
-            <div key={i} onClick={() => setActiveTab(activity.tab)} className="flex items-start gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.99]">
+            <div key={i} onClick={() => setActiveTab(activity.tab)} className="flex items-start gap-3 p-3 rounded-2xl bg-gray-50/50 border-2 border-gray-200 shadow-sm/50 hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.99]">
               <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${activity.isNew ? 'bg-indigo-500' : 'bg-gray-300'}`} />
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-0.5">
