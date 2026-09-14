@@ -91,7 +91,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
             <thead className="bg-indigo-50/50 border-y border-indigo-100">
                   <tr>
                     <th className="px-4 py-3 text-left text-[12px] font-extrabold text-gray-500 tracking-wider">접수일시</th>
-                    <th className="px-4 py-3 text-left text-[12px] font-extrabold text-gray-500 tracking-wider">이름 / 폼 종류</th>
+                    <th className="px-4 py-3 text-left text-[12px] font-extrabold text-gray-500 tracking-wider">이름</th>
                     <th className="px-4 py-3 text-left text-[12px] font-extrabold text-gray-500 tracking-wider">연락처</th>
                     <th className="px-4 py-3 text-center text-[12px] font-extrabold text-gray-500 tracking-wider">진행상태</th>
                     <th className="px-4 py-3 text-center text-[12px] font-extrabold text-gray-500 tracking-wider">상세보기</th>
@@ -133,8 +133,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <div className="font-bold text-gray-900 text-[13px]">{customerName}</div>
-                        <div className="text-[11px] font-medium text-gray-400 mt-0.5 truncate max-w-[120px]" title={formTitle}>{formTitle}</div>
-                      </td>
+                        </td>
                       <td className="px-4 py-3 align-middle">
                         <div className="text-[12.5px] font-semibold text-indigo-600">{customerPhone}</div>
                       </td>
