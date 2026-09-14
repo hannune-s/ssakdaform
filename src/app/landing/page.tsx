@@ -537,12 +537,12 @@ export default function LandingPage() {
                 ))}
               </ul>
               
-              <button 
-                onClick={() => window.location.href = '/signup'}
-                className="w-full py-4 sm:py-5 rounded-2xl font-black text-white text-lg bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-200 transition-all active:scale-[0.98]"
+              <a 
+                href="/signup"
+                className="block text-center w-full py-4 sm:py-5 rounded-2xl font-black text-white text-lg bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-200 transition-all active:scale-[0.98]"
               >
                 월간 플랜으로 시작하기
-              </button>
+              </a>
             </div>
 
             {/* Yearly Plan */}
@@ -574,12 +574,12 @@ export default function LandingPage() {
                 </li>
               </ul>
               
-              <button 
-                onClick={() => window.location.href = '/signup'}
-                className="w-full py-4 rounded-2xl font-bold text-gray-700 text-lg bg-gray-50 border border-gray-200 hover:border-gray-900 hover:bg-gray-900 hover:text-white transition-all active:scale-[0.98]"
+              <a 
+                href="/signup"
+                className="block text-center w-full py-4 rounded-2xl font-bold text-gray-700 text-lg bg-gray-50 border border-gray-200 hover:border-gray-900 hover:bg-gray-900 hover:text-white transition-all active:scale-[0.98]"
               >
                 연간 플랜으로 혜택받기
-              </button>
+              </a>
             </div>
 
           </div>
