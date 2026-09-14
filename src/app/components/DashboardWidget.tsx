@@ -81,7 +81,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
               
               <p className="text-gray-500 text-[10px] sm:text-[11px] font-semibold mb-1">{stat.name}</p>
               <div className="flex items-baseline gap-0.5">
-                <span className="text-[22px] sm:text-[26px] font-black text-gray-900 tracking-tight">{stat.count}</span>
+                <span className={`text-[22px] sm:text-[26px] font-black tracking-tight ${stat.color}`}>{stat.count}</span>
                 <span className="text-[11px] sm:text-[12px] text-gray-500 font-medium">건</span>
               </div>
             </button>
