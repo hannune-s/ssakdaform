@@ -245,7 +245,8 @@ export default function AdminHub() {
               {
                 title: '구독 및 결제 관리',
                 desc: '이용권 상태, 카드 변경, 결제 내역',
-                color: 'bg-purple-900'
+                color: 'bg-purple-900',
+                onClick: () => setActiveTab('subscription')
               },
               {
                 title: '설정 (가게/계좌 정보)',
