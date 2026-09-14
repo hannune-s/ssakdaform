@@ -88,7 +88,7 @@ export default function AdminHub() {
               className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'dashboard' 
                   ? 'bg-indigo-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-100/70'
               }`}
             >
               대시보드
@@ -98,7 +98,7 @@ export default function AdminHub() {
               className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'builder' 
                   ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-100/70'
               }`}
             >간편폼 만들기</button>
           </div>
@@ -110,7 +110,7 @@ export default function AdminHub() {
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'delivery' 
                   ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-100/70'
               }`}
             >택배접수</button>
             <button
@@ -118,7 +118,7 @@ export default function AdminHub() {
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'reservation' 
                   ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-100/70'
               }`}
             >예약접수</button>
             <button
@@ -126,7 +126,7 @@ export default function AdminHub() {
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'order' 
                   ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-100/70'
               }`}
             >상품접수</button>
             <button
@@ -134,7 +134,7 @@ export default function AdminHub() {
               className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'custom' 
                   ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-100/70'
               }`}
             >간편폼접수</button>
           </div>
