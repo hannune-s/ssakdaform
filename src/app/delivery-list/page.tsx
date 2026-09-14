@@ -85,7 +85,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       </div>
 
       {/* 리스트 테이블 */}
-      <div className="bg-white rounded-xl border-2 border-gray-300 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
@@ -138,7 +138,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                       <td className="px-4 py-3 text-right align-middle">
                         <button 
                           onClick={() => openDetails(res)}
-                          className="inline-flex items-center px-3 py-1.5 bg-white border-2 border-gray-300 font-semibold rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
+                          className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
                         >
                           상세 내용
                         </button>
@@ -165,7 +165,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
           <button 
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="w-8 h-8 flex items-center justify-center rounded-md border-2 border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             &lt;
           </button>
@@ -177,7 +177,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                 onClick={() => setCurrentPage(pageNum)}
                 className={`w-8 h-8 flex items-center justify-center rounded-md text-[13px] font-bold transition-colors ${
                   currentPage === pageNum 
-                    ? 'bg-indigo-600 font-bold border-2 border-indigo-600 shadow-md text-white shadow-sm' 
+                    ? 'bg-indigo-600 text-white shadow-sm' 
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
@@ -189,7 +189,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
           <button 
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="w-8 h-8 flex items-center justify-center rounded-md border-2 border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             &gt;
           </button>

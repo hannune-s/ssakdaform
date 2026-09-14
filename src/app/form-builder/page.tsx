@@ -156,7 +156,7 @@ export default function FormBuilder() {
                   type="text" 
                   value={storeName}
                   onChange={(e) => setStoreName(e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 font-semibold rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                 />
               </div>
               <div>
@@ -165,7 +165,7 @@ export default function FormBuilder() {
                   type="text" 
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 font-semibold rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                 />
               </div>
               <div>
@@ -174,7 +174,7 @@ export default function FormBuilder() {
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder="예: 주문 전 필독사항, 제작 기간 안내 등을 적어주세요."
-                  className="w-full px-3 py-2 border-2 border-gray-300 font-semibold rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y" 
                   rows={3}
                 />
               </div>
@@ -184,7 +184,7 @@ export default function FormBuilder() {
 
         {/* 오른쪽: 입력 항목 리스트 (빌더) */}
         <div className="lg:col-span-2 space-y-3">
-          <div className="bg-white p-4 sm:p-5 rounded-xl border-2 border-gray-300 shadow-sm mb-3">
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm mb-3">
             <h3 className="font-semibold text-[15px] text-gray-800">입력 항목 관리</h3>
             <p className="text-[13px] text-gray-500 mt-1">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
           </div>
@@ -194,7 +194,7 @@ export default function FormBuilder() {
               <p className="text-[13px] text-gray-500">아직 추가된 입력 칸이 없습니다.<br/>아래의 [새 입력 칸 추가] 버튼을 눌러주세요.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border-2 border-gray-300 shadow-sm overflow-hidden mb-3">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-3">
               
               <div className="divide-y divide-gray-100">
                 {fields.map((field) => (
@@ -206,7 +206,7 @@ export default function FormBuilder() {
                         value={field.label}
                         onChange={(e) => updateField(field.id, 'label', e.target.value)}
                         placeholder="예: 연락처"
-                        className="w-full px-3 py-2 border-2 border-gray-300 font-semibold rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -216,7 +216,7 @@ export default function FormBuilder() {
                         value={field.placeholder}
                         onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
                         placeholder={getSmartPlaceholder(field.label)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 font-semibold rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
                       />
                     </div>
                     <button 
@@ -243,19 +243,19 @@ export default function FormBuilder() {
           
           
           {/* 하단 액션 버튼 그룹 */}
-          <div className="pt-6 mt-4 border-t border-gray-300 flex flex-col gap-2.5">
+          <div className="pt-6 mt-4 border-t border-gray-200 flex flex-col gap-2.5">
             {/* 윗줄: 보조 액션 (초기화, 미리보기) */}
             <div className="flex flex-row gap-2">
               <button 
                 onClick={handleReset}
-                className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border-2 border-gray-300 font-semibold text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-[14px] font-medium"
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-[14px] font-medium"
               >
                 <RotateCcw className="w-4 h-4 text-gray-500" />
                 초기화
               </button>
               <button 
                 onClick={handlePreview}
-                className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border-2 border-gray-300 font-semibold text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-[14px] font-medium"
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm text-[13px] sm:text-[14px] font-medium"
               >
                 <Eye className="w-4 h-4 text-gray-500" />
                 고객화면 미리보기
@@ -274,7 +274,7 @@ export default function FormBuilder() {
                 </button>
                 <button 
                   onClick={handleSave}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-blue-600 font-bold border-2 border-blue-600 shadow-md text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm text-[13px] sm:text-[14px]"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm text-[13px] sm:text-[14px]"
                 >
                   폼 저장하기
                 </button>

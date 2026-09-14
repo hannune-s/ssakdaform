@@ -99,7 +99,7 @@ export default function SettingsPage() {
   return (
     <div className="max-w-4xl mx-auto pb-10">
       {/* 가게 정보 설정 */}
-      <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-300 overflow-hidden mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">가게 정보 설정</h2>
@@ -115,7 +115,7 @@ export default function SettingsPage() {
                   type="text" 
                   value={storeInfo.name}
                   onChange={(e) => handleStoreChange('name', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="예) 싹다상점"
                 />
               </div>
@@ -129,7 +129,7 @@ export default function SettingsPage() {
                   type="text" 
                   value={storeInfo.address}
                   onChange={(e) => handleStoreChange('address', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="예) 서울특별시 강남구 테헤란로 123"
                 />
               </div>
@@ -144,7 +144,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.phone}
                     onChange={(e) => handleStoreChange('phone', e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                     placeholder="예) 02-1234-5678"
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.hours}
                     onChange={(e) => handleStoreChange('hours', e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                     placeholder="예) 09:00 ~ 18:00"
                   />
                 </div>
@@ -172,7 +172,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.closedDays}
                     onChange={(e) => handleStoreChange('closedDays', e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                     placeholder="예) 매주 일요일"
                   />
                 </div>
@@ -183,7 +183,7 @@ export default function SettingsPage() {
       </div>
 
       {/* 계좌 설정 */}
-      <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-300 overflow-hidden mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -201,14 +201,14 @@ export default function SettingsPage() {
 
           <div className="space-y-3">
             {accounts.map((account, index) => (
-              <div key={index} className="p-3 border-2 border-gray-300 rounded-xl bg-gray-50/50 flex flex-row items-end gap-1.5 relative group w-full">
+              <div key={index} className="p-3 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-row items-end gap-1.5 relative group w-full">
                 <div className="w-[25%] shrink-0">
                   <label className="block text-[10px] sm:text-[11px] font-semibold text-gray-500 mb-1">은행명</label>
                   <input 
                     type="text" 
                     value={account.bank}
                     onChange={(e) => handleChange(index, 'bank', e.target.value)}
-                    className="w-full px-2 py-2 rounded-md border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
                     placeholder="국민은행"
                   />
                 </div>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={account.accountNumber}
                     onChange={(e) => handleChange(index, 'accountNumber', e.target.value)}
-                    className="w-full px-2 py-2 rounded-md border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm font-mono"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm font-mono"
                     placeholder="123-456-7890"
                   />
                 </div>
@@ -230,7 +230,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={account.holder}
                     onChange={(e) => handleChange(index, 'holder', e.target.value)}
-                    className="w-full px-2 py-2 rounded-md border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
                     placeholder="홍길동"
                   />
                 </div>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
                   type="url" 
                   value={storeInfo.paymentLink || ''}
                   onChange={(e) => handleStoreChange('paymentLink', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border-2 border-gray-300 font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
                   placeholder="https://toss.me/..."
                 />
               </div>
@@ -270,7 +270,7 @@ export default function SettingsPage() {
           <button 
             onClick={handleSave}
             disabled={isLoading}
-            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 font-bold border-2 border-indigo-600 shadow-md text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
+            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
           >
             {isSaved ? <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">✓</div>저장됨</span> : <><Save className="w-4 h-4" />저장하기</>}
           </button>
