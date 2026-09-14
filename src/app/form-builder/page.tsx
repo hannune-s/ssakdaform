@@ -143,7 +143,7 @@ export default function FormBuilder() {
         
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
+      <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">
         
         {/* 왼쪽: 폼 기본 정보 설정 */}
         <div className="lg:col-span-1 space-y-4">
