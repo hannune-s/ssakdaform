@@ -211,9 +211,7 @@ export default function CustomerFormPage() {
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-indigo-100 selection:text-indigo-900 relative">
       
-      <div className="mb-6 text-stone-400 text-xs font-mono">
-        Form ID: {params.id}
-      </div>
+      
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
