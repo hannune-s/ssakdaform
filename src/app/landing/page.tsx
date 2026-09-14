@@ -3,7 +3,7 @@ import { QrCode, Sparkles, Users, Smartphone, PlusSquare, CreditCard, BarChart3,
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white selection:bg-indigo-100 selection:text-indigo-900 font-sans">
+    <div className="min-h-screen break-keep bg-white selection:bg-indigo-100 selection:text-indigo-900 font-sans">
       {/* Navbar */}
       <nav className="fixed top-0 inset-x-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -65,7 +65,7 @@ export default function LandingPage() {
                   <QrCode className="w-6 h-6 text-blue-600" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  고무장갑 벗고 전화할 필요 없는,<br />1초 만에 끝나는 스마트 접수
+                  고무장갑 벗고 전화할 필요 없는,<br className="hidden sm:block" />1초 만에 끝나는 스마트 접수
                 </h3>
                 <p className="text-lg text-gray-500 font-medium leading-relaxed">
                   "김치 담그다 말고 장갑 벗고, 알아보기 힘든 종이 조각에 주소를 적고 계신가요?"<br/><br/>
@@ -121,7 +121,7 @@ export default function LandingPage() {
                   <Sparkles className="w-6 h-6 text-purple-600" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  우리 매장의 품격을 높이는<br />고급스러운 브랜드 경험
+                  우리 매장의 품격을 높이는<br className="hidden sm:block" />고급스러운 브랜드 경험
                 </h3>
                 <p className="text-lg text-gray-500 font-medium leading-relaxed">
                   싸구려 간이 폼이나 지저분한 메모장이 아닙니다.<br/><br/>
@@ -175,7 +175,7 @@ export default function LandingPage() {
                   <Users className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  버려지던 종이 조각이 '단골 자산'으로!<br />자동 고객 관리 시스템
+                  버려지던 종이 조각이 '단골 자산'으로!<br className="hidden sm:block" />자동 고객 관리 시스템
                 </h3>
                 <p className="text-lg text-gray-500 font-medium leading-relaxed">
                   그동안 택배 주문을 받고 대충 버려졌던 종이 조각들과 흩어진 수기 노트는 그만.<br/><br/>
@@ -279,7 +279,7 @@ export default function LandingPage() {
                   <PlusSquare className="w-6 h-6 text-orange-600" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  어떤 현장이든 내 입맛대로 뚝딱!<br />무한 확장 '간편폼 만들기'
+                  어떤 현장이든 내 입맛대로 뚝딱!<br className="hidden sm:block" />무한 확장 '간편폼 만들기'
                 </h3>
                 <p className="text-lg text-gray-500 font-medium leading-relaxed">
                   기본적으로 현장에서 가장 많이 쓰는 택배, 주문, 예약 폼은 완벽하게 세팅 완료!<br/><br/>
@@ -375,7 +375,7 @@ export default function LandingPage() {
                   <Smartphone className="w-6 h-6 text-rose-600" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  스마트폰 홈 화면에 톡!<br />언제 어디서나 확인하고 척척 출력
+                  스마트폰 홈 화면에 톡!<br className="hidden sm:block" />언제 어디서나 확인하고 척척 출력
                 </h3>
                 <p className="text-lg text-gray-500 font-medium leading-relaxed">
                   복잡한 앱 설치 없이, 스마트폰 홈 화면에 아이콘만 바로 추가해두고 언제 어디서나 모바일로 확인합니다.<br/><br/>
@@ -559,7 +559,7 @@ export default function LandingPage() {
               </p>
               
               <p className="text-[15px] text-gray-500 mb-8 font-medium leading-relaxed">
-                1년 치를 한 번에 결제하시면<br/>
+                1년 치를 한 번에 결제하시면<br className="hidden sm:block" />
                 <strong className="text-gray-900">두 달치 요금을 완전히 면제</strong>해 드립니다.
               </p>
               
@@ -591,7 +591,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 leading-tight">
-            더 이상 아날로그 접수에<br />시간 뺏기지 마세요
+            더 이상 아날로그 접수에<br className="hidden sm:block" />시간 뺏기지 마세요
           </h2>
           <p className="text-indigo-100 text-lg sm:text-xl mb-10 font-medium">
             지금 바로 싹다폼을 도입하고 매장 업무의 혁신을 경험해 보세요.
