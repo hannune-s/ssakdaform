@@ -70,7 +70,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
             <button 
               key={stat.id}
               onClick={() => setActiveTab(stat.id)}
-              className="flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors active:scale-95 relative border border-gray-100/50"
+              className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl bg-gray-50/80 hover:bg-white hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 transition-all active:scale-95 relative"
             >
               {stat.newCount > 0 && (
                 <div className="absolute top-1.5 right-1.5 flex h-2 w-2">
@@ -79,9 +79,9 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
                 </div>
               )}
               
-              <p className="text-gray-500 text-[11px] sm:text-[12px] font-semibold mb-0.5">{stat.name}</p>
+              <p className="text-gray-500 text-[10px] sm:text-[11px] font-semibold mb-1">{stat.name}</p>
               <div className="flex items-baseline gap-0.5">
-                <span className="text-[16px] sm:text-[18px] font-black text-gray-900 tracking-tight">{stat.count}</span>
+                <span className="text-[22px] sm:text-[26px] font-black text-gray-900 tracking-tight">{stat.count}</span>
                 <span className="text-[11px] sm:text-[12px] text-gray-500 font-medium">건</span>
               </div>
             </button>
@@ -101,17 +101,18 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
           </button>
         </div>
         
-        <div className="space-y-2.5">
+        <div className="divide-y divide-gray-100/80 flex flex-col">
           {recentActivities.map((activity, i) => (
-            <div key={i} onClick={() => setActiveTab(activity.tab)} className="flex items-start gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:bg-gray-50 transition-colors cursor-pointer active:scale-[0.99]">
-              <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${activity.isNew ? 'bg-indigo-500' : 'bg-gray-300'}`} />
+            <div key={i} onClick={() => setActiveTab(activity.tab)} className="flex items-center gap-3 py-3.5 px-2 bg-white hover:bg-gray-50/40 transition-colors cursor-pointer active:scale-[0.99] group">
+              <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${activity.isNew ? 'bg-indigo-500' : 'bg-gray-300'}`} />
               <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start mb-0.5">
+                <div className="flex justify-between items-center mb-0.5">
                   <p className={`text-[12.5px] sm:text-[13px] font-bold truncate pr-2 ${activity.isNew ? 'text-gray-900' : 'text-gray-600'}`}>{activity.title}</p>
-                  <span className="text-[10px] sm:text-[11px] font-medium text-gray-400 whitespace-nowrap shrink-0 mt-0.5">{activity.time}</span>
+                  <span className="text-[10px] sm:text-[11px] font-medium text-gray-400 whitespace-nowrap shrink-0">{activity.time}</span>
                 </div>
                 <p className="text-[11.5px] sm:text-[12px] text-gray-500 truncate">{activity.desc}</p>
               </div>
+              <ChevronRight className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity ml-1 shrink-0" />
             </div>
           ))}
         </div>
