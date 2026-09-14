@@ -478,9 +478,9 @@ export default function LandingPage() {
               <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-6">
                 <CreditCard className="w-6 h-6 text-teal-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">계좌번호 무한 추가 & 결제 링크 연동</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">계좌번호 무한 추가</h3>
               <p className="text-gray-500 font-medium leading-relaxed">
-                입금 받을 계좌가 여러 개인가요? 싹다폼에서는 필요한 만큼 계좌번호를 등록하고, 토스나 카카오페이 등 간편 송금 링크까지 연동할 수 있어 폼 하나로 결제 안내까지 깔끔하게 끝납니다.
+                입금 받을 계좌가 여러 개인가요? 싹다폼에서는 필요한 만큼 계좌번호를 무제한으로 등록할 수 있어, 폼 하나로 복잡한 입금 안내까지 깔끔하게 끝납니다.
               </p>
             </div>
             
@@ -529,7 +529,7 @@ export default function LandingPage() {
               </div>
               
               <ul className="space-y-4 mb-10">
-                {['아날로그 접수 혁신 (QR/링크 결제)', '무제한 폼 생성 및 커스텀', '자동 고객 및 주문 관리', '모바일 주문서 다운로드 및 출력', '싹다폼의 모든 강력한 기능 포함'].map((item, i) => (
+                {['아날로그 접수 혁신', '무제한 폼 생성 및 커스텀', '자동 고객 및 주문 관리', '모바일 주문서 다운로드 및 출력', '싹다폼의 모든 강력한 기능 포함'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <CheckCircle2 className="w-6 h-6 text-indigo-500 shrink-0" />
                     <span className="text-gray-700 font-bold text-[15px]">{item}</span>
