@@ -8,6 +8,7 @@ import OrderList from './order-list/page';
 import CustomList from './custom-list/page';
 import FormBuilder from './form-builder/page';
 import SettingsPage from './settings/page';
+import SubscriptionPage from './subscription/page';
 import AccountPage from './account/page';
 import DashboardWidget from './components/DashboardWidget';
 
