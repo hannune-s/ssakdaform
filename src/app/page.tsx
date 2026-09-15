@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft, LogOut, QrCode } from 'lucide-react';
+import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft, LogOut, QrCode, Smartphone } from 'lucide-react';
 import DeliveryList from './delivery-list/page';
 import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
@@ -16,6 +16,10 @@ export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
+
+  const handleInstallApp = () => {
+    alert('📱 모바일 홈 화면 추가 방법\n\n[아이폰 (Safari)]\n하단의 공유(보내기) ⍗ 버튼을 누른 후 "홈 화면에 추가"를 선택하세요.\n\n[안드로이드 (Chrome)]\n상단 메뉴(⋮)를 누른 후 "홈 화면에 추가"를 선택하세요.');
+  };
 
   const handleCopy = async () => {
     try {
@@ -34,7 +38,14 @@ export default function AdminHub() {
         <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-10 relative">
+        <button 
+          onClick={handleInstallApp} 
+          className="absolute top-0 right-0 sm:-top-4 sm:right-4 text-[12px] font-bold bg-white text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-200 shadow-sm flex items-center gap-1.5 hover:bg-indigo-50 transition-colors active:scale-95 z-10"
+        >
+          <Smartphone className="w-3.5 h-3.5" /> 
+          홈 화면에 추가
+        </button>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight mb-2">
           싹다폼
         </h1>
