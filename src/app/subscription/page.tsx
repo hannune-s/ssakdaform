@@ -38,7 +38,7 @@ export default function SubscriptionPage() {
                   <span className="text-2xl sm:text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors tracking-tight">9,900<span className="text-[13px] sm:text-[15px] font-bold text-gray-500 ml-0.5">원</span></span>
                   <span className="text-xs sm:text-sm text-gray-400 line-through mb-0.5 sm:mb-1 ml-1 font-medium">14,900원</span>
                 </div>
-                <div className="text-[11px] sm:text-[13px] text-gray-500 font-medium">매월 정기 결제됩니다.</div>
+                <div className="text-[11px] sm:text-[13px] text-gray-500 font-medium">1개월 이용권이 1회 단독 결제됩니다.</div>
               </button>
 
               {/* 연간 결제 버튼 */}
