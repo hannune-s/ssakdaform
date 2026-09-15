@@ -23,6 +23,12 @@ export default function RootLayout({
       
         <script dangerouslySetInnerHTML={{
           __html: `
+            
+            window.deferredPrompt = null;
+            window.addEventListener('beforeinstallprompt', function(e) {
+              e.preventDefault();
+              window.deferredPrompt = e;
+            });
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
