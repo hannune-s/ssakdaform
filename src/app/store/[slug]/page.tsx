@@ -39,13 +39,24 @@ export default function StoreHubPage() {
   ];
   const [accounts, setAccounts] = useState<any[]>([]);
   const [storeInfo, setStoreInfo] = useState<any>(null);
-  const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(true);
+  const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadAccounts() {
       const savedStoreInfo = localStorage.getItem('ssakdaform_store_details');
-      if (savedStoreInfo) { setStoreInfo(JSON.parse(savedStoreInfo)); }
+      if (savedStoreInfo) { 
+        setStoreInfo(JSON.parse(savedStoreInfo)); 
+      } else {
+        setStoreInfo({
+          name: '싹다폼 (데모 상호명)',
+          address: '서울시 서초구 (데모 주소)',
+          phone: '010-1234-5678',
+          hours: '09:00 ~ 18:00',
+          closedDays: '일요일',
+          paymentLink: ''
+        });
+      }
       const { data } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
