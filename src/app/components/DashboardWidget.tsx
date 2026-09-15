@@ -101,7 +101,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
           
         </div>
         
-        <div className="divide-y divide-gray-100/80 flex flex-col">
+        <div className="divide-y divide-gray-200 flex flex-col">
           {recentActivities.map((activity, i) => (
             <div key={i} onClick={() => setActiveTab(activity.tab)} className="flex items-center gap-3 py-4 px-3 sm:px-4 bg-white hover:bg-gray-50/40 transition-colors cursor-pointer active:scale-[0.99] group rounded-xl">
               <div className={`w-2 h-2 rounded-full shrink-0 ${activity.isNew ? 'bg-indigo-500' : 'bg-gray-300'}`} />
