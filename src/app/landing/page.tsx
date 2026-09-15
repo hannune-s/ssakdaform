@@ -47,10 +47,10 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
-              href="/signup"
+              href="/demo"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
             >
-              무료로 시작하기 <ArrowRight className="w-5 h-5" />
+              어드민 체험하기 <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
         </div>
@@ -605,10 +605,10 @@ export default function LandingPage() {
             지금 바로 싹다폼을 도입하고 매장 업무의 혁신을 경험해 보세요.
           </p>
           <Link 
-            href="/signup"
+            href="/demo"
             className="inline-flex items-center justify-center gap-2 bg-white text-indigo-600 px-10 py-5 rounded-2xl font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
           >
-            무료로 시작하기 <ArrowRight className="w-5 h-5" />
+            어드민 체험하기 <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>
