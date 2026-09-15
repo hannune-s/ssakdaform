@@ -13,12 +13,20 @@ export default function LandingPage() {
             </div>
             <span className="text-xl font-black tracking-tight text-gray-900">싹다폼</span>
           </div>
-          <Link 
-            href="/demo"
-            className="text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-full transition-colors"
-          >
-            어드민으로 이동
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link 
+              href="/"
+              className="text-sm font-bold text-gray-600 hover:text-gray-900 px-2 py-2 transition-colors"
+            >
+              로그인
+            </Link>
+            <Link 
+              href="/signup"
+              className="text-[13px] sm:text-sm font-bold text-white hover:text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-colors shadow-sm"
+            >
+              회원가입
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -39,7 +47,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
-              href="/demo"
+              href="/signup"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
             >
               무료로 시작하기 <ArrowRight className="w-5 h-5" />
@@ -597,10 +605,10 @@ export default function LandingPage() {
             지금 바로 싹다폼을 도입하고 매장 업무의 혁신을 경험해 보세요.
           </p>
           <Link 
-            href="/demo"
+            href="/signup"
             className="inline-flex items-center justify-center gap-2 bg-white text-indigo-600 px-10 py-5 rounded-2xl font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
           >
-            싹다폼 어드민 체험하기 <ArrowRight className="w-5 h-5" />
+            무료로 시작하기 <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>
