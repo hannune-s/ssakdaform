@@ -6,6 +6,7 @@ import LayoutWrapper from "@/components/LayoutWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
   title: "싹다폼 Admin",
   description: "싹다폼 관리자 대시보드",
 };
@@ -19,7 +20,21 @@ export default function RootLayout({
     <html lang="ko">
       <body className={inter.className}>
         <LayoutWrapper>{children}</LayoutWrapper>
-      </body>
+      
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                  console.log('SW registered');
+                }, function(err) {
+                  console.log('SW registration failed: ', err);
+                });
+              });
+            }
+          `
+        }} />
+</body>
     </html>
   );
 }

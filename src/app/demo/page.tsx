@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft, LogOut, Smartphone } from 'lucide-react';
 import DeliveryList from '../delivery-list/page';
 import ReservationList from '../reservation-list/page';
@@ -16,8 +16,29 @@ export default function DemoAdminHub() {
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
 
+  
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
   const handleInstallApp = () => {
-    alert('📱 모바일 홈 화면 추가 방법\n\n[아이폰 (Safari)]\n하단의 공유(보내기) ⍗ 버튼을 누른 후 "홈 화면에 추가"를 선택하세요.\n\n[안드로이드 (Chrome)]\n상단 메뉴(⋮)를 누른 후 "홈 화면에 추가"를 선택하세요.');
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult: any) => {
+        if (choiceResult.outcome === 'accepted') {
+          setDeferredPrompt(null);
+        }
+      });
+    } else {
+      alert('📱 아이폰(Safari) 또는 앱 내 브라우저에서는 하단의 공유(보내기) ⍗ 버튼을 누른 후 "홈 화면에 추가"를 직접 선택해주세요.');
+    }
   };
 
   const handleCopy = async () => {
