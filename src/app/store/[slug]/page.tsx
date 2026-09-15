@@ -39,7 +39,7 @@ export default function StoreHubPage() {
   ];
   const [accounts, setAccounts] = useState<any[]>([]);
   const [storeInfo, setStoreInfo] = useState<any>(null);
-  const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
+  const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(true);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
 
   useEffect(() => {

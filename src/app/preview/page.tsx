@@ -26,7 +26,7 @@ export default function PreviewPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
   const [storeInfo, setStoreInfo] = useState<any>(null);
-  const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
+  const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(true);
 
   // 주소 검색 모달 관련 상태
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
