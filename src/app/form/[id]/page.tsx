@@ -73,8 +73,7 @@ export default function CustomerFormPage() {
           { id: 5, type: 'phone', label: '받는 분 - 연락처', placeholder: '010-0000-0000', required: true },
           { id: 6, type: 'address', label: '받는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
           { id: 7, type: 'text', label: '배송 기사님께 남길 말씀', placeholder: '예: 문 앞에 놓고 문자 부탁드립니다.', required: false },
-          { id: 8, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '사장님께 전달하실 기타 요청사항을 자유롭게 적어주세요.', required: false },
-          { id: 9, type: 'checkbox', label: '[필수] 개인정보 수집 동의', placeholder: '개인정보 수집 및 이용에 동의합니다.', required: true }
+          { id: 8, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '사장님께 전달하실 기타 요청사항을 자유롭게 적어주세요.', required: false }
         ]
       });
       return;
@@ -88,8 +87,7 @@ export default function CustomerFormPage() {
           { id: 3, type: 'date', label: '예약 날짜', placeholder: '날짜를 선택해주세요', required: true },
           { id: 4, type: 'time', label: '예약 시간', placeholder: '시간을 선택해주세요', required: true },
           { id: 5, type: 'text', label: '방문 인원', placeholder: '예: 성인 2명, 아이 1명', required: true },
-          { id: 6, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '매장에 미리 요청하실 사항이나 알러지 정보 등을 자유롭게 적어주세요.', required: false },
-          { id: 7, type: 'checkbox', label: '[필수] 개인정보 수집 동의', placeholder: '개인정보 수집 및 이용에 동의합니다.', required: true }
+          { id: 6, type: 'textarea', label: '기타 전달하고 싶은 내용', placeholder: '매장에 미리 요청하실 사항이나 알러지 정보 등을 자유롭게 적어주세요.', required: false }
         ]
       });
       return;
@@ -111,8 +109,7 @@ export default function CustomerFormPage() {
           { id: 4, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
           { id: 5, type: 'address', label: '배송지 주소', placeholder: '클릭하여 배송지 검색', required: true },
           { id: 6, type: 'text', label: '입금자명', placeholder: '입금하실 분의 성함을 입력하세요', required: true },
-          { id: 7, type: 'textarea', label: '기타 전달 내용', placeholder: '배송 메시지 등 기타 요청사항을 적어주세요', required: false },
-          { id: 8, type: 'checkbox', label: '[필수] 개인정보 수집 동의', placeholder: '개인정보 수집 및 이용에 동의합니다.', required: true }
+          { id: 7, type: 'textarea', label: '기타 전달 내용', placeholder: '배송 메시지 등 기타 요청사항을 적어주세요', required: false }
         ]
       });
       return;
@@ -490,7 +487,18 @@ export default function CustomerFormPage() {
               );
             })()}
             
-            <div className="pt-8">
+            
+            {/* 고정 개인정보 수집 동의 */}
+            <div className="pt-6">
+              <label className="flex items-start gap-2.5 p-3 sm:p-4 rounded-xl border border-gray-300 cursor-pointer transition-colors bg-white hover:bg-gray-50 shadow-sm">
+                <input type="checkbox" required className="w-4 h-4 mt-0.5 sm:mt-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer" />
+                <span className="text-sm sm:text-[15px] font-medium text-gray-800 leading-relaxed">
+                  [필수] 개인정보 수집 및 이용에 동의합니다.
+                </span>
+              </label>
+            </div>
+            
+            <div className="pt-6 sm:pt-8">
               <button 
                 type="submit"
                 className="w-full py-4 bg-indigo-700 text-white rounded-xl font-semibold text-lg hover:bg-indigo-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-indigo-700/20"

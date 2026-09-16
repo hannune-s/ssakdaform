@@ -3,6 +3,7 @@ import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
+import { supabase } from '@/lib/supabase';
 import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
@@ -370,7 +371,18 @@ export default function PreviewPage() {
               );
             })()}
             
-            <div className="pt-8">
+            
+            {/* 고정 개인정보 수집 동의 */}
+            <div className="pt-6">
+              <label className="flex items-start gap-2.5 p-3 sm:p-4 rounded-xl border border-gray-300 cursor-pointer transition-colors bg-white hover:bg-gray-50 shadow-sm">
+                <input type="checkbox" required className="w-4 h-4 mt-0.5 sm:mt-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer" />
+                <span className="text-sm sm:text-[15px] font-medium text-gray-800 leading-relaxed">
+                  [필수] 개인정보 수집 및 이용에 동의합니다.
+                </span>
+              </label>
+            </div>
+            
+            <div className="pt-6 sm:pt-8">
               <button className="w-full py-4 bg-indigo-700 text-white rounded-xl font-semibold text-lg hover:bg-indigo-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-indigo-700/20">
                 제출하기
               </button>
