@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 
@@ -38,7 +38,19 @@ export default function CustomerFormPage() {
   useEffect(() => {
     async function loadAccounts() {
       const savedStoreInfo = localStorage.getItem('ssakdaform_store_details');
-      if (savedStoreInfo) { setStoreInfo(JSON.parse(savedStoreInfo)); }
+      if (savedStoreInfo) { 
+        setStoreInfo(JSON.parse(savedStoreInfo)); 
+      } else {
+        setStoreInfo({
+          name: '싹다폼 (데모 상호명)',
+          ownerName: '홍길동',
+          address: '서울시 서초구 (데모 주소)',
+          phone: '010-1234-5678',
+          hours: '09:00 ~ 18:00',
+          closedDays: '일요일',
+          paymentLink: ''
+        });
+      }
       const { data } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
@@ -227,7 +239,7 @@ export default function CustomerFormPage() {
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
-          {storeInfo && (storeInfo.name || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
+          {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
             <div className="mb-6">
               <button 
                 onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
@@ -246,6 +258,13 @@ export default function CustomerFormPage() {
                       <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
                   </div>
                 )}
+
+                  {storeInfo.ownerName && (
+                    <div className="flex gap-2">
+                      <User className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                      <div><span className="font-semibold text-gray-900 mr-2">대표자:</span>{storeInfo.ownerName}</div>
+                    </div>
+                  )}
                   {storeInfo.address && (
                     <div className="flex gap-2">
                       <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
@@ -275,13 +294,13 @@ export default function CustomerFormPage() {
             </div>
           )}
           {(accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
-            <div className="mb-8 bg-[#F0F4FF] border border-indigo-200 rounded-2xl p-5">
-              <div className="flex items-center gap-2 mb-3.5">
+            <div className="mb-6 bg-[#F0F4FF] border border-indigo-200 rounded-2xl px-4 py-3.5">
+              <div className="flex items-center gap-2 mb-2">
                 <CreditCard className="w-4 h-4 text-indigo-400" />
                 <h2 className="font-bold text-indigo-900 text-[14px]">결제 및 계좌 안내</h2>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-1.5">
                 {accounts.map((acc, idx) => (
                   <div key={idx} className="flex items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 flex-1">
@@ -292,7 +311,7 @@ export default function CustomerFormPage() {
                     <button 
                       type="button"
                       onClick={() => handleCopyAccount(acc.accountNumber)}
-                      className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-[13px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-indigo-50"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-indigo-50"
                     >
                       {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
                       <span>{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
