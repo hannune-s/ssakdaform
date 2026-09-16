@@ -125,7 +125,27 @@ export default function FormBuilder() {
   };
 
   const handleSave = () => {
-    alert('폼이 성공적으로 저장되었습니다! (추후 데이터베이스와 연동됩니다)');
+    const formData = {
+      id: `custom-${Date.now()}`,
+      storeName,
+      formTitle,
+      formDescription,
+      fields
+    };
+    
+    let existingForms = [];
+    try {
+      const stored = localStorage.getItem('ssakdaform_custom_forms');
+      if (stored) {
+        existingForms = JSON.parse(stored);
+      }
+    } catch(e) {}
+    
+    // We append the new form
+    existingForms.push(formData);
+    localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(existingForms));
+    
+    alert('폼이 성공적으로 저장되었습니다!');
   };
 
   if (!isLoaded) {

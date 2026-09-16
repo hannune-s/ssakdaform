@@ -61,6 +61,17 @@ export default function CustomerFormPage() {
     }
     loadAccounts();
 
+    
+    const storedForms = localStorage.getItem('ssakdaform_custom_forms');
+    if (storedForms) {
+      const forms = JSON.parse(storedForms);
+      const foundForm = forms.find((f: any) => f.id === id);
+      if (foundForm) {
+        setData(foundForm);
+        return;
+      }
+    }
+
     if (id === 'delivery-preset') {
       setData({
         storeName: '내 매장 이름 (기본 설정)',
