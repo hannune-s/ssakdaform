@@ -184,7 +184,7 @@ export default function FormBuilder() {
         <div className="lg:col-span-1 space-y-4">
           <div className="bg-indigo-50/50 p-4 sm:p-5 rounded-xl border border-indigo-100 shadow-sm">
             <h3 className="font-semibold text-[15px] text-indigo-900 mb-3 border-b border-indigo-100 pb-2">기본 정보 설정</h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div>
                 <label className="block text-[13px] font-medium text-gray-700 mb-1">상호명 (스토어 이름)</label>
                 <input 
@@ -325,14 +325,14 @@ export default function FormBuilder() {
           </h3>
           <div className="space-y-3">
             {savedForms.map((form, idx) => (
-              <div key={form.id || idx} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all group">
+              <div key={form.id || idx} className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all group">
                 <div>
                   <h4 className="font-bold text-gray-800 text-[15px]">{form.formTitle}</h4>
                   {form.formDescription && <p className="text-sm text-gray-500 mt-1 line-clamp-1">{form.formDescription}</p>}
                 </div>
                 <button 
                   onClick={() => handleDeleteForm(form.id)}
-                  className="px-3 sm:px-4 py-2 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors whitespace-nowrap ml-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                  className="px-3 sm:px-4 py-1.5 text-[13px] font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors whitespace-nowrap ml-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   삭제
                 </button>
