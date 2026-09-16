@@ -66,6 +66,11 @@ export default function StoreHubPage() {
       if (data && data.length > 0) {
         setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
       }
+      
+      const storedForms = localStorage.getItem('ssakdaform_custom_forms');
+      if (storedForms) {
+        setCustomForms(JSON.parse(storedForms));
+      }
     }
     loadAccounts();
   }, []);
