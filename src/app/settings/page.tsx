@@ -122,6 +122,20 @@ export default function SettingsPage() {
             </div>
 
             <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5">대표자명</label>
+              <div className="relative">
+                <User className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input 
+                  type="text" 
+                  value={storeInfo.ownerName || ''}
+                  onChange={(e) => handleStoreChange('ownerName', e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm transition-all"
+                  placeholder="예) 홍길동"
+                />
+              </div>
+            </div>
+
+            <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">주소</label>
               <div className="relative">
                 <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
