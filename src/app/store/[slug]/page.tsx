@@ -214,7 +214,7 @@ export default function StoreHubPage() {
         
         {/* Custom Forms Section (Placeholder for Demo) */}
         <div className="mt-12 pt-8 border-t border-gray-200">
-           <h3 className="text-sm font-bold text-gray-400 mb-4 px-2 uppercase tracking-wider">이벤트 & 기획전 (커스텀 폼 예시)</h3>
+           <h3 className="text-sm font-bold text-gray-400 mb-4 px-2 uppercase tracking-wider">매장 맞춤 신청서</h3>
            <Link href="/form/demo-12345" className="block group">
               <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center justify-between group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
