@@ -189,7 +189,7 @@ export default function FormBuilder() {
                 <label className="block text-[13px] font-medium text-gray-700 mb-1">상호명 (스토어 이름)</label>
                 <input 
                   type="text" 
-                  value={storeName}
+                  defaultValue={storeName}
                   onChange={(e) => setStoreName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                 />
@@ -198,7 +198,7 @@ export default function FormBuilder() {
                 <label className="block text-[13px] font-medium text-gray-700 mb-1">폼 제목 (신청서 이름)</label>
                 <input 
                   type="text" 
-                  value={formTitle}
+                  defaultValue={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
                 />
@@ -206,7 +206,7 @@ export default function FormBuilder() {
               <div>
                 <label className="block text-[13px] font-medium text-gray-700 mb-1">사장님 안내글 (고객에게 전달할 내용)</label>
                 <textarea 
-                  value={formDescription}
+                  defaultValue={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder="예: 주문 전 필독사항, 제작 기간 안내 등을 적어주세요."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y" 
