@@ -16,6 +16,7 @@ export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -39,6 +40,28 @@ export default function AdminHub() {
       });
     } else {
       alert('📱 아이폰(Safari) 또는 앱 내 브라우저에서는 하단의 공유(보내기) ⍗ 버튼을 누른 후 "홈 화면에 추가"를 직접 선택해주세요.');
+    }
+  };
+
+  
+  const downloadQrCode = async () => {
+    try {
+      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
+      const storeLink = `${currentOrigin}/store/demo`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(storeLink)}`;
+      
+      const response = await fetch(qrUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ssakdaform_qr.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('다운로드 중 오류가 발생했습니다.');
     }
   };
 
@@ -96,7 +119,7 @@ export default function AdminHub() {
                   {copied ? '복사완료' : '링크 복사'}
                 </button>
                 <button 
-                  onClick={() => alert('QR 코드 이미지 다운로드가 실행됩니다.\n(데모 버전 안내)')}
+                  onClick={() => setIsQrModalOpen(true)}
                   className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-gray-800 text-white rounded-xl hover:bg-gray-900 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px] whitespace-nowrap"
                 >
                   <QrCode className="w-4 h-4" />
