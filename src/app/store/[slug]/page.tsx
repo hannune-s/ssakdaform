@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp } from 'lucide-react';
+import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export default function StoreHubPage() {
@@ -54,6 +54,7 @@ export default function StoreHubPage() {
           phone: '010-1234-5678',
           hours: '09:00 ~ 18:00',
           closedDays: '일요일',
+          ownerName: '홍길동',
           paymentLink: ''
         });
       }
@@ -94,7 +95,7 @@ export default function StoreHubPage() {
 
       <div className="w-full max-w-md mx-auto px-4 mt-6 relative z-20 flex-1 pb-16">
         
-        {storeInfo && (storeInfo.name || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
+        {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
           <div className="mb-6">
             <button 
               onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
@@ -111,6 +112,13 @@ export default function StoreHubPage() {
                   <div className="flex gap-2">
                     <Store className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                     <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
+                  </div>
+                )}
+
+                {storeInfo.ownerName && (
+                  <div className="flex gap-2">
+                    <User className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                    <div><span className="font-semibold text-gray-900 mr-2">대표자:</span>{storeInfo.ownerName}</div>
                   </div>
                 )}
                 {storeInfo.address && (

@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
-  const [storeInfo, setStoreInfo] = useState<any>({ name: '', address: '', phone: '', hours: '', closedDays: '', paymentLink: '' });
+  const [storeInfo, setStoreInfo] = useState<any>({ name: '', ownerName: '', address: '', phone: '', hours: '', closedDays: '', paymentLink: '' });
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

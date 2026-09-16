@@ -3,7 +3,7 @@ import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
 
@@ -120,7 +120,7 @@ export default function PreviewPage() {
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
-          {storeInfo && (storeInfo.name || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
+          {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
             <div className="mb-6">
               <button 
                 onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
@@ -137,6 +137,13 @@ export default function PreviewPage() {
                     <div className="flex gap-2">
                       <Store className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                       <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
+                  </div>
+                )}
+
+                {storeInfo.ownerName && (
+                  <div className="flex gap-2">
+                    <User className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                    <div><span className="font-semibold text-gray-900 mr-2">대표자:</span>{storeInfo.ownerName}</div>
                   </div>
                 )}
                   {storeInfo.address && (
