@@ -19,6 +19,7 @@ export default function FormBuilder() {
   const [storeName, setStoreName] = useState('내 매장 이름');
   const [formTitle, setFormTitle] = useState('새로운 맞춤형 신청서');
   const [formDescription, setFormDescription] = useState('');
+  const [savedForms, setSavedForms] = useState<any[]>([]);
   const [fields, setFields] = useState<FormField[]>([
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
@@ -36,6 +37,10 @@ export default function FormBuilder() {
       } catch (e) {
         console.error("Draft parsing error", e);
       }
+    }
+    const storedForms = localStorage.getItem('ssakdaform_custom_forms');
+    if (storedForms) {
+      setSavedForms(JSON.parse(storedForms));
     }
     setIsLoaded(true);
   }, []);
@@ -124,6 +129,15 @@ export default function FormBuilder() {
     });
   };
 
+  
+  const handleDeleteForm = (id: string) => {
+    if (window.confirm('이 폼을 정말 삭제하시겠습니까? 고객 화면에서도 즉시 사라집니다.')) {
+      const updated = savedForms.filter(f => f.id !== id);
+      setSavedForms(updated);
+      localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(updated));
+    }
+  };
+
   const handleSave = () => {
     const formData = {
       id: `custom-${Date.now()}`,
@@ -144,6 +158,7 @@ export default function FormBuilder() {
     // We append the new form
     existingForms.push(formData);
     localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(existingForms));
+    setSavedForms(existingForms);
     
     alert('폼이 성공적으로 저장되었습니다!');
   };
@@ -300,8 +315,33 @@ export default function FormBuilder() {
                 </button>
               </div>
             )}
+                </div>
+
+      {savedForms.length > 0 && (
+        <div className="mt-10 bg-white p-6 rounded-2xl border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <h3 className="font-extrabold text-gray-900 mb-5 text-[17px] flex items-center gap-2">
+            <span className="w-2 h-6 bg-blue-600 rounded-full inline-block"></span>
+            저장된 맞춤형 폼 관리
+          </h3>
+          <div className="space-y-3">
+            {savedForms.map((form, idx) => (
+              <div key={form.id || idx} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all group">
+                <div>
+                  <h4 className="font-bold text-gray-800 text-[15px]">{form.formTitle}</h4>
+                  {form.formDescription && <p className="text-sm text-gray-500 mt-1 line-clamp-1">{form.formDescription}</p>}
+                </div>
+                <button 
+                  onClick={() => handleDeleteForm(form.id)}
+                  className="px-3 sm:px-4 py-2 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors whitespace-nowrap ml-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
           </div>
         </div>
+      )}
+      </div>
       </div>
     </div>
   );
