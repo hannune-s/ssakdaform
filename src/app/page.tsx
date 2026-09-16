@@ -328,11 +328,6 @@ export default function AdminHub() {
                 desc: '가게 기본 정보 및 무통장 입금 계좌 관리',
                 color: 'bg-purple-900',
                 onClick: () => setActiveTab('settings')
-              },
-              {
-                title: '고객 홍보 (링크 & QR)',
-                desc: '우리 매장 전용 링크 및 QR코드 다운로드',
-                color: 'bg-pink-500'
               }
             ].map((menu, idx) => (
               <div 
