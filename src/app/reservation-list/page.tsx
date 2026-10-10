@@ -47,10 +47,20 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
   };
 
   const toggleStatus = async (id: string, currentStatus: string) => {
+    if (currentStatus === '취소됨') return;
     const newStatus = currentStatus === '예약확정' ? '접수대기' : '예약확정';
     await supabase
       .from('ssakdaform_responses')
       .update({ status: newStatus })
+      .eq('id', id);
+    loadData();
+  };
+
+  const cancelStatus = async (id: string) => {
+    if (!window.confirm('정말 취소 처리하시겠습니까?')) return;
+    await supabase
+      .from('ssakdaform_responses')
+      .update({ status: '취소됨' })
       .eq('id', id);
     loadData();
   };
@@ -138,18 +148,27 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                         <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{resTime}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <button 
-                          onClick={() => toggleStatus(res.id, res.status)}
-                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
-                            isCompleted 
-                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
-                              : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
-                          }`}
-                          title="상태를 변경하시려면 클릭하세요"
-                        >
-                          {isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
-                          {isCompleted ? '예약확정' : '접수확인'}
-                        </button>
+                        <div className="flex flex-col gap-1.5 items-start">
+                          <button 
+                            onClick={() => toggleStatus(res.id, res.status)}
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
+                              res.status === '취소됨'
+                                ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                                : isCompleted 
+                                  ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
+                                  : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+                            }`}
+                            title={res.status === '취소됨' ? "취소된 내역입니다" : "상태를 변경하시려면 클릭하세요"}
+                          >
+                            {res.status === '취소됨' ? <X className="w-3 h-3 mr-1" /> : isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
+                            {res.status === '취소됨' ? '취소됨' : isCompleted ? '예약확정' : '접수대기'}
+                          </button>
+                          {res.status !== '취소됨' && (
+                            <button onClick={() => cancelStatus(res.id)} className="text-[11px] text-gray-400 hover:text-red-600 font-medium ml-1 transition-colors">
+                              취소하기
+                            </button>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right align-middle">
                         <button 
