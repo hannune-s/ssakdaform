@@ -152,8 +152,7 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
                         <div className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{depositorName}</div>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <div className="flex flex-col gap-1.5 items-start">
-                          <button 
+                        <button 
                             onClick={() => toggleStatus(res.id, res.status)}
                             className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
                               res.status === '취소됨'
@@ -167,20 +166,24 @@ export default function OrderList({ searchQuery = '' }: { searchQuery?: string }
                             {res.status === '취소됨' ? <X className="w-3 h-3 mr-1" /> : isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
                             {res.status === '취소됨' ? '취소됨' : isCompleted ? '발송완료' : '접수대기'}
                           </button>
-                          {res.status !== '취소됨' && (
-                            <button onClick={() => cancelStatus(res.id)} className="text-[11px] text-gray-400 hover:text-red-600 font-medium ml-1 transition-colors">
-                              취소하기
-                            </button>
-                          )}
-                        </div>
                       </td>
                       <td className="px-4 py-3 text-right align-middle">
-                        <button 
-                          onClick={() => openDetails(res)}
-                          className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
-                        >
-                          상세 내용
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          {res.status !== '취소됨' && (
+                            <button 
+                              onClick={() => cancelStatus(res.id)} 
+                              className="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg text-[12px] font-bold transition-all"
+                            >
+                              주문 취소
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => openDetails(res)}
+                            className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
+                          >
+                            상세 내용
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
