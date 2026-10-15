@@ -162,6 +162,7 @@ export default function CustomerFormPage() {
       setData({
         storeName: '내 매장 이름 (기본 설정)',
         formTitle: '간편한 매장 예약 신청',
+        formDescription: '원활한 매장 운영과 정성스러운 준비를 위해 예약 시간을 꼭 지켜주시기 바랍니다.\n부득이하게 방문이 어렵거나 일정이 변경될 경우, 노쇼(No-Show) 방지를 위해 반드시 매장으로 미리 연락 부탁드립니다.',
         fields: [
           { id: 1, type: 'text', label: '예약자 이름', placeholder: '이름을 입력하세요', required: true },
           { id: 2, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
@@ -194,7 +195,7 @@ export default function CustomerFormPage() {
       setData({
         storeName: '내 매장 이름 (기본 설정)',
         formTitle: '직원채용 간편이력서',
-        formDescription: '지원해주셔서 감사합니다. 아래 기본 인적사항과 희망 근무조건을 작성해 제출해주시면 확인 후 연락드리겠습니다.',
+        formDescription: '지원해주셔서 감사합니다. 작성해 제출해주시면 확인 후 연락드리겠습니다.\n• 사진은 꼭 증명사진이 아니어도 되며, 얼굴 확인이 가능한 편한 사진으로 첨부해주세요.\n• 보건증 등 증빙서류 첨부가 어려우신 경우, 추후 방문 시 종이서류로 직접 확인시켜 주셔도 됩니다.',
         fields: [
           { id: 1, type: 'photo', label: '사진', placeholder: '본인 확인용 사진을 첨부해주세요 (카메라 촬영 또는 앨범 선택)', required: false },
           { id: 2, type: 'text', label: '이름', placeholder: '지원자 성함을 입력하세요', required: true },

@@ -1,21 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, User, Lock, Phone, Store, MapPin, Briefcase, ChevronLeft } from 'lucide-react';
+import { Sparkles, User, Lock, Phone, Store, MapPin, Mail, Globe, ChevronLeft } from 'lucide-react';
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
     password: '',
     passwordConfirm: '',
     ownerName: '',
     phone: '',
+    storeId: '',
     storeName: '',
     address: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name === 'storeId') {
+      // 영문 소문자와 숫자만 허용
+      const sanitized = value.toLowerCase().replace(/[^a-z0-9]/g, '');
+      setFormData(prev => ({ ...prev, storeId: sanitized }));
+      return;
+    }
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -68,46 +76,63 @@ export default function SignUpPage() {
                       required
                       value={formData.username}
                       onChange={handleChange}
-                      className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
-                      placeholder="사용하실 아이디를 입력해주세요"
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      placeholder="사용하실 로그인 아이디를 입력해주세요"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">비밀번호 <span className="text-rose-500">*</span></label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        name="password"
-                        type="password"
-                        required
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
-                        placeholder="비밀번호"
-                      />
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">이메일 <span className="text-rose-500">*</span></label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
                     </div>
+                    <input
+                      name="email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      placeholder="example@email.com"
+                    />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">비밀번호 확인 <span className="text-rose-500">*</span></label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        name="passwordConfirm"
-                        type="password"
-                        required
-                        value={formData.passwordConfirm}
-                        onChange={handleChange}
-                        className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
-                        placeholder="비밀번호 한 번 더 입력"
-                      />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">비밀번호 <span className="text-rose-500">*</span></label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
                     </div>
+                    <input
+                      name="password"
+                      type="password"
+                      required
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      placeholder="비밀번호 (6자리 이상)"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">비밀번호 확인 <span className="text-rose-500">*</span></label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      name="passwordConfirm"
+                      type="password"
+                      required
+                      value={formData.passwordConfirm}
+                      onChange={handleChange}
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      placeholder="비밀번호 한 번 더 입력"
+                    />
                   </div>
                 </div>
               </div>
@@ -119,7 +144,7 @@ export default function SignUpPage() {
                 <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs">2</span>
                 대표자 정보
               </h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">이름 <span className="text-rose-500">*</span></label>
                   <div className="relative">
@@ -132,11 +157,12 @@ export default function SignUpPage() {
                       required
                       value={formData.ownerName}
                       onChange={handleChange}
-                      className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
                       placeholder="대표자 성함"
                     />
                   </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">연락처 <span className="text-rose-500">*</span></label>
                   <div className="relative">
@@ -149,7 +175,7 @@ export default function SignUpPage() {
                       required
                       value={formData.phone}
                       onChange={handleChange}
-                      className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
                       placeholder="010-0000-0000"
                     />
                   </div>
@@ -165,6 +191,29 @@ export default function SignUpPage() {
               </h3>
               <div className="space-y-4">
                 <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    매장 전용 영문 아이디 (스토어 주소용) <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Globe className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      name="storeId"
+                      type="text"
+                      required
+                      value={formData.storeId}
+                      onChange={handleChange}
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      placeholder="영문 소문자/숫자만 입력 (예: ssakdamart)"
+                    />
+                  </div>
+                  <p className="mt-1.5 text-xs text-indigo-600 font-medium pl-1">
+                    * 내 매장 전용 링크 및 QR코드 주소로 사용됩니다. (예: /store/{formData.storeId || 'ssakdamart'})
+                  </p>
+                </div>
+
+                <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">상호명 (소속/단체명) <span className="text-rose-500">*</span></label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -176,7 +225,7 @@ export default function SignUpPage() {
                       required
                       value={formData.storeName}
                       onChange={handleChange}
-                      className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
                       placeholder="매장 이름 또는 소속 단체명"
                     />
                   </div>
@@ -194,7 +243,7 @@ export default function SignUpPage() {
                       required
                       value={formData.address}
                       onChange={handleChange}
-                      className="appearance-none block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
                       placeholder="매장 주소를 입력해주세요"
                     />
                   </div>

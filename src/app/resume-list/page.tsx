@@ -72,6 +72,15 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
     loadData();
   };
 
+  const deleteItem = async (id: string) => {
+    if (!window.confirm('이 내역을 목록에서 완전히 삭제하시겠습니까?\n(삭제 후에는 복구할 수 없습니다)')) return;
+    await supabase
+      .from('ssakdaform_responses')
+      .delete()
+      .eq('id', id);
+    loadData();
+  };
+
   const openDetails = (res: any) => {
     setSelectedResponse(res);
   };
@@ -185,20 +194,26 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                         </button>
                       </td>
                       <td className="px-4 py-3 text-right align-middle">
-                        <div className="flex items-center justify-end gap-2">
-                          {res.status !== '취소됨' && (
-                            <button 
-                              onClick={() => cancelStatus(res.id)} 
-                              className="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg text-[12px] font-bold transition-all"
-                            >
-                              지원 취소
-                            </button>
-                          )}
+                        <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                           <button 
                             onClick={() => openDetails(res)}
                             className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shadow-sm"
                           >
                             상세 내용
+                          </button>
+                          {res.status !== '취소됨' && (
+                            <button 
+                              onClick={() => cancelStatus(res.id)} 
+                              className="inline-flex items-center px-2.5 py-1.5 bg-amber-50 text-amber-700 border border-amber-200/80 hover:bg-amber-100 rounded-lg text-[12px] font-bold transition-all"
+                            >
+                              지원 취소
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => deleteItem(res.id)} 
+                            className="inline-flex items-center px-2.5 py-1.5 bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 hover:text-red-700 rounded-lg text-[12px] font-bold transition-all"
+                          >
+                            삭제
                           </button>
                         </div>
                       </td>
