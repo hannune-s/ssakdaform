@@ -63,16 +63,21 @@ export default function StoreHubPage() {
         };
       }
 
-      // 2. 같은 브라우저에서 설정한 추가 상세정보(영업시간, 휴무일 등) 병합
+      // 2. 같은 브라우저에서 설정한 추가 상세정보(영업시간, 휴무일 등) 병합 (DB의 상호명/기본정보 우선)
       const savedStoreInfo = localStorage.getItem(`ssakdaform_store_details_${slug}`) || (slug === getActiveStoreId() ? localStorage.getItem('ssakdaform_store_details') : null);
       if (savedStoreInfo) {
         try {
           const parsed = JSON.parse(savedStoreInfo);
           resolvedStore = {
-            ...(resolvedStore || {}),
             ...parsed,
-            name: parsed.name || parsed.storeName || resolvedStore?.name || '',
-            phone: parsed.phone || parsed.contact || resolvedStore?.phone || ''
+            ...(resolvedStore || {}),
+            name: resolvedStore?.name || parsed.name || parsed.storeName || '',
+            ownerName: resolvedStore?.ownerName || parsed.ownerName || '',
+            address: resolvedStore?.address || parsed.address || '',
+            phone: resolvedStore?.phone || parsed.phone || parsed.contact || '',
+            hours: parsed.hours || resolvedStore?.hours || '',
+            closedDays: parsed.closedDays || resolvedStore?.closedDays || '',
+            paymentLink: parsed.paymentLink || resolvedStore?.paymentLink || ''
           };
         } catch (e) {}
       }
@@ -276,7 +281,10 @@ export default function StoreHubPage() {
         </div>
 
         <div className="mt-12 text-center text-sm text-stone-400 font-medium">
-          Powered by <span className="text-indigo-600 font-semibold">싹다폼</span>
+          Powered by{' '}
+          <Link href="/landing" className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-colors">
+            싹다폼
+          </Link>
         </div>
       </div>
     </div>

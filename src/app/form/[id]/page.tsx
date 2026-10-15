@@ -146,10 +146,15 @@ export default function CustomerFormPage() {
         try {
           const parsed = JSON.parse(savedStoreInfo);
           resolvedInfo = {
-            ...(resolvedInfo || {}),
             ...parsed,
-            name: parsed.name || parsed.storeName || resolvedInfo?.name || '',
-            phone: parsed.phone || parsed.contact || resolvedInfo?.phone || ''
+            ...(resolvedInfo || {}),
+            name: resolvedInfo?.name || parsed.name || parsed.storeName || '',
+            ownerName: resolvedInfo?.ownerName || parsed.ownerName || '',
+            address: resolvedInfo?.address || parsed.address || '',
+            phone: resolvedInfo?.phone || parsed.phone || parsed.contact || '',
+            hours: parsed.hours || resolvedInfo?.hours || '',
+            closedDays: parsed.closedDays || resolvedInfo?.closedDays || '',
+            paymentLink: parsed.paymentLink || resolvedInfo?.paymentLink || ''
           };
         } catch (e) {}
       }
@@ -763,7 +768,10 @@ export default function CustomerFormPage() {
       </div>
       
       <div className="mt-8 text-center text-sm text-stone-400 font-medium">
-        Powered by <span className="text-indigo-600 font-semibold">싹다폼</span>
+        Powered by{' '}
+        <a href="/landing" className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-colors">
+          싹다폼
+        </a>
       </div>
 
       {/* 카카오 우편번호 검색 모달 */}
