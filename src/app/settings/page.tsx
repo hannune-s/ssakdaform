@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Building, CreditCard, User, Store, MapPin, Phone, Clock, CalendarX, Link as LinkIcon } from 'lucide-react';
+import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getActiveStoreId, getLoggedInStore, setLoggedInStore } from '@/lib/storeSession';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
@@ -12,16 +13,61 @@ export default function SettingsPage() {
 
   useEffect(() => {
     async function loadData() {
-      // Load Store Info from localStorage
-      const savedInfo = localStorage.getItem('ssakdaform_store_details');
-      if (savedInfo) {
-        setStoreInfo(JSON.parse(savedInfo));
+      const activeStoreId = getActiveStoreId();
+      const loggedIn = getLoggedInStore();
+
+      let initialStore: any = {
+        name: loggedIn?.store_name || '',
+        ownerName: loggedIn?.owner_name || '',
+        address: loggedIn?.address || '',
+        phone: loggedIn?.phone || '',
+        hours: '',
+        closedDays: '',
+        paymentLink: ''
+      };
+
+      // DB에서 최신 매장 정보 로드
+      const { data: storeRow } = await supabase
+        .from('ssakdaform_stores')
+        .select('*')
+        .eq('store_id', activeStoreId)
+        .maybeSingle();
+
+      if (storeRow) {
+        initialStore = {
+          ...initialStore,
+          name: storeRow.store_name || initialStore.name,
+          ownerName: storeRow.owner_name || initialStore.ownerName,
+          address: storeRow.address || initialStore.address,
+          phone: storeRow.phone || initialStore.phone
+        };
       }
 
-      // Load Accounts from Supabase
+      // 로컬에 저장된 영업시간/휴무일 등 부가 정보 병합
+      const savedInfo = localStorage.getItem(`ssakdaform_store_details_${activeStoreId}`) || localStorage.getItem('ssakdaform_store_details');
+      if (savedInfo) {
+        try {
+          const parsed = JSON.parse(savedInfo);
+          initialStore = {
+            ...initialStore,
+            hours: parsed.hours || '',
+            closedDays: parsed.closedDays || '',
+            paymentLink: parsed.paymentLink || '',
+            name: initialStore.name || parsed.name || parsed.storeName || '',
+            ownerName: initialStore.ownerName || parsed.ownerName || '',
+            address: initialStore.address || parsed.address || '',
+            phone: initialStore.phone || parsed.phone || parsed.contact || ''
+          };
+        } catch (e) {}
+      }
+
+      setStoreInfo(initialStore);
+
+      // 현재 로그인된 매장(store_id)의 계좌 목록만 불러오기
       const { data } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
+        .eq('store_id', activeStoreId)
         .order('created_at', { ascending: true });
       
       if (data && data.length > 0) {
@@ -57,25 +103,57 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     setIsSaved(false);
+    const activeStoreId = getActiveStoreId();
+    const loggedIn = getLoggedInStore();
     
-    // Save Store Info to localStorage
+    // 로컬 스토리지 저장 (매장별 키 + 기본 키)
+    localStorage.setItem(`ssakdaform_store_details_${activeStoreId}`, JSON.stringify(storeInfo));
     localStorage.setItem('ssakdaform_store_details', JSON.stringify(storeInfo));
 
     const validAccounts = accounts.filter(acc => acc.bank.trim() !== '' || acc.accountNumber.trim() !== '');
     
     try {
-      // Delete existing
-      const { error: delError } = await supabase.from('ssakdaform_store_accounts').delete().not('id', 'is', null);
+      // 1. ssakdaform_stores 테이블의 매장 기본 정보 업데이트
+      const { data: updatedStore } = await supabase
+        .from('ssakdaform_stores')
+        .update({
+          store_name: storeInfo.name,
+          owner_name: storeInfo.ownerName,
+          address: storeInfo.address,
+          phone: storeInfo.phone
+        })
+        .eq('store_id', activeStoreId)
+        .select('*')
+        .maybeSingle();
+
+      if (updatedStore) {
+        setLoggedInStore(updatedStore);
+      } else if (loggedIn) {
+        setLoggedInStore({
+          ...loggedIn,
+          store_name: storeInfo.name,
+          owner_name: storeInfo.ownerName,
+          address: storeInfo.address,
+          phone: storeInfo.phone
+        });
+      }
+
+      // 2. 현재 매장(store_id)의 기존 계좌만 삭제 후 재등록
+      const { error: delError } = await supabase
+        .from('ssakdaform_store_accounts')
+        .delete()
+        .eq('store_id', activeStoreId);
+
       if (delError) {
         console.error('Delete Error:', delError);
         alert('삭제 오류: ' + delError.message);
         return;
       }
       
-      // Insert new
       if (validAccounts.length > 0) {
         const { error: insError } = await supabase.from('ssakdaform_store_accounts').insert(
           validAccounts.map(acc => ({
+            store_id: activeStoreId,
             bank: acc.bank,
             account_number: acc.accountNumber,
             holder: acc.holder
@@ -259,8 +337,6 @@ export default function SettingsPage() {
               </div>
             ))}
           </div>
-          
-          
         </div>
         
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 import { Package, Calendar, ShoppingBag, FileText, UserCheck, Bell, BarChart3, ChevronRight } from 'lucide-react';
 
@@ -11,6 +12,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
 
   useEffect(() => {
     async function fetchCounts() {
+      const storeId = getEffectiveAdminStoreId();
       // Get today's start and end in local time
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -23,6 +25,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
       const { data, error } = await supabase
         .from('ssakdaform_responses')
         .select('form_id')
+        .eq('store_id', storeId)
         .gte('submitted_at', startOfDay)
         .lt('submitted_at', endOfDay);
       
@@ -42,6 +45,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
       const { data: recentData } = await supabase
         .from('ssakdaform_responses')
         .select('*')
+        .eq('store_id', storeId)
         .order('submitted_at', { ascending: false })
         .limit(5);
 

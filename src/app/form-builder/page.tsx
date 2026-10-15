@@ -2,7 +2,9 @@
 import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useState, useEffect } from 'react';
-import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle } from 'lucide-react';
+import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle, ExternalLink } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { getActiveStoreId, getLoggedInStore } from '@/lib/storeSession';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'time' | 'textarea' | 'checkbox' | 'address';
 
@@ -27,9 +29,29 @@ export default function FormBuilder() {
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
 
-  // 로컬 스토리지에서 자동 저장된 초안 및 저장된 폼 목록 불러오기
+  const syncCustomFormsToDb = async (forms: any[]) => {
+    const activeStoreId = getActiveStoreId();
+    localStorage.setItem(`ssakdaform_custom_forms_${activeStoreId}`, JSON.stringify(forms));
+    localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(forms));
+    try {
+      await supabase
+        .from('ssakdaform_stores')
+        .update({ custom_forms: forms })
+        .eq('store_id', activeStoreId);
+    } catch (e) {
+      console.error('Failed to sync custom forms to DB', e);
+    }
+  };
+
+  // 로컬 스토리지 및 DB에서 초안 및 저장된 폼 목록 불러오기
   useEffect(() => {
-    const draft = localStorage.getItem('ssakdaform_draft');
+    const activeStoreId = getActiveStoreId();
+    const loggedIn = getLoggedInStore();
+    if (loggedIn?.store_name) {
+      setStoreName(loggedIn.store_name);
+    }
+
+    const draft = localStorage.getItem(`ssakdaform_draft_${activeStoreId}`) || localStorage.getItem('ssakdaform_draft');
     if (draft) {
       try {
         const parsed = JSON.parse(draft);
@@ -41,26 +63,47 @@ export default function FormBuilder() {
         console.error("Draft parsing error", e);
       }
     }
-    const storedForms = localStorage.getItem('ssakdaform_custom_forms');
+
+    const storedForms = localStorage.getItem(`ssakdaform_custom_forms_${activeStoreId}`) || localStorage.getItem('ssakdaform_custom_forms');
     if (storedForms) {
       try {
         setSavedForms(JSON.parse(storedForms));
-      } catch (e) {
-        console.error("Saved forms parsing error", e);
-      }
+      } catch (e) {}
     }
+
+    supabase
+      .from('ssakdaform_stores')
+      .select('store_name, custom_forms')
+      .eq('store_id', activeStoreId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          if (data.store_name && (!draft || storeName === '내 매장 이름')) {
+            setStoreName(data.store_name);
+          }
+          if (Array.isArray(data.custom_forms) && data.custom_forms.length > 0) {
+            setSavedForms(data.custom_forms);
+            localStorage.setItem(`ssakdaform_custom_forms_${activeStoreId}`, JSON.stringify(data.custom_forms));
+            localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(data.custom_forms));
+          }
+        }
+      });
+
     setIsLoaded(true);
   }, []);
 
   // 값이 변경될 때마다 로컬 스토리지에 자동 저장 (새로고침 방지)
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('ssakdaform_draft', JSON.stringify({
+      const activeStoreId = getActiveStoreId();
+      const draftStr = JSON.stringify({
         storeName,
         formTitle,
         formDescription,
         fields
-      }));
+      });
+      localStorage.setItem(`ssakdaform_draft_${activeStoreId}`, draftStr);
+      localStorage.setItem('ssakdaform_draft', draftStr);
     }
   }, [storeName, formTitle, formDescription, fields, isLoaded]);
 
@@ -122,8 +165,9 @@ export default function FormBuilder() {
 
   const handleReset = () => {
     if (window.confirm('작성 중인 폼을 정말 초기화하시겠습니까? (모든 항목이 기본값으로 초기화됩니다)')) {
+      const loggedIn = getLoggedInStore();
       setEditingFormId(null);
-      setStoreName('내 매장 이름');
+      setStoreName(loggedIn?.store_name || '내 매장 이름');
       setFormTitle('새로운 맞춤형 신청서');
       setFormDescription('');
       setFields([{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]);
@@ -132,8 +176,9 @@ export default function FormBuilder() {
   };
 
   const handleCancelEdit = () => {
+    const loggedIn = getLoggedInStore();
     setEditingFormId(null);
-    setStoreName('내 매장 이름');
+    setStoreName(loggedIn?.store_name || '내 매장 이름');
     setFormTitle('새로운 맞춤형 신청서');
     setFormDescription('');
     setFields([{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]);
@@ -141,8 +186,9 @@ export default function FormBuilder() {
   };
 
   const handleCopyLink = () => {
+    const activeStoreId = getActiveStoreId();
     if (editingFormId) {
-      const editLink = `${window.location.origin}/form/${editingFormId}`;
+      const editLink = `${window.location.origin}/form/${editingFormId}?store=${encodeURIComponent(activeStoreId)}`;
       navigator.clipboard.writeText(editLink).then(() => {
         alert(`현재 수정 중인 폼의 고객용 링크가 복사되었습니다!\n\n${editLink}`);
       });
@@ -152,7 +198,8 @@ export default function FormBuilder() {
   };
 
   const handleCopySavedFormLink = (form: any) => {
-    const link = `${window.location.origin}/form/${form.id}`;
+    const activeStoreId = getActiveStoreId();
+    const link = `${window.location.origin}/form/${form.id}?store=${encodeURIComponent(activeStoreId)}`;
     navigator.clipboard.writeText(link).then(() => {
       setCopiedFormId(form.id);
       setTimeout(() => setCopiedFormId(null), 2000);
@@ -174,25 +221,19 @@ export default function FormBuilder() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeleteForm = (id: string) => {
+  const handleDeleteForm = async (id: string) => {
     if (window.confirm('이 폼을 정말 삭제하시겠습니까? 삭제하면 해당 링크로 더 이상 접속할 수 없습니다.')) {
       const updated = savedForms.filter(f => f.id !== id);
       setSavedForms(updated);
-      localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(updated));
+      await syncCustomFormsToDb(updated);
       if (editingFormId === id) {
         handleCancelEdit();
       }
     }
   };
 
-  const handleSave = () => {
-    let existingForms: any[] = [];
-    try {
-      const stored = localStorage.getItem('ssakdaform_custom_forms');
-      if (stored) {
-        existingForms = JSON.parse(stored);
-      }
-    } catch (e) {}
+  const handleSave = async () => {
+    const existingForms = [...savedForms];
 
     if (editingFormId) {
       // 기존 폼 수정 덮어쓰기 (링크 ID 유지)
@@ -208,8 +249,8 @@ export default function FormBuilder() {
         }
         return f;
       });
-      localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(updatedForms));
       setSavedForms(updatedForms);
+      await syncCustomFormsToDb(updatedForms);
       alert('폼 수정사항이 성공적으로 저장되었습니다!');
     } else {
       // 새 폼 추가
@@ -220,9 +261,9 @@ export default function FormBuilder() {
         formDescription,
         fields
       };
-      existingForms.push(newFormData);
-      localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(existingForms));
-      setSavedForms(existingForms);
+      const updatedForms = [...existingForms, newFormData];
+      setSavedForms(updatedForms);
+      await syncCustomFormsToDb(updatedForms);
       alert('새로운 맞춤형 폼이 저장되었습니다!\n아래 [저장된 맞춤형 폼 관리] 목록에서 링크를 복사해 고객에게 전달해 보세요.');
     }
   };
@@ -262,16 +303,7 @@ export default function FormBuilder() {
         <div className="lg:col-span-1 space-y-4">
           <div className="bg-indigo-50/50 p-4 sm:p-5 rounded-xl border border-indigo-100 shadow-sm">
             <h3 className="font-semibold text-[15px] text-indigo-900 mb-3 border-b border-indigo-100 pb-2">기본 정보 설정</h3>
-            <div className="space-y-2">
-              <div>
-                <label className="block text-[13px] font-medium text-gray-700 mb-1">상호명 (스토어 이름)</label>
-                <input 
-                  type="text" 
-                  defaultValue={storeName}
-                  onChange={(e) => setStoreName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white" 
-                />
-              </div>
+            <div className="space-y-3">
               <div>
                 <label className="block text-[13px] font-medium text-gray-700 mb-1">폼 제목 (신청서 이름)</label>
                 <input 
@@ -288,7 +320,7 @@ export default function FormBuilder() {
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder="예: 주문 전 필독사항, 제작 기간 안내 등을 적어주세요."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y bg-white" 
-                  rows={3}
+                  rows={4}
                 />
               </div>
             </div>
@@ -401,7 +433,7 @@ export default function FormBuilder() {
                   저장된 맞춤형 폼 관리
                 </h3>
                 <p className="text-[12.5px] text-gray-500 mt-1">
-                  각 폼의 <strong>[링크 복사]</strong> 버튼을 눌러 원하는 고객에게만 신청서를 보내실 수 있습니다.
+                  각 폼의 <strong>[바로가기]</strong>로 화면을 확인하거나, <strong>[링크 복사]</strong>를 눌러 원하는 고객에게만 신청서를 보내실 수 있습니다.
                 </p>
               </div>
               <div className="space-y-2.5">
@@ -433,7 +465,16 @@ export default function FormBuilder() {
                         )}
                       </div>
                       
-                      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-end sm:self-center">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0 self-end sm:self-center">
+                        <a
+                          href={`/form/${form.id}?store=${encodeURIComponent(getActiveStoreId())}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-lg transition-colors whitespace-nowrap"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          바로가기
+                        </a>
                         <button 
                           onClick={() => handleCopySavedFormLink(form)}
                           className={`inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold rounded-lg transition-colors whitespace-nowrap border ${

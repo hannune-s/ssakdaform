@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Package, ShoppingCart, FileText, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 export default function CustomList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
@@ -33,6 +34,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
     const { data, error } = await supabase
       .from('ssakdaform_responses')
       .select('*')
+      .eq('store_id', getEffectiveAdminStoreId())
       .not('form_id', 'in', '("delivery-preset","reservation-preset","order-preset","resume-preset")')
       .order('submitted_at', { ascending: false });
 

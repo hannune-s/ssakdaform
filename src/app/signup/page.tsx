@@ -2,8 +2,12 @@
 
 import { useState } from 'react';
 import { Sparkles, User, Lock, Phone, Store, MapPin, Mail, Globe, ChevronLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { setLoggedInStore } from '@/lib/storeSession';
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -15,6 +19,7 @@ export default function SignUpPage() {
     storeName: '',
     address: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -27,14 +32,93 @@ export default function SignUpPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const cleanUsername = formData.username.trim();
+    const cleanStoreId = formData.storeId.trim().toLowerCase();
+
+    if (!cleanUsername) {
+      alert('사용하실 로그인 아이디를 입력해주세요.');
+      return;
+    }
+    if (formData.password.length < 4) {
+      alert('비밀번호는 최소 4자리 이상 입력해주세요.');
+      return;
+    }
     if (formData.password !== formData.passwordConfirm) {
       alert('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
       return;
     }
-    // TODO: 실제 회원가입 API 연동
-    alert('🎉 회원가입 UI 테스트가 완료되었습니다!\n(현재는 디자인만 구현된 상태입니다.)');
+    if (!cleanStoreId || cleanStoreId.length < 2) {
+      alert('매장 전용 영문 아이디(스토어 주소용)를 영문/숫자 2자 이상 입력해주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // 1. 로그인 아이디(username) 중복 체크
+      const { data: existingUser } = await supabase
+        .from('ssakdaform_stores')
+        .select('id')
+        .eq('username', cleanUsername)
+        .maybeSingle();
+
+      if (existingUser) {
+        alert('이미 사용 중인 로그인 아이디입니다. 다른 아이디를 입력해주세요.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 2. 매장 전용 영문 아이디(store_id) 중복 체크
+      const { data: existingStore } = await supabase
+        .from('ssakdaform_stores')
+        .select('id')
+        .eq('store_id', cleanStoreId)
+        .maybeSingle();
+
+      if (existingStore) {
+        alert('이미 사용 중인 매장 전용 영문 아이디(스토어 주소)입니다. 다른 영문 아이디를 입력해주세요.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 3. ssakdaform_stores 테이블에 신규 매장/계정 저장
+      const newStorePayload = {
+        username: cleanUsername,
+        email: formData.email.trim(),
+        password: formData.password,
+        owner_name: formData.ownerName.trim(),
+        phone: formData.phone.trim(),
+        store_id: cleanStoreId,
+        store_name: formData.storeName.trim(),
+        address: formData.address.trim(),
+        custom_forms: []
+      };
+
+      const { data: insertedStore, error: insertError } = await supabase
+        .from('ssakdaform_stores')
+        .insert([newStorePayload])
+        .select('*')
+        .single();
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
+
+      // 4. 가입 완료 후 즉시 로그인 세션 저장 및 어드민 홈 이동
+      setLoggedInStore(insertedStore || newStorePayload);
+
+      alert(
+        `🎉 회원가입이 완료되었습니다!\n\n[${formData.storeName}] 전용 링크(/store/${cleanStoreId})가 생성되었습니다.\n어드민 대시보드로 이동합니다.`
+      );
+      router.push('/');
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      alert('회원가입 처리 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -254,9 +338,10 @@ export default function SignUpPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-200 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={isSubmitting}
+                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-200 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-60"
               >
-                가입 완료하고 시작하기
+                {isSubmitting ? '가입 처리 중...' : '가입 완료하고 시작하기'}
               </button>
             </div>
             

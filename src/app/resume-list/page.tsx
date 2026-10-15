@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { UserCheck, X, Printer, CheckCircle, User, Download, FileText } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 export default function ResumeList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
@@ -40,6 +41,7 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
     const { data, error } = await supabase
       .from('ssakdaform_responses')
       .select('*')
+      .eq('store_id', getEffectiveAdminStoreId())
       .eq('form_id', 'resume-preset')
       .order('submitted_at', { ascending: false });
 

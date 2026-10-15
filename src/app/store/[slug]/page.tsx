@@ -5,14 +5,11 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Package, Calendar, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, UserCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getActiveStoreId } from '@/lib/storeSession';
 
 export default function StoreHubPage() {
   const params = useParams();
-  const slug = params?.slug as string;
-
-  // 실제로는 slug를 이용해 DB에서 매장 정보를 불러옵니다.
-  // 데모를 위해 임시로 slug를 파싱하여 매장명을 생성합니다.
-  const storeName = slug === 'demo' ? '싹다 데모 매장' : `${decodeURIComponent(slug || '우리')} 매장`;
+  const slug = (params?.slug as string) || 'demo';
 
   const standardForms = [
     {
@@ -37,37 +34,83 @@ export default function StoreHubPage() {
       color: 'bg-orange-50 border-orange-100 group-hover:border-orange-300',
     }
   ];
+
   const [accounts, setAccounts] = useState<any[]>([]);
   const [storeInfo, setStoreInfo] = useState<any>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadAccounts() {
-      const savedStoreInfo = localStorage.getItem('ssakdaform_store_details');
-      if (savedStoreInfo) { 
-        setStoreInfo(JSON.parse(savedStoreInfo)); 
-      } else {
-        setStoreInfo({
-          name: '싹다폼 (데모 상호명)',
-          address: '서울시 서초구 (데모 주소)',
-          phone: '010-1234-5678',
-          hours: '09:00 ~ 18:00',
-          closedDays: '일요일',
-          ownerName: '홍길동',
+    async function loadStoreAndAccounts() {
+      let resolvedStore: any = null;
+
+      // 1. Supabase ssakdaform_stores 테이블에서 해당 slug(store_id)의 매장 정보 조회
+      const { data: storeRow } = await supabase
+        .from('ssakdaform_stores')
+        .select('*')
+        .eq('store_id', slug)
+        .maybeSingle();
+
+      if (storeRow) {
+        resolvedStore = {
+          name: storeRow.store_name,
+          ownerName: storeRow.owner_name,
+          address: storeRow.address,
+          phone: storeRow.phone,
+          hours: '',
+          closedDays: '',
           paymentLink: ''
-        });
+        };
       }
-      const { data } = await supabase
+
+      // 2. 같은 브라우저에서 설정한 추가 상세정보(영업시간, 휴무일 등) 병합
+      const savedStoreInfo = localStorage.getItem(`ssakdaform_store_details_${slug}`) || (slug === getActiveStoreId() ? localStorage.getItem('ssakdaform_store_details') : null);
+      if (savedStoreInfo) {
+        try {
+          const parsed = JSON.parse(savedStoreInfo);
+          resolvedStore = {
+            ...(resolvedStore || {}),
+            ...parsed,
+            name: parsed.name || parsed.storeName || resolvedStore?.name || '',
+            phone: parsed.phone || parsed.contact || resolvedStore?.phone || ''
+          };
+        } catch (e) {}
+      }
+
+      if (!resolvedStore) {
+        resolvedStore = {
+          name: slug === 'demo' ? '싹다 데모 매장' : `${decodeURIComponent(slug)} 매장`,
+          address: slug === 'demo' ? '서울시 서초구 (데모 주소)' : '',
+          phone: slug === 'demo' ? '010-1234-5678' : '',
+          hours: slug === 'demo' ? '09:00 ~ 18:00' : '',
+          closedDays: slug === 'demo' ? '일요일' : '',
+          ownerName: slug === 'demo' ? '홍길동' : '',
+          paymentLink: ''
+        };
+      }
+
+      setStoreInfo(resolvedStore);
+
+      // 3. 해당 매장(store_id)의 입금 계좌 목록 조회
+      const { data: accData } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
+        .eq('store_id', slug)
         .order('created_at', { ascending: true });
-      if (data && data.length > 0) {
-        setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
+
+      if (accData && accData.length > 0) {
+        setAccounts(accData.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
+      } else {
+        setAccounts([]);
       }
     }
-    loadAccounts();
-  }, []);
+    loadStoreAndAccounts();
+  }, [slug]);
+
+  const displayStoreName =
+    storeInfo?.name ||
+    storeInfo?.storeName ||
+    (slug === 'demo' ? '싹다 데모 매장' : `${decodeURIComponent(slug || '우리')} 매장`);
 
   const handleCopyAccount = (accountNumber: string) => {
     navigator.clipboard.writeText(accountNumber).then(() => {
@@ -88,7 +131,9 @@ export default function StoreHubPage() {
           <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mx-auto mb-5 border-4 border-indigo-400/20">
             <Store className="w-10 h-10 text-indigo-700" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md">{storeName}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md">
+            {displayStoreName}
+          </h1>
           <p className="text-indigo-100 font-medium tracking-wide">원하시는 서비스를 선택해주세요</p>
         </div>
       </div>
@@ -150,7 +195,7 @@ export default function StoreHubPage() {
           </div>
         )}
 
-        {/* 계좌 안내 영역 (전체 배경색 적용, 크기 축소) */}
+        {/* 계좌 안내 영역 */}
         {(accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
           <div className="mb-6 bg-[#F0F4FF] border border-indigo-200 rounded-2xl px-4 py-3.5">
             <div className="flex items-center gap-2 mb-2">
@@ -196,7 +241,7 @@ export default function StoreHubPage() {
         {/* 기본 고객 서비스 폼 3종 */}
         <div className="space-y-4">
           {standardForms.map((form) => (
-            <Link href={`/form/${form.id}`} key={form.id} className="block group">
+            <Link href={`/form/${form.id}?store=${encodeURIComponent(slug)}`} key={form.id} className="block group">
               <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 <div className={`relative z-10 p-3 rounded-xl ${form.color} transition-colors border shadow-sm`}>
@@ -215,7 +260,7 @@ export default function StoreHubPage() {
         {/* 기본 폼과 분리된 직원채용 간편이력서 영역 */}
         <div className="mt-10 pt-7 border-t border-gray-200/90">
           <h3 className="text-xs font-bold text-gray-400 mb-3 px-1 uppercase tracking-wider">직원 채용 안내</h3>
-          <Link href="/form/resume-preset" className="block group">
+          <Link href={`/form/resume-preset?store=${encodeURIComponent(slug)}`} className="block group">
             <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-emerald-200/80 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-emerald-300 group-hover:border-b-emerald-400 cursor-pointer overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/0 via-emerald-50/0 to-emerald-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               <div className="relative z-10 p-3 rounded-xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-300 transition-colors shadow-sm">

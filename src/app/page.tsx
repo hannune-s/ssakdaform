@@ -12,23 +12,33 @@ import SettingsPage from './settings/page';
 import SubscriptionPage from './subscription/page';
 import AccountPage from './account/page';
 import DashboardWidget from './components/DashboardWidget';
+import { getActiveStoreId, getLoggedInStore, clearLoggedInStore } from '@/lib/storeSession';
 
 export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [storeId, setStoreId] = useState('demo');
+  const [storeName, setStoreName] = useState('');
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
+    const activeId = getActiveStoreId();
+    const store = getLoggedInStore();
+    setStoreId(activeId);
+    if (store?.store_name) {
+      setStoreName(store.store_name);
+    }
+
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+  }, [activeTab]);
 
   const handleInstallApp = () => {
     if (deferredPrompt) {
@@ -46,7 +56,7 @@ export default function AdminHub() {
   const downloadQrCode = async () => {
     try {
       const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
-      const storeLink = `${currentOrigin}/store/demo`;
+      const storeLink = `${currentOrigin}/store/${storeId}`;
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(storeLink)}`;
       
       const response = await fetch(qrUrl);
@@ -54,7 +64,7 @@ export default function AdminHub() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'ssakdaform_qr.png';
+      link.download = `ssakdaform_${storeId}_qr.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -67,11 +77,18 @@ export default function AdminHub() {
   const handleCopy = async () => {
     try {
       const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
-      await navigator.clipboard.writeText(`${currentOrigin}/store/demo`);
+      await navigator.clipboard.writeText(`${currentOrigin}/store/${storeId}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      clearLoggedInStore();
+      window.location.href = '/login';
     }
   };
 
@@ -92,7 +109,9 @@ export default function AdminHub() {
         <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight mb-2">
           싹다폼
         </h1>
-        <p className="text-gray-500 font-medium">복잡한 접수와 주문, 싹다폼으로 싹 다.</p>
+        <p className="text-gray-500 font-medium">
+          {storeName ? `${storeName} 사장님, 환영합니다!` : '복잡한 접수와 주문, 싹다폼으로 싹 다.'}
+        </p>
       </div>
 
 
@@ -102,7 +121,12 @@ export default function AdminHub() {
             
             {/* 텍스트 영역 */}
             <div className="flex-1">
-              <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 mb-1.5 tracking-tight">우리 매장 통합 링크</h2>
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 tracking-tight">우리 매장 통합 링크</h2>
+                <span className="text-[11px] sm:text-[12px] font-bold bg-indigo-600/10 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                  /store/{storeId}
+                </span>
+              </div>
               <p className="text-indigo-900/70 text-[12.5px] sm:text-[14px] font-medium leading-snug tracking-tighter whitespace-nowrap">
                 인스타, 카톡 등에 링크를 공유해 고객에게 안내해 보세요.
               </p>
@@ -125,7 +149,7 @@ export default function AdminHub() {
                   QR 다운로드
                 </button>
                 <a 
-                  href="/store/demo"
+                  href={`/store/${storeId}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-white border border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-50 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px] whitespace-nowrap"
@@ -363,6 +387,7 @@ export default function AdminHub() {
             ].map((menu, idx) => (
               <div 
                 key={idx}
+                onClick={menu.type === 'logout' ? handleLogout : undefined}
                 className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors group"
               >
                 <div className="flex items-center gap-2">
@@ -398,11 +423,11 @@ export default function AdminHub() {
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 text-center">
               <h3 className="text-xl font-bold text-gray-900 mb-2">우리 매장 QR 코드</h3>
-              <p className="text-sm text-gray-500 mb-6">고객이 스캔하면 매장 통합 링크로 연결됩니다.</p>
+              <p className="text-sm text-gray-500 mb-6">고객이 스캔하면 매장 통합 링크(/store/{storeId})로 연결됩니다.</p>
               
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 flex justify-center">
                 <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app')}/store/demo`} 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app')}/store/${storeId}`} 
                   alt="Store QR Code" 
                   className="w-48 h-48 rounded-lg"
                 />

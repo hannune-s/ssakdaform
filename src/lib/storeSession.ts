@@ -2,6 +2,7 @@ export interface StoreProfile {
   id?: string;
   username: string;
   email: string;
+  password?: string;
   owner_name: string;
   phone: string;
   store_id: string;
@@ -40,24 +41,47 @@ export function getActiveStoreId(): string {
   return store?.store_id || 'demo';
 }
 
+export function getEffectiveAdminStoreId(): string {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/demo')) {
+    return 'demo';
+  }
+  return getActiveStoreId();
+}
+
 export function setLoggedInStore(profile: StoreProfile) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(SESSION_KEY, JSON.stringify(profile));
-  // 기존 호환용 로컬스토리지 동기화
+  // 기존 호환용 로컬스토리지 동기화 (SettingsPage 등에서 사용 중인 필드명 매핑)
   localStorage.setItem(
     'ssakdaform_store_details',
     JSON.stringify({
+      name: profile.store_name,
       storeName: profile.store_name,
       ownerName: profile.owner_name,
+      phone: profile.phone,
       contact: profile.phone,
       address: profile.address,
       storeId: profile.store_id,
       email: profile.email
     })
   );
+  localStorage.setItem(
+    'ssakdaform_account_info',
+    JSON.stringify({
+      id: profile.username,
+      name: profile.owner_name,
+      email: profile.email,
+      storeId: profile.store_id
+    })
+  );
+  if (Array.isArray(profile.custom_forms)) {
+    localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(profile.custom_forms));
+  }
 }
 
 export function clearLoggedInStore() {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem('ssakdaform_store_details');
+  localStorage.removeItem('ssakdaform_account_info');
 }

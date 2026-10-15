@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 export default function DeliveryList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
@@ -33,6 +34,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
     const { data, error } = await supabase
       .from('ssakdaform_responses')
       .select('*')
+      .eq('store_id', getEffectiveAdminStoreId())
       .eq('form_id', 'delivery-preset')
       .order('submitted_at', { ascending: false });
 

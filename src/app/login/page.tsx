@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Sparkles, User, Lock, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { setLoggedInStore } from '@/lib/storeSession';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,20 +13,51 @@ export default function LoginPage() {
     username: '',
     password: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 데모 버전 로그인 처리
-    if (formData.username && formData.password) {
-      alert('환영합니다! 어드민 홈으로 이동합니다.');
-      router.push('/');
-    } else {
+    const inputId = formData.username.trim();
+    const inputPw = formData.password;
+
+    if (!inputId || !inputPw) {
       alert('아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // 로그인 아이디(username) 또는 매장 영문 아이디(store_id)로 조회
+      const { data: stores, error } = await supabase
+        .from('ssakdaform_stores')
+        .select('*')
+        .or(`username.eq.${inputId},store_id.eq.${inputId.toLowerCase()},email.eq.${inputId}`);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const matchedStore = (stores || []).find(s => s.password === inputPw);
+
+      if (!matchedStore) {
+        alert('아이디 또는 비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+        setIsLoading(false);
+        return;
+      }
+
+      setLoggedInStore(matchedStore);
+      alert(`환영합니다, [${matchedStore.store_name}] ${matchedStore.owner_name} 사장님! 어드민 홈으로 이동합니다.`);
+      router.push('/');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      alert('로그인 처리 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -90,6 +123,7 @@ export default function LoginPage() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  defaultChecked
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 cursor-pointer">
@@ -107,9 +141,10 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-[15px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all active:scale-[0.98]"
+                disabled={isLoading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-[15px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all active:scale-[0.98] disabled:opacity-60"
               >
-                로그인
+                {isLoading ? '로그인 확인 중...' : '로그인'}
               </button>
             </div>
           </form>

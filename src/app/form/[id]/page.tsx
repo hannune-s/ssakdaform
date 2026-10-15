@@ -6,6 +6,7 @@ import DaumPostcode from 'react-daum-postcode';
 import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
+import { getActiveStoreId } from '@/lib/storeSession';
 
 export default function CustomerFormPage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function CustomerFormPage() {
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
   const [storeInfo, setStoreInfo] = useState<any>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
+  const [targetStoreId, setTargetStoreId] = useState<string>('demo');
   
   // 주소 검색 모달 관련 상태
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
@@ -107,30 +109,76 @@ export default function CustomerFormPage() {
   };
 
   useEffect(() => {
-    async function loadAccounts() {
-      const savedStoreInfo = localStorage.getItem('ssakdaform_store_details');
-      if (savedStoreInfo) { 
-        setStoreInfo(JSON.parse(savedStoreInfo)); 
-      } else {
-        setStoreInfo({
-          name: '싹다폼 (데모 상호명)',
+    const paramsObj = new URLSearchParams(window.location.search);
+    const resolvedStoreId = paramsObj.get('store') || getActiveStoreId() || 'demo';
+    setTargetStoreId(resolvedStoreId);
+
+    async function loadStoreAndAccounts() {
+      let resolvedInfo: any = null;
+      const { data: storeRow } = await supabase
+        .from('ssakdaform_stores')
+        .select('*')
+        .eq('store_id', resolvedStoreId)
+        .maybeSingle();
+
+      if (storeRow) {
+        resolvedInfo = {
+          name: storeRow.store_name,
+          ownerName: storeRow.owner_name,
+          address: storeRow.address,
+          phone: storeRow.phone,
+          hours: '',
+          closedDays: '',
+          paymentLink: ''
+        };
+        if (Array.isArray(storeRow.custom_forms)) {
+          const dbFoundForm = storeRow.custom_forms.find((f: any) => f.id === id);
+          if (dbFoundForm) {
+            setData(dbFoundForm);
+          }
+        }
+      }
+
+      const savedStoreInfo =
+        localStorage.getItem(`ssakdaform_store_details_${resolvedStoreId}`) ||
+        (resolvedStoreId === getActiveStoreId() ? localStorage.getItem('ssakdaform_store_details') : null);
+      if (savedStoreInfo) {
+        try {
+          const parsed = JSON.parse(savedStoreInfo);
+          resolvedInfo = {
+            ...(resolvedInfo || {}),
+            ...parsed,
+            name: parsed.name || parsed.storeName || resolvedInfo?.name || '',
+            phone: parsed.phone || parsed.contact || resolvedInfo?.phone || ''
+          };
+        } catch (e) {}
+      }
+
+      if (!resolvedInfo) {
+        resolvedInfo = {
+          name: '싹다 데모 매장',
           ownerName: '홍길동',
           address: '서울시 서초구 (데모 주소)',
           phone: '010-1234-5678',
           hours: '09:00 ~ 18:00',
           closedDays: '일요일',
           paymentLink: ''
-        });
+        };
       }
-      const { data } = await supabase
+      setStoreInfo(resolvedInfo);
+
+      const { data: accData } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
+        .eq('store_id', resolvedStoreId)
         .order('created_at', { ascending: true });
-      if (data && data.length > 0) {
-        setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
+      if (accData && accData.length > 0) {
+        setAccounts(accData.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
+      } else {
+        setAccounts([]);
       }
     }
-    loadAccounts();
+    loadStoreAndAccounts();
 
     const storedForms = localStorage.getItem('ssakdaform_custom_forms');
     if (storedForms) {
@@ -289,6 +337,7 @@ export default function CustomerFormPage() {
     });
 
     const newResponse = {
+      store_id: targetStoreId,
       form_id: id,
       data: dataObj,
       status: '접수대기'
