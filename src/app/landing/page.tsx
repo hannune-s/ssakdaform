@@ -522,19 +522,22 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-center">
             
-            {/* Monthly Plan (Early Bird) */}
+            {/* Monthly Plan (Event) */}
             <div className="relative bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border-2 border-indigo-500 p-8 sm:p-10 z-10 transform md:-translate-y-4">
               <div className="absolute -top-5 right-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[13px] font-black px-4 py-2 rounded-full shadow-lg animate-bounce">
-                2026 얼리버드 특가 🚀
+                현재 특별 이벤트 특가 🚀
               </div>
               
-              <h4 className="text-2xl font-black text-gray-900 mb-2">월간 구독 플랜</h4>
+              <h4 className="text-2xl font-black text-gray-900 mb-2">월간 이용권</h4>
               <div className="flex items-end gap-2 mb-2">
-                <span className="line-through text-gray-400 text-lg font-bold">정상가 월 14,900원</span>
+                <span className="line-through text-gray-400 text-lg font-bold">월 19,900원</span>
               </div>
-              <div className="flex items-end gap-2 mb-8 border-b border-gray-100 pb-8">
+              <div className="flex items-end gap-2 mb-2">
                 <span className="text-5xl sm:text-6xl font-black text-indigo-600 tracking-tight">9,900<span className="text-xl font-bold text-gray-500 ml-1">원 / 월</span></span>
               </div>
+              <p className="text-indigo-600 text-sm font-black mb-8 pb-6 border-b border-gray-100">
+                오픈 기념 한시적 특별 이벤트가
+              </p>
               
               <ul className="space-y-4 mb-10">
                 {['아날로그 접수 혁신', '무제한 폼 생성 및 커스텀', '자동 고객 및 주문 관리', '모바일 주문서 다운로드 및 출력', '싹다폼의 모든 강력한 기능 포함'].map((item, i) => (
@@ -556,19 +559,19 @@ export default function LandingPage() {
             {/* Yearly Plan */}
             <div className="relative bg-white rounded-[2rem] border border-gray-200 p-8 sm:p-10 h-fit shadow-lg shadow-gray-100/50">
               <div className="absolute -top-4 left-8 bg-gray-800 text-white text-[12px] font-black px-4 py-1.5 rounded-full shadow-md">
-                추천! 2개월 무료 🎁
+                추천! 약 38% 할인 🎁
               </div>
               <h4 className="text-xl font-bold text-gray-900 mb-2">연간 구독 플랜 (선택 옵션)</h4>
               <div className="flex items-end gap-2 mb-2">
-                <span className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">99,000<span className="text-lg font-bold text-gray-500 ml-1">원 / 년</span></span>
+                <span className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">149,000<span className="text-lg font-bold text-gray-500 ml-1">원 / 년</span></span>
               </div>
               <p className="text-indigo-600 text-sm font-black mb-6 pb-6 border-b border-gray-100">
-                월 8,250원 꼴 (약 17% 추가 할인 혜택!)
+                월 12,410원 꼴 (약 38% 추가 할인 혜택!)
               </p>
               
               <p className="text-[15px] text-gray-500 mb-8 font-medium leading-relaxed">
                 1년 치를 한 번에 결제하시면<br className="hidden sm:block" />
-                <strong className="text-gray-900">두 달치 요금을 완전히 면제</strong>해 드립니다.
+                <strong className="text-gray-900">연간 89,800원의 요금을 특별 할인</strong>해 드립니다.
               </p>
               
               <ul className="space-y-4 mb-10">
@@ -578,7 +581,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                  <span className="text-gray-900 font-bold">12개월 중 2개월 무료 혜택 제공</span>
+                  <span className="text-gray-900 font-bold">월간 결제 대비 약 38% 파격 할인 제공</span>
                 </li>
               </ul>
               

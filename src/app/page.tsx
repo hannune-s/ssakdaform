@@ -6,6 +6,7 @@ import DeliveryList from './delivery-list/page';
 import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
 import CustomList from './custom-list/page';
+import ResumeList from './resume-list/page';
 import FormBuilder from './form-builder/page';
 import SettingsPage from './settings/page';
 import SubscriptionPage from './subscription/page';
@@ -18,7 +19,6 @@ export default function AdminHub() {
   const [copied, setCopied] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
-  
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export default function AdminHub() {
     }
   };
 
-  
   const downloadQrCode = async () => {
     try {
       const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
@@ -144,7 +143,7 @@ export default function AdminHub() {
         
         {/* 메뉴(카테고리) 탭 버튼 */}
         <div className="flex flex-col items-center gap-2 sm:gap-3 w-full px-1">
-          {/* 1번 줄: 맞춤형 폼 만들기 */}
+          {/* 1번 줄: 대시보드 / 간편폼 만들기 */}
           <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
             <button
               onClick={() => setActiveTab('dashboard')}
@@ -166,11 +165,11 @@ export default function AdminHub() {
             >간편폼 만들기</button>
           </div>
           
-          {/* 2번 줄: 현황 3종 */}
+          {/* 2번 줄: 현황 5종 (택배 / 예약 / 상품 / 간편폼 / 이력서) */}
           <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
             <button
               onClick={() => setActiveTab('delivery')}
-              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'delivery' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
@@ -178,7 +177,7 @@ export default function AdminHub() {
             >택배접수</button>
             <button
               onClick={() => setActiveTab('reservation')}
-              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'reservation' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
@@ -186,7 +185,7 @@ export default function AdminHub() {
             >예약접수</button>
             <button
               onClick={() => setActiveTab('order')}
-              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'order' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
@@ -194,12 +193,20 @@ export default function AdminHub() {
             >상품접수</button>
             <button
               onClick={() => setActiveTab('custom')}
-              className={`flex-1 max-w-[130px] px-0.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'custom' 
                   ? 'bg-blue-600 text-white shadow-md' 
                   : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
               }`}
             >간편폼접수</button>
+            <button
+              onClick={() => setActiveTab('resume')}
+              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+                activeTab === 'resume' 
+                  ? 'bg-emerald-600 text-white shadow-md' 
+                  : 'bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100/70 border border-emerald-200 shadow-sm'
+              }`}
+            >이력서접수</button>
           </div>
         </div>
         
@@ -208,7 +215,7 @@ export default function AdminHub() {
           <input
             type="text"
             className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
-            placeholder="이름, 연락처, 주문상품 등을 검색해보세요"
+            placeholder="이름, 연락처, 주문상품, 지원파트 등을 검색해보세요"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -222,16 +229,14 @@ export default function AdminHub() {
 
       {/* 하단 콘텐츠(기존 컴포넌트 렌더링) 영역 */}
       <div className="w-full max-w-6xl mx-auto flex-1">
-        
-        
         {activeTab === 'dashboard' && <DashboardWidget setActiveTab={setActiveTab} />}
         {activeTab === 'builder' && <FormBuilder />}
         {activeTab === 'delivery' && <DeliveryList searchQuery={searchQuery} />}
         {activeTab === 'reservation' && <ReservationList searchQuery={searchQuery} />}
         {activeTab === 'order' && <OrderList searchQuery={searchQuery} />}
         {activeTab === 'custom' && <CustomList searchQuery={searchQuery} />}
-        
-        </div>
+        {activeTab === 'resume' && <ResumeList searchQuery={searchQuery} />}
+      </div>
       </div>
       )}
 
@@ -388,7 +393,6 @@ export default function AdminHub() {
         </div>
       )}
 
-    
       {isQrModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
@@ -423,7 +427,6 @@ export default function AdminHub() {
           </div>
         </div>
       )}
-
-</div>
+    </div>
   );
 }

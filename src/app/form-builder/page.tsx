@@ -2,7 +2,7 @@
 import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useState, useEffect } from 'react';
-import { Plus, X, Eye, ArrowLeft, Type, Hash, Calendar, Phone, CheckSquare, Link as LinkIcon, RotateCcw } from 'lucide-react';
+import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle } from 'lucide-react';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'time' | 'textarea' | 'checkbox' | 'address';
 
@@ -20,11 +20,14 @@ export default function FormBuilder() {
   const [formTitle, setFormTitle] = useState('새로운 맞춤형 신청서');
   const [formDescription, setFormDescription] = useState('');
   const [savedForms, setSavedForms] = useState<any[]>([]);
+  const [editingFormId, setEditingFormId] = useState<string | null>(null);
+  const [copiedFormId, setCopiedFormId] = useState<string | null>(null);
+  const [formKey, setFormKey] = useState(0);
   const [fields, setFields] = useState<FormField[]>([
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
 
-  // 로컬 스토리지에서 자동 저장된 초안 불러오기
+  // 로컬 스토리지에서 자동 저장된 초안 및 저장된 폼 목록 불러오기
   useEffect(() => {
     const draft = localStorage.getItem('ssakdaform_draft');
     if (draft) {
@@ -40,7 +43,11 @@ export default function FormBuilder() {
     }
     const storedForms = localStorage.getItem('ssakdaform_custom_forms');
     if (storedForms) {
-      setSavedForms(JSON.parse(storedForms));
+      try {
+        setSavedForms(JSON.parse(storedForms));
+      } catch (e) {
+        console.error("Saved forms parsing error", e);
+      }
     }
     setIsLoaded(true);
   }, []);
@@ -51,6 +58,7 @@ export default function FormBuilder() {
       localStorage.setItem('ssakdaform_draft', JSON.stringify({
         storeName,
         formTitle,
+        formDescription,
         fields
       }));
     }
@@ -113,54 +121,110 @@ export default function FormBuilder() {
   };
 
   const handleReset = () => {
-    if (window.confirm('작성 중인 폼을 정말 초기화하시겠습니까? (모든 항목이 지워집니다)')) {
+    if (window.confirm('작성 중인 폼을 정말 초기화하시겠습니까? (모든 항목이 기본값으로 초기화됩니다)')) {
+      setEditingFormId(null);
       setStoreName('내 매장 이름');
       setFormTitle('새로운 맞춤형 신청서');
       setFormDescription('');
       setFields([{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]);
+      setFormKey(prev => prev + 1);
     }
   };
 
+  const handleCancelEdit = () => {
+    setEditingFormId(null);
+    setStoreName('내 매장 이름');
+    setFormTitle('새로운 맞춤형 신청서');
+    setFormDescription('');
+    setFields([{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]);
+    setFormKey(prev => prev + 1);
+  };
+
   const handleCopyLink = () => {
-    // 향후 실제 DB ID로 대체될 가짜 링크
-    const dummyLink = `${window.location.origin}/form/demo-12345`;
-    navigator.clipboard.writeText(dummyLink).then(() => {
-      alert(`고객에게 전송할 폼 링크가 복사되었습니다!\n\n${dummyLink}\n\n(아직 DB 연동 전이라 가상의 링크가 복사됩니다)`);
+    if (editingFormId) {
+      const editLink = `${window.location.origin}/form/${editingFormId}`;
+      navigator.clipboard.writeText(editLink).then(() => {
+        alert(`현재 수정 중인 폼의 고객용 링크가 복사되었습니다!\n\n${editLink}`);
+      });
+      return;
+    }
+    alert('먼저 우측의 [폼 저장하기] 버튼을 눌러 폼을 저장하신 후,\n하단 [저장된 맞춤형 폼 관리] 목록에서 개별 [링크 복사] 버튼을 눌러주세요!');
+  };
+
+  const handleCopySavedFormLink = (form: any) => {
+    const link = `${window.location.origin}/form/${form.id}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedFormId(form.id);
+      setTimeout(() => setCopiedFormId(null), 2000);
+      alert(`'${form.formTitle}' 링크가 복사되었습니다!\n원하시는 고객에게 카톡이나 문자로 전달해 보세요.\n\n${link}`);
     });
   };
 
-  
+  const handleEditForm = (form: any) => {
+    setEditingFormId(form.id);
+    setStoreName(form.storeName || '내 매장 이름');
+    setFormTitle(form.formTitle || '');
+    setFormDescription(form.formDescription || '');
+    setFields(
+      form.fields && form.fields.length > 0
+        ? form.fields.map((f: any, idx: number) => ({ ...f, id: f.id || Date.now() + idx }))
+        : [{ id: Date.now(), type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }]
+    );
+    setFormKey(prev => prev + 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleDeleteForm = (id: string) => {
-    if (window.confirm('이 폼을 정말 삭제하시겠습니까? 고객 화면에서도 즉시 사라집니다.')) {
+    if (window.confirm('이 폼을 정말 삭제하시겠습니까? 삭제하면 해당 링크로 더 이상 접속할 수 없습니다.')) {
       const updated = savedForms.filter(f => f.id !== id);
       setSavedForms(updated);
       localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(updated));
+      if (editingFormId === id) {
+        handleCancelEdit();
+      }
     }
   };
 
   const handleSave = () => {
-    const formData = {
-      id: `custom-${Date.now()}`,
-      storeName,
-      formTitle,
-      formDescription,
-      fields
-    };
-    
-    let existingForms = [];
+    let existingForms: any[] = [];
     try {
       const stored = localStorage.getItem('ssakdaform_custom_forms');
       if (stored) {
         existingForms = JSON.parse(stored);
       }
-    } catch(e) {}
-    
-    // We append the new form
-    existingForms.push(formData);
-    localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(existingForms));
-    setSavedForms(existingForms);
-    
-    alert('폼이 성공적으로 저장되었습니다!');
+    } catch (e) {}
+
+    if (editingFormId) {
+      // 기존 폼 수정 덮어쓰기 (링크 ID 유지)
+      const updatedForms = existingForms.map(f => {
+        if (f.id === editingFormId) {
+          return {
+            ...f,
+            storeName,
+            formTitle,
+            formDescription,
+            fields
+          };
+        }
+        return f;
+      });
+      localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(updatedForms));
+      setSavedForms(updatedForms);
+      alert('폼 수정사항이 성공적으로 저장되었습니다!');
+    } else {
+      // 새 폼 추가
+      const newFormData = {
+        id: `custom-${Date.now()}`,
+        storeName,
+        formTitle,
+        formDescription,
+        fields
+      };
+      existingForms.push(newFormData);
+      localStorage.setItem('ssakdaform_custom_forms', JSON.stringify(existingForms));
+      setSavedForms(existingForms);
+      alert('새로운 맞춤형 폼이 저장되었습니다!\n아래 [저장된 맞춤형 폼 관리] 목록에서 링크를 복사해 고객에게 전달해 보세요.');
+    }
   };
 
   if (!isLoaded) {
@@ -173,12 +237,26 @@ export default function FormBuilder() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-5">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">맞춤형 폼 만들기</h1>
-          <p className="text-[13px] text-gray-500">우리 매장에 딱 맞는 신청서를 직접 만들어보세요.</p>
+          <p className="text-[13px] text-gray-500">우리 매장에 딱 맞는 신청서를 만들고, 필요한 고객에게만 개별 링크로 전달해보세요.</p>
         </div>
-        
+        {editingFormId && (
+          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-xl">
+            <span className="text-[12.5px] font-bold text-amber-800 flex items-center gap-1.5">
+              <Pencil className="w-3.5 h-3.5 text-amber-600" />
+              기존 폼 수정 중
+            </span>
+            <button
+              onClick={handleCancelEdit}
+              className="ml-2 px-2.5 py-1 bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 rounded-lg text-[11.5px] font-bold transition-colors flex items-center gap-1"
+            >
+              <PlusCircle className="w-3 h-3" />
+              새 폼 만들기로 전환
+            </button>
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">
+      <div key={formKey} className="flex flex-col lg:flex-row gap-5 lg:gap-6">
         
         {/* 왼쪽: 폼 기본 정보 설정 */}
         <div className="lg:col-span-1 space-y-4">
@@ -191,7 +269,7 @@ export default function FormBuilder() {
                   type="text" 
                   defaultValue={storeName}
                   onChange={(e) => setStoreName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white" 
                 />
               </div>
               <div>
@@ -200,7 +278,7 @@ export default function FormBuilder() {
                   type="text" 
                   defaultValue={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px]" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white" 
                 />
               </div>
               <div>
@@ -209,7 +287,7 @@ export default function FormBuilder() {
                   defaultValue={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder="예: 주문 전 필독사항, 제작 기간 안내 등을 적어주세요."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y bg-white" 
                   rows={3}
                 />
               </div>
@@ -218,7 +296,7 @@ export default function FormBuilder() {
         </div>
 
         {/* 오른쪽: 입력 항목 리스트 (빌더) */}
-        <div className="lg:col-span-2 space-y-3">
+        <div className="lg:col-span-2 space-y-3 flex-1">
           <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm mb-3">
             <h3 className="font-semibold text-[15px] text-gray-800">입력 항목 관리</h3>
             <p className="text-[13px] text-gray-500 mt-1">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
@@ -238,7 +316,7 @@ export default function FormBuilder() {
                       <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">항목 이름</label>
                       <input 
                         type="text" 
-                        value={field.label}
+                        defaultValue={field.label}
                         onChange={(e) => updateField(field.id, 'label', e.target.value)}
                         placeholder="예: 연락처"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
@@ -248,7 +326,7 @@ export default function FormBuilder() {
                       <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">안내 문구</label>
                       <input 
                         type="text" 
-                        value={field.placeholder}
+                        defaultValue={field.placeholder}
                         onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
                         placeholder={getSmartPlaceholder(field.label)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
@@ -267,7 +345,6 @@ export default function FormBuilder() {
             </div>
           )}
           
-          
           {/* 간단한 칸 추가 버튼 */}
           <button 
             onClick={() => addField('text')}
@@ -275,7 +352,6 @@ export default function FormBuilder() {
           >
             <span className="text-xl leading-none">+</span> 새 입력 칸 추가
           </button>
-          
           
           {/* 하단 액션 버튼 그룹 */}
           <div className="pt-6 mt-4 border-t border-gray-200 flex flex-col gap-2.5">
@@ -311,37 +387,86 @@ export default function FormBuilder() {
                   onClick={handleSave}
                   className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm text-[13px] sm:text-[14px]"
                 >
-                  폼 저장하기
+                  {editingFormId ? '수정사항 저장하기' : '폼 저장하기'}
                 </button>
               </div>
             )}
-                </div>
-
-      {savedForms.length > 0 && (
-        <div className="mt-10 bg-white p-6 rounded-2xl border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <h3 className="font-extrabold text-gray-900 mb-5 text-[17px] flex items-center gap-2">
-            <span className="w-2 h-6 bg-blue-600 rounded-full inline-block"></span>
-            저장된 맞춤형 폼 관리
-          </h3>
-          <div className="space-y-3">
-            {savedForms.map((form, idx) => (
-              <div key={form.id || idx} className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all group">
-                <div>
-                  <h4 className="font-bold text-gray-800 text-[15px]">{form.formTitle}</h4>
-                  {form.formDescription && <p className="text-sm text-gray-500 mt-1 line-clamp-1">{form.formDescription}</p>}
-                </div>
-                <button 
-                  onClick={() => handleDeleteForm(form.id)}
-                  className="px-3 sm:px-4 py-1.5 text-[13px] font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors whitespace-nowrap ml-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                >
-                  삭제
-                </button>
-              </div>
-            ))}
           </div>
+
+          {savedForms.length > 0 && (
+            <div className="mt-10 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <div className="mb-4">
+                <h3 className="font-extrabold text-gray-900 text-[16px] sm:text-[17px] flex items-center gap-2">
+                  <span className="w-2 h-5 bg-blue-600 rounded-full inline-block"></span>
+                  저장된 맞춤형 폼 관리
+                </h3>
+                <p className="text-[12.5px] text-gray-500 mt-1">
+                  각 폼의 <strong>[링크 복사]</strong> 버튼을 눌러 원하는 고객에게만 신청서를 보내실 수 있습니다.
+                </p>
+              </div>
+              <div className="space-y-2.5">
+                {savedForms.map((form, idx) => {
+                  const isEditingThis = editingFormId === form.id;
+                  const isCopiedThis = copiedFormId === form.id;
+                  return (
+                    <div 
+                      key={form.id || idx} 
+                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-xl border transition-all ${
+                        isEditingThis 
+                          ? 'bg-amber-50/60 border-amber-300 shadow-sm' 
+                          : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-indigo-100 hover:shadow-sm'
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-gray-800 text-[14.5px] sm:text-[15px] truncate">{form.formTitle}</h4>
+                          {isEditingThis && (
+                            <span className="px-2 py-0.5 text-[11px] font-bold bg-amber-200/80 text-amber-900 rounded-md shrink-0">
+                              수정 중
+                            </span>
+                          )}
+                        </div>
+                        {form.formDescription ? (
+                          <p className="text-[12.5px] text-gray-500 mt-0.5 line-clamp-1">{form.formDescription}</p>
+                        ) : (
+                          <p className="text-[12px] text-gray-400 mt-0.5">입력 항목 {form.fields?.length || 0}개</p>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-end sm:self-center">
+                        <button 
+                          onClick={() => handleCopySavedFormLink(form)}
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold rounded-lg transition-colors whitespace-nowrap border ${
+                            isCopiedThis
+                              ? 'bg-green-50 text-green-700 border-green-200'
+                              : 'bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100'
+                          }`}
+                        >
+                          {isCopiedThis ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                          {isCopiedThis ? '복사됨' : '링크 복사'}
+                        </button>
+                        <button 
+                          onClick={() => handleEditForm(form)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold text-gray-700 bg-white border border-gray-200 hover:bg-gray-100 rounded-lg transition-colors whitespace-nowrap shadow-xs"
+                        >
+                          <Pencil className="w-3.5 h-3.5 text-gray-500" />
+                          수정
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteForm(form.id)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold text-red-600 bg-red-50 border border-red-100 hover:bg-red-100 rounded-lg transition-colors whitespace-nowrap"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
-      )}
-      </div>
       </div>
     </div>
   );

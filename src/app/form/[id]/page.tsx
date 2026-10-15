@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 
@@ -20,8 +20,12 @@ export default function CustomerFormPage() {
   // 주소 검색 모달 관련 상태
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [currentAddressFieldId, setCurrentAddressFieldId] = useState<number | null>(null);
-    const [addressValues, setAddressValues] = useState<Record<number, string>>({});
+  const [addressValues, setAddressValues] = useState<Record<number, string>>({});
   const [timeValues, setTimeValues] = useState<Record<number, { ampm: string, hour: string, minute: string }>>({});
+  
+  // 사진 및 첨부파일 (Base64 Data URL) 상태
+  const [fileValues, setFileValues] = useState<Record<string, string>>({});
+  const [fileNames, setFileNames] = useState<Record<string, string>>({});
   
   const handleTimeChange = (fieldId: number, part: 'ampm' | 'hour' | 'minute', value: string) => {
     setTimeValues(prev => ({
@@ -33,6 +37,73 @@ export default function CustomerFormPage() {
         [part]: value
       }
     }));
+  };
+
+  // 이미지 파일을 가볍게 리사이징하여 Base64 Data URL로 변환하는 함수
+  const handleFileUpload = (fieldLabel: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFileNames(prev => ({ ...prev, [fieldLabel]: file.name }));
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 700;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            setFileValues(prev => ({ ...prev, [fieldLabel]: compressedDataUrl }));
+          }
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('파일 크기는 2MB 이하로 첨부해주세요.');
+        e.target.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFileValues(prev => ({
+          ...prev,
+          [fieldLabel]: event.target?.result as string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearFile = (fieldLabel: string) => {
+    setFileValues(prev => {
+      const next = { ...prev };
+      delete next[fieldLabel];
+      return next;
+    });
+    setFileNames(prev => {
+      const next = { ...prev };
+      delete next[fieldLabel];
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -61,7 +132,6 @@ export default function CustomerFormPage() {
     }
     loadAccounts();
 
-    
     const storedForms = localStorage.getItem('ssakdaform_custom_forms');
     if (storedForms) {
       const forms = JSON.parse(storedForms);
@@ -104,15 +174,11 @@ export default function CustomerFormPage() {
       return;
     } else if (id === 'order-preset') {
       const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      const todayStr = `${year}-${month}-${day}`;
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
       
       setData({
         storeName: '내 매장 이름 (기본 설정)',
         formTitle: '간편한 상품 주문서',
-          
         fields: [
           { id: 1, type: 'date', label: '주문 날짜', defaultValue: todayStr, required: true },
           { id: 2, type: 'textarea', label: '상품명', placeholder: '주문하실 상품명, 수량, 옵션 등을 자유롭게 적어주세요', required: true },
@@ -121,6 +187,25 @@ export default function CustomerFormPage() {
           { id: 5, type: 'address', label: '배송지 주소', placeholder: '클릭하여 배송지 검색', required: true },
           { id: 6, type: 'text', label: '입금자명', placeholder: '입금하실 분의 성함을 입력하세요', required: true },
           { id: 7, type: 'textarea', label: '기타 전달 내용', placeholder: '배송 메시지 등 기타 요청사항을 적어주세요', required: false }
+        ]
+      });
+      return;
+    } else if (id === 'resume-preset') {
+      setData({
+        storeName: '내 매장 이름 (기본 설정)',
+        formTitle: '직원채용 간편이력서',
+        formDescription: '지원해주셔서 감사합니다. 아래 기본 인적사항과 희망 근무조건을 작성해 제출해주시면 확인 후 연락드리겠습니다.',
+        fields: [
+          { id: 1, type: 'photo', label: '사진', placeholder: '본인 확인용 사진을 첨부해주세요 (카메라 촬영 또는 앨범 선택)', required: false },
+          { id: 2, type: 'text', label: '이름', placeholder: '지원자 성함을 입력하세요', required: true },
+          { id: 3, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
+          { id: 4, type: 'address', label: '주소', placeholder: '클릭하여 거주지 주소 검색', required: true },
+          { id: 5, type: 'text', label: '지원파트', placeholder: '예: 홀서빙, 주방, 카운터, 배달, 오픈/마감 등', required: true },
+          { id: 6, type: 'text', label: '근무가능시간', placeholder: '예: 오전(09~15시), 오후(18~23시), 풀타임, 시간협의 등', required: true },
+          { id: 7, type: 'text', label: '근무가능요일', placeholder: '예: 평일(월~금), 주말(토·일), 주 5일, 요일협의 등', required: true },
+          { id: 8, type: 'textarea', label: '관련업종경력유무', placeholder: '예: 유 (음식점 홀서빙 1년, 카페 6개월) / 무 (신입이지만 성실히 배우겠습니다)', required: true },
+          { id: 9, type: 'textarea', label: '간단한 소개 또는 각오', placeholder: '간단한 자기소개나 근무 각오를 자유롭게 적어주세요.', required: true },
+          { id: 10, type: 'file', label: '증빙서류 (보건증 등 파일첨부)', placeholder: '보건증, 자격증 등 관련 서류 사진이나 파일을 첨부해주세요 (선택)', required: false }
         ]
       });
       return;
@@ -195,6 +280,13 @@ export default function CustomerFormPage() {
       }
     });
 
+    // 첨부된 사진 및 파일 데이터 병합
+    Object.entries(fileValues).forEach(([label, dataUrl]) => {
+      if (dataUrl) {
+        dataObj[label] = dataUrl;
+      }
+    });
+
     const newResponse = {
       form_id: id,
       data: dataObj,
@@ -210,7 +302,10 @@ export default function CustomerFormPage() {
     };
     
     submitData().then(() => {
-      alert('신청이 성공적으로 완료되었습니다!\n(어드민의 현황 리스트에서 확인하실 수 있습니다)');
+      alert(id === 'resume-preset'
+        ? '이력서 지원이 성공적으로 접수되었습니다!\n확인 후 연락드리겠습니다.'
+        : '신청이 성공적으로 완료되었습니다!\n(어드민의 현황 리스트에서 확인하실 수 있습니다)'
+      );
       window.location.reload();
     }).catch(err => {
       console.error(err);
@@ -228,16 +323,18 @@ export default function CustomerFormPage() {
     }
   };
 
+  const isResumeForm = id === 'resume-preset';
+
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-indigo-100 selection:text-indigo-900 relative">
       
-      
-
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        <div className="bg-gradient-to-r from-indigo-700 to-indigo-900 px-4 sm:px-6 py-6 sm:py-8 text-center relative overflow-hidden">
+        <div className={`bg-gradient-to-r ${isResumeForm ? 'from-emerald-700 to-teal-900' : 'from-indigo-700 to-indigo-900'} px-4 sm:px-6 py-6 sm:py-8 text-center relative overflow-hidden`}>
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
-          <p className="relative z-10 text-indigo-100 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">{data.storeName}</p>
+          <p className="relative z-10 text-white/80 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">
+            {storeInfo?.name || data.storeName}
+          </p>
           <h1 className="relative z-10 text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-md">{data.formTitle}</h1>
         </div>
         
@@ -245,6 +342,7 @@ export default function CustomerFormPage() {
           {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
             <div className="mb-6">
               <button 
+                type="button"
                 onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
                 className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors mx-auto bg-gray-100/80 hover:bg-gray-200/80 px-3 py-1.5 rounded-full"
               >
@@ -259,8 +357,8 @@ export default function CustomerFormPage() {
                     <div className="flex gap-2">
                       <Store className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
                       <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
-                  </div>
-                )}
+                    </div>
+                  )}
 
                   {storeInfo.ownerName && (
                     <div className="flex gap-2">
@@ -296,7 +394,9 @@ export default function CustomerFormPage() {
               )}
             </div>
           )}
-          {(accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
+
+          {/* 이력서 폼이 아닐 때만 결제 및 계좌 안내 노출 */}
+          {!isResumeForm && (accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
             <div className="mb-6 bg-[#F0F4FF] border border-indigo-200 rounded-2xl px-4 py-3.5">
               <div className="flex items-center gap-2 mb-2">
                 <CreditCard className="w-4 h-4 text-indigo-400" />
@@ -321,35 +421,35 @@ export default function CustomerFormPage() {
                     </button>
                   </div>
                 ))}
-            </div>
-            {storeInfo && storeInfo.paymentLink && (
-              <div className="mt-4 pt-4 border-t border-indigo-200/50">
-                <h3 className="text-[12px] font-bold text-indigo-900 mb-2">비대면 카드 결제</h3>
-                <a 
-                  href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
-                >
-                  <CreditCard className="w-4 h-4" />
-                  결제하러 가기
-                </a>
               </div>
-            )}
-          </div>
-        )}
-
-        {data.formDescription && (
-          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-4 sm:px-5 py-4 shadow-sm">
-            <h3 className="font-bold text-amber-900 text-[14px] mb-2 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-              사장님 안내사항
-            </h3>
-            <div className="text-[13.5px] text-amber-900/80 leading-relaxed whitespace-pre-wrap">
-              {data.formDescription}
+              {storeInfo && storeInfo.paymentLink && (
+                <div className="mt-4 pt-4 border-t border-indigo-200/50">
+                  <h3 className="text-[12px] font-bold text-indigo-900 mb-2">비대면 카드 결제</h3>
+                  <a 
+                    href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    결제하러 가기
+                  </a>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          )}
+
+          {data.formDescription && (
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-4 sm:px-5 py-4 shadow-sm">
+              <h3 className="font-bold text-amber-900 text-[14px] mb-2 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                사장님 안내사항
+              </h3>
+              <div className="text-[13.5px] text-amber-900/80 leading-relaxed whitespace-pre-wrap">
+                {data.formDescription}
+              </div>
+            </div>
+          )}
 
           <form className="space-y-7" onSubmit={handleSubmit}>
             {(() => {
@@ -381,11 +481,95 @@ export default function CustomerFormPage() {
                       {field.required && <span className="text-red-500 ml-1">*</span>}
                     </label>
                     
-                    {field.type === 'textarea' ? (
+                    {field.type === 'photo' ? (
+                      <div className="bg-white border border-gray-300 rounded-xl p-3.5 shadow-sm">
+                        {fileValues[field.label] ? (
+                          <div className="flex items-center gap-4">
+                            <img 
+                              src={fileValues[field.label]} 
+                              alt="첨부 사진 미리보기" 
+                              className="w-20 h-24 object-cover rounded-lg border border-gray-200 shadow-xs shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-bold text-emerald-700 flex items-center gap-1">
+                                <FileCheck className="w-4 h-4 shrink-0" />
+                                사진이 등록되었습니다
+                              </p>
+                              <p className="text-[12px] text-gray-500 truncate mt-0.5">{fileNames[field.label]}</p>
+                              <button
+                                type="button"
+                                onClick={() => clearFile(field.label)}
+                                className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-[12px] font-bold transition-colors"
+                              >
+                                <X className="w-3.5 h-3.5" /> 다시 선택
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <label className="flex flex-col items-center justify-center py-4 px-3 border-2 border-dashed border-gray-200 hover:border-emerald-400 rounded-xl cursor-pointer bg-gray-50/50 hover:bg-emerald-50/30 transition-all">
+                            <Camera className="w-7 h-7 text-emerald-600 mb-1.5" />
+                            <span className="text-[13px] font-bold text-gray-700">클릭하여 사진 촬영 또는 앨범에서 선택</span>
+                            <span className="text-[11.5px] text-gray-400 mt-0.5">{field.placeholder}</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(field.label, e)}
+                              className="hidden"
+                            />
+                          </label>
+                        )}
+                      </div>
+                    ) : field.type === 'file' ? (
+                      <div className="bg-white border border-gray-300 rounded-xl p-3.5 shadow-sm">
+                        {fileValues[field.label] ? (
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              {fileValues[field.label].startsWith('data:image/') ? (
+                                <img 
+                                  src={fileValues[field.label]} 
+                                  alt="증빙서류 미리보기" 
+                                  className="w-14 h-14 object-cover rounded-lg border border-gray-200 shrink-0"
+                                />
+                              ) : (
+                                <div className="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                                  <FileCheck className="w-6 h-6 text-emerald-600" />
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <p className="text-[13px] font-bold text-emerald-700">서류 첨부 완료</p>
+                                <p className="text-[12px] text-gray-500 truncate mt-0.5">{fileNames[field.label]}</p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => clearFile(field.label)}
+                              className="px-2.5 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[12px] font-bold shrink-0 transition-colors"
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        ) : (
+                          <label className="flex items-center justify-center gap-2.5 py-3.5 px-3 border-2 border-dashed border-gray-200 hover:border-emerald-400 rounded-xl cursor-pointer bg-gray-50/50 hover:bg-emerald-50/30 transition-all">
+                            <Paperclip className="w-5 h-5 text-emerald-600 shrink-0" />
+                            <div className="text-left">
+                              <p className="text-[13px] font-bold text-gray-700">증빙서류 (보건증 등) 사진/파일 첨부하기</p>
+                              <p className="text-[11.5px] text-gray-400">{field.placeholder}</p>
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/*,.pdf"
+                              onChange={(e) => handleFileUpload(field.label, e)}
+                              className="hidden"
+                            />
+                          </label>
+                        )}
+                      </div>
+                    ) : field.type === 'textarea' ? (
                       <textarea 
                         name={field.label}
                         className={inputClass}
                         placeholder={field.placeholder || getSmartPlaceholder(field.label)}
+                        required={field.required}
                         rows={3}
                       />
                     ) : field.type === 'checkbox' ? (
@@ -399,10 +583,11 @@ export default function CustomerFormPage() {
                           type="text" 
                           name={field.label}
                           readOnly
+                          required={field.required}
                           onClick={() => openPostcode(field.id)}
                           value={addressValues[field.id] || ''}
                           className={`${inputClass} cursor-pointer`}
-                          placeholder="클릭하여 주소 검색"
+                          placeholder={field.placeholder || "클릭하여 주소 검색"}
                         />
                         {addressValues[field.id] && (
                           <input 
@@ -493,8 +678,8 @@ export default function CustomerFormPage() {
                   {otherFields.length > 0 && (
                     <div className="bg-gray-100 border border-gray-300 rounded-2xl p-3.5 sm:p-5 shadow-sm">
                       <h3 className="font-extrabold text-gray-800 mb-3.5 text-base flex items-center gap-2">
-                        <span className="w-2 h-6 bg-gray-500 rounded-full inline-block"></span>
-                        {(senderFields.length > 0 || receiverFields.length > 0) ? '기타 정보' : '입력 정보'}
+                        <span className={`w-2 h-6 ${isResumeForm ? 'bg-emerald-600' : 'bg-gray-500'} rounded-full inline-block`}></span>
+                        {isResumeForm ? '지원자 이력서 정보' : (senderFields.length > 0 || receiverFields.length > 0) ? '기타 정보' : '입력 정보'}
                       </h3>
                       <div>
                         {otherFields.map((f: any) => renderField(f, 'other'))}
@@ -504,7 +689,6 @@ export default function CustomerFormPage() {
                 </div>
               );
             })()}
-            
             
             {/* 고정 개인정보 수집 동의 */}
             <div className="pt-6">
@@ -519,9 +703,9 @@ export default function CustomerFormPage() {
             <div className="pt-6 sm:pt-8">
               <button 
                 type="submit"
-                className="w-full py-4 bg-indigo-700 text-white rounded-xl font-semibold text-lg hover:bg-indigo-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-indigo-700/20"
+                className={`w-full py-4 ${isResumeForm ? 'bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20' : 'bg-indigo-700 hover:bg-indigo-800 shadow-indigo-700/20'} text-white rounded-xl font-semibold text-lg active:transform active:scale-[0.99] transition-all shadow-lg`}
               >
-                제출하기
+                {isResumeForm ? '이력서 제출하기' : '제출하기'}
               </button>
             </div>
           </form>

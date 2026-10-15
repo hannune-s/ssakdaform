@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Package, Calendar, FileText, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Package, Calendar, ChevronRight, Store, ShoppingBag, CreditCard, Copy, CheckCircle2, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, UserCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export default function StoreHubPage() {
@@ -40,7 +40,6 @@ export default function StoreHubPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [storeInfo, setStoreInfo] = useState<any>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
-  const [customForms, setCustomForms] = useState<any[]>([]);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,11 +64,6 @@ export default function StoreHubPage() {
         .order('created_at', { ascending: true });
       if (data && data.length > 0) {
         setAccounts(data.map(d => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
-      }
-      
-      const storedForms = localStorage.getItem('ssakdaform_custom_forms');
-      if (storedForms) {
-        setCustomForms(JSON.parse(storedForms));
       }
     }
     loadAccounts();
@@ -199,7 +193,7 @@ export default function StoreHubPage() {
           </div>
         )}
 
-        {/* Form Links */}
+        {/* 기본 고객 서비스 폼 3종 */}
         <div className="space-y-4">
           {standardForms.map((form) => (
             <Link href={`/form/${form.id}`} key={form.id} className="block group">
@@ -217,35 +211,23 @@ export default function StoreHubPage() {
             </Link>
           ))}
         </div>
-        
-        {/* Custom Forms Section (Placeholder for Demo) */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-           <h3 className="text-sm font-bold text-gray-400 mb-4 px-2 uppercase tracking-wider">매장 맞춤 신청서</h3>
-           {customForms.length > 0 ? (
-            customForms.map((form, idx) => (
-              <Link key={form.id || idx} href={`/form/${form.id}`} className="block group mb-3 last:mb-0">
-                <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center justify-between group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                  <div className="relative z-10">
-                    <h4 className="font-bold text-gray-800">{form.formTitle}</h4>
-                    {form.formDescription && <p className="text-xs text-gray-500 mt-1 line-clamp-1">{form.formDescription}</p>}
-                  </div>
-                  <ChevronRight className="relative z-10 w-5 h-5 text-gray-300 group-hover:text-indigo-500 transition-colors" />
-                </div>
-              </Link>
-            ))
-          ) : (
-            <Link href="/form/demo-12345" className="block group">
-              <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center justify-between group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                <div className="relative z-10">
-                  <h4 className="font-bold text-gray-800">🎉 추석 맞이 특별 할인 신청</h4>
-                  <p className="text-xs text-gray-500 mt-1">2026.09.15 ~ 09.30</p>
-                </div>
-                <ChevronRight className="relative z-10 w-5 h-5 text-gray-300 group-hover:text-indigo-500 transition-colors" />
+
+        {/* 기본 폼과 분리된 직원채용 간편이력서 영역 */}
+        <div className="mt-10 pt-7 border-t border-gray-200/90">
+          <h3 className="text-xs font-bold text-gray-400 mb-3 px-1 uppercase tracking-wider">직원 채용 안내</h3>
+          <Link href="/form/resume-preset" className="block group">
+            <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-emerald-200/80 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-emerald-300 group-hover:border-b-emerald-400 cursor-pointer overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/0 via-emerald-50/0 to-emerald-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+              <div className="relative z-10 p-3 rounded-xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-300 transition-colors shadow-sm">
+                <UserCheck className="w-6 h-6 text-emerald-600" />
               </div>
-            </Link>
-          )}
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900 text-lg mb-0.5">직원채용 간편이력서</h3>
+                <p className="text-sm text-gray-500">매장 근무 지원을 위한 간편 이력서를 작성합니다.</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-emerald-600 transition-colors" />
+            </div>
+          </Link>
         </div>
 
         <div className="mt-12 text-center text-sm text-stone-400 font-medium">

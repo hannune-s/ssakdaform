@@ -33,7 +33,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
     const { data, error } = await supabase
       .from('ssakdaform_responses')
       .select('*')
-      .not('form_id', 'in', '("delivery-preset","reservation-preset","order-preset")')
+      .not('form_id', 'in', '("delivery-preset","reservation-preset","order-preset","resume-preset")')
       .order('submitted_at', { ascending: false });
 
     if (error) {
