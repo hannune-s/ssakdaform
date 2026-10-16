@@ -76,6 +76,7 @@ export default function HqAdminPage() {
   // 3. 1:1 문의 상태
   const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
+  const [expandedInquiryId, setExpandedInquiryId] = useState<string | null>(null);
 
   // 4. 푸시 발송 상태
   const [pushTarget, setPushTarget] = useState('all');
@@ -993,65 +994,167 @@ export default function HqAdminPage() {
           </div>
         )}
 
-        {/* ================= 4. 제휴 · 1:1 문의 내역 ================= */}
+        {/* ================= 4. 제휴 · 1:1 문의 내역 (게시판 형태 - 제목 클릭 시 상세/답변 펼침) ================= */}
         {activeMenu === 'inquiries' && (
           <div className="space-y-5 sm:space-y-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900">제휴 · 1:1 문의 내역</h1>
-              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
-                가맹 매장 사장님들이 어드민 &apos;마이 메뉴 &gt; 1:1 문의&apos;에서 남긴 문의를 확인하고 답변을 등록합니다.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900">제휴 · 1:1 문의 내역</h1>
+                <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
+                  제목을 클릭하면 아래로 문의 상세 내용과 본사 답변 입력창이 펼쳐집니다.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-[12px] font-bold">
+                <span className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap">
+                  답변대기 {inquiries.filter(i => i.status === '답변대기').length}건
+                </span>
+                <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                  답변완료 {inquiries.filter(i => i.status === '답변완료').length}건
+                </span>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              {inquiries.map(inq => (
-                <div
-                  key={inq.id}
-                  className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200/80 shadow-2xs space-y-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${
-                          inq.status === '답변완료'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200'
-                        }`}
-                      >
-                        {inq.status}
-                      </span>
-                      <span className="text-[14px] font-extrabold text-indigo-700">{inq.storeName}</span>
-                      <span className="text-[12.5px] font-semibold text-gray-500">
-                        ({inq.ownerName} · {inq.phone})
-                      </span>
-                    </div>
-                    <span className="text-[12px] text-gray-400 font-medium">{inq.createdAt}</span>
-                  </div>
+            <div className="bg-white rounded-2xl border border-gray-200/80 shadow-2xs overflow-hidden">
+              {/* 게시판 상단 컬럼 헤더 (데스크톱 표시) */}
+              <div className="hidden sm:grid sm:grid-cols-12 items-center px-6 py-3.5 bg-gray-50/90 border-b border-gray-100 text-[12.5px] font-extrabold text-gray-500">
+                <div className="col-span-2">상태</div>
+                <div className="col-span-5">문의 제목</div>
+                <div className="col-span-3">매장명 / 작성자</div>
+                <div className="col-span-2 text-right">작성일시</div>
+              </div>
 
-                  <div>
-                    <h3 className="text-[15px] sm:text-[15.5px] font-extrabold text-gray-900 mb-1.5">{inq.title}</h3>
-                    <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-700 bg-gray-50 p-3.5 sm:p-4 rounded-xl border border-gray-100 whitespace-pre-wrap">
-                      {inq.content}
-                    </p>
-                  </div>
+              <div className="divide-y divide-gray-100">
+                {inquiries.length > 0 ? (
+                  inquiries.map(inq => {
+                    const isOpen = expandedInquiryId === inq.id;
+                    return (
+                      <div key={inq.id} className="transition-colors">
+                        {/* 게시판 목록 행 (클릭 시 아코디언 토글) */}
+                        <button
+                          type="button"
+                          onClick={() => setExpandedInquiryId(prev => (prev === inq.id ? null : inq.id))}
+                          className={`w-full text-left px-4 sm:px-6 py-4 transition-colors hover:bg-gray-50/80 ${
+                            isOpen ? 'bg-blue-50/30' : ''
+                          }`}
+                        >
+                          {/* 데스크톱 게시판 레이아웃 */}
+                          <div className="hidden sm:grid sm:grid-cols-12 items-center gap-3">
+                            <div className="col-span-2">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${
+                                  inq.status === '답변완료'
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : 'bg-amber-50 text-amber-700 border border-amber-200'
+                                }`}
+                              >
+                                {inq.status}
+                              </span>
+                            </div>
 
-                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                    <input
-                      type="text"
-                      defaultValue={inq.reply || ''}
-                      onChange={e => setReplyInputs(prev => ({ ...prev, [inq.id]: e.target.value }))}
-                      placeholder="사장님께 전달할 본사 답변을 입력하세요..."
-                      className="flex-1 px-4 py-2.5 bg-indigo-50/40 border border-indigo-200 rounded-xl text-[13px] font-medium text-gray-900 focus:bg-white focus:border-indigo-500 outline-none"
-                    />
-                    <button
-                      onClick={() => handleSaveInquiryReply(inq)}
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13px] font-bold shrink-0 shadow-xs transition-all active:scale-95 whitespace-nowrap"
-                    >
-                      답변 저장 / 완료
-                    </button>
+                            <div className="col-span-5 flex items-center gap-2 min-w-0 pr-2">
+                              <span className="text-[14.5px] font-extrabold text-gray-900 truncate">
+                                {inq.title}
+                              </span>
+                              <span className="text-[11px] font-bold text-gray-400 shrink-0">
+                                {isOpen ? '▲' : '▼'}
+                              </span>
+                            </div>
+
+                            <div className="col-span-3 truncate">
+                              <span className="text-[13px] font-extrabold text-indigo-700">{inq.storeName}</span>
+                              <span className="text-[12px] font-medium text-gray-500 ml-1.5">
+                                ({inq.ownerName})
+                              </span>
+                            </div>
+
+                            <div className="col-span-2 text-right text-[12px] text-gray-400 font-medium whitespace-nowrap">
+                              {inq.createdAt.split('오')[0].trim()}
+                            </div>
+                          </div>
+
+                          {/* 모바일 게시판 레이아웃 */}
+                          <div className="sm:hidden flex items-center justify-between gap-3">
+                            <div className="min-w-0 flex-1 space-y-1">
+                              <div className="flex items-center gap-1.5">
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold whitespace-nowrap ${
+                                    inq.status === '답변완료'
+                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                                  }`}
+                                >
+                                  {inq.status}
+                                </span>
+                                <span className="text-[12px] font-extrabold text-indigo-700 truncate">
+                                  {inq.storeName}
+                                </span>
+                                <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
+                                  · {inq.ownerName}
+                                </span>
+                              </div>
+                              <p className="text-[14px] font-extrabold text-gray-900 truncate">
+                                {inq.title}
+                              </p>
+                            </div>
+                            <span className="text-[12px] font-bold text-gray-400 shrink-0">
+                              {isOpen ? '▲' : '▼'}
+                            </span>
+                          </div>
+                        </button>
+
+                        {/* 클릭 시 펼쳐지는 하단 상세 내용 + 답변 등록 영역 */}
+                        {isOpen && (
+                          <div className="px-4 sm:px-6 pb-5 pt-3 bg-gray-50/70 border-t border-gray-100 space-y-4">
+                            <div className="flex flex-wrap items-center justify-between gap-2 text-[12px] text-gray-500">
+                              <div>
+                                <span className="font-bold text-gray-700">연락처:</span> {inq.phone}
+                              </div>
+                              <div>
+                                <span className="font-bold text-gray-700">접수일시:</span> {inq.createdAt}
+                              </div>
+                            </div>
+
+                            <div className="bg-white p-4 rounded-xl border border-gray-200/80">
+                              <p className="text-[11.5px] font-extrabold text-gray-400 mb-1.5">문의 내용</p>
+                              <p className="text-[13.5px] font-medium text-gray-800 whitespace-pre-wrap leading-relaxed">
+                                {inq.content}
+                              </p>
+                            </div>
+
+                            <div className="bg-white p-4 rounded-xl border border-indigo-100 space-y-2.5">
+                              <label className="block text-[12px] font-extrabold text-indigo-700">
+                                💬 본사 답변 작성 / 수정
+                              </label>
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <input
+                                  type="text"
+                                  defaultValue={inq.reply || ''}
+                                  onChange={e =>
+                                    setReplyInputs(prev => ({ ...prev, [inq.id]: e.target.value }))
+                                  }
+                                  placeholder="사장님께 전달할 본사 답변을 입력하세요..."
+                                  className="flex-1 px-4 py-2.5 bg-indigo-50/30 border border-indigo-200 rounded-xl text-[13px] font-medium text-gray-900 focus:bg-white focus:border-indigo-500 outline-none"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleSaveInquiryReply(inq)}
+                                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13px] font-bold shrink-0 shadow-xs transition-all active:scale-95 whitespace-nowrap"
+                                >
+                                  답변 저장 / 완료
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="px-6 py-12 text-center text-gray-400 font-medium text-[13.5px]">
+                    등록된 제휴·1:1 문의 내역이 없습니다.
                   </div>
-                </div>
-              ))}
+                )}
+              </div>
             </div>
           </div>
         )}
