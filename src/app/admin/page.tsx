@@ -641,79 +641,99 @@ export default function HqAdminPage() {
               </div>
             </div>
 
-            {/* 상단 3대 방문자/설치 KPI 카드 (좌측 컬러 바 디자인) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
+            {/* 상단 3대 방문자/설치 KPI 카드 (모바일에서도 1줄에 3칸 배치) */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-5">
               {/* 카드 1: 오늘 순수 방문자 */}
-              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500" />
-                <div className="pl-2">
-                  <p className="text-[13.5px] sm:text-[14px] font-extrabold text-gray-600 mb-2">오늘 순수 방문자</p>
-                  <div className="flex items-baseline gap-1.5 mb-1.5">
-                    <span className="text-3xl sm:text-4xl font-black text-blue-600">{webVisitorsCount}</span>
-                    <span className="text-[13.5px] font-bold text-gray-500">명</span>
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-blue-500" />
+                <div className="pl-1.5 sm:pl-2">
+                  <p className="text-[11px] sm:text-[14px] font-extrabold text-gray-600 mb-1 sm:mb-2 whitespace-nowrap">
+                    오늘 순수 방문자
+                  </p>
+                  <div className="flex items-baseline gap-0.5 sm:gap-1.5 mb-0.5 sm:mb-1.5">
+                    <span className="text-xl sm:text-4xl font-black text-blue-600 leading-none">{webVisitorsCount}</span>
+                    <span className="text-[11px] sm:text-[13.5px] font-bold text-gray-500">명</span>
                   </div>
-                  <p className="text-[12px] font-medium text-gray-400">
-                    관리자·봇을 제외한 오늘 실제 방문자 수
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-400 truncate">
+                    실제 순방문자 수
                   </p>
                 </div>
               </div>
 
               {/* 카드 2: 인스타그램 유입 */}
-              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-pink-500" />
-                <div className="pl-2">
-                  <p className="text-[13.5px] sm:text-[14px] font-extrabold text-gray-600 mb-2">인스타그램 유입 (오늘)</p>
-                  <div className="flex items-baseline gap-1.5 mb-1.5">
-                    <span className="text-3xl sm:text-4xl font-black text-pink-600">{instaVisitorsCount}</span>
-                    <span className="text-[13.5px] font-bold text-gray-500">명</span>
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-pink-500" />
+                <div className="pl-1.5 sm:pl-2">
+                  <p className="text-[11px] sm:text-[14px] font-extrabold text-gray-600 mb-1 sm:mb-2 whitespace-nowrap">
+                    인스타 유입
+                  </p>
+                  <div className="flex items-baseline gap-0.5 sm:gap-1.5 mb-0.5 sm:mb-1.5">
+                    <span className="text-xl sm:text-4xl font-black text-pink-600 leading-none">{instaVisitorsCount}</span>
+                    <span className="text-[11px] sm:text-[13.5px] font-bold text-gray-500">명</span>
                   </div>
-                  <p className="text-[12px] font-medium text-gray-400">비중: {instaRatio}%</p>
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-400 whitespace-nowrap">
+                    비중: {instaRatio}%
+                  </p>
                 </div>
               </div>
 
               {/* 카드 3: 앱 설치 횟수 */}
-              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500" />
-                <div className="pl-2">
-                  <p className="text-[13.5px] sm:text-[14px] font-extrabold text-gray-600 mb-2">앱 설치 횟수 (오늘)</p>
-                  <div className="flex items-baseline gap-1.5 mb-1.5">
-                    <span className="text-3xl sm:text-4xl font-black text-emerald-600">{appInstallCount}</span>
-                    <span className="text-[13.5px] font-bold text-gray-500">건</span>
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-emerald-500" />
+                <div className="pl-1.5 sm:pl-2">
+                  <p className="text-[11px] sm:text-[14px] font-extrabold text-gray-600 mb-1 sm:mb-2 whitespace-nowrap">
+                    앱 설치 횟수
+                  </p>
+                  <div className="flex items-baseline gap-0.5 sm:gap-1.5 mb-0.5 sm:mb-1.5">
+                    <span className="text-xl sm:text-4xl font-black text-emerald-600 leading-none">{appInstallCount}</span>
+                    <span className="text-[11px] sm:text-[13.5px] font-bold text-gray-500">건</span>
                   </div>
-                  <p className="text-[12px] font-medium text-gray-400">
-                    &apos;홈 화면 추가&apos;를 통해 설치된 기기 수
+                  <p className="text-[10px] sm:text-[12px] font-medium text-gray-400 truncate">
+                    홈 화면 추가 기기
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* 싹다폼 가맹점 & 주문 접수 실시간 요약 배너 */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+            {/* 싹다폼 가맹점 & 주문 접수 실시간 요약 배너 (모바일에서도 1줄에 3칸 배치) */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               <div
                 onClick={() => setActiveMenu('stores')}
-                className="bg-indigo-600 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex items-center justify-between cursor-pointer hover:bg-indigo-700 transition-colors"
+                className="bg-indigo-600 text-white rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-sm flex items-center justify-between cursor-pointer hover:bg-indigo-700 transition-colors"
               >
-                <div>
-                  <p className="text-[12.5px] font-bold text-indigo-100">전체 가입 가맹 매장</p>
-                  <p className="text-xl sm:text-2xl font-black mt-1">{stores.length}개 매장</p>
+                <div className="min-w-0">
+                  <p className="text-[10.5px] sm:text-[12.5px] font-bold text-indigo-100 whitespace-nowrap">
+                    가맹 매장
+                  </p>
+                  <p className="text-base sm:text-2xl font-black mt-0.5 sm:mt-1 whitespace-nowrap">
+                    {stores.length}곳
+                  </p>
                 </div>
-                <Store className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-200 shrink-0" />
+                <Store className="hidden sm:block w-8 h-8 text-indigo-200 shrink-0" />
               </div>
 
-              <div className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs flex items-center justify-between">
-                <div>
-                  <p className="text-[12.5px] font-bold text-gray-500">전체 누적 고객 접수 건수</p>
-                  <p className="text-xl sm:text-2xl font-black text-gray-900 mt-1">{allResponses.length}건</p>
+              <div className="bg-white border border-gray-200/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xs flex items-center justify-between">
+                <div className="min-w-0">
+                  <p className="text-[10.5px] sm:text-[12.5px] font-bold text-gray-500 whitespace-nowrap">
+                    누적 접수
+                  </p>
+                  <p className="text-base sm:text-2xl font-black text-gray-900 mt-0.5 sm:mt-1 whitespace-nowrap">
+                    {allResponses.length}건
+                  </p>
                 </div>
-                <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500 shrink-0" />
+                <FileText className="hidden sm:block w-8 h-8 text-blue-500 shrink-0" />
               </div>
 
-              <div className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs flex items-center justify-between">
-                <div>
-                  <p className="text-[12.5px] font-bold text-gray-500">오늘 신규 접수 건수 (전 매장)</p>
-                  <p className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">{todayResponsesCount}건</p>
+              <div className="bg-white border border-gray-200/80 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-2xs flex items-center justify-between">
+                <div className="min-w-0">
+                  <p className="text-[10.5px] sm:text-[12.5px] font-bold text-gray-500 whitespace-nowrap">
+                    오늘 신규접수
+                  </p>
+                  <p className="text-base sm:text-2xl font-black text-emerald-600 mt-0.5 sm:mt-1 whitespace-nowrap">
+                    {todayResponsesCount}건
+                  </p>
                 </div>
-                <BarChart3 className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-500 shrink-0" />
+                <BarChart3 className="hidden sm:block w-8 h-8 text-emerald-500 shrink-0" />
               </div>
             </div>
 
@@ -921,21 +941,21 @@ export default function HqAdminPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
-              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-2xs">
-                <p className="text-[13px] font-bold text-gray-500">활성 구독 매장 수</p>
-                <p className="text-2xl sm:text-3xl font-black text-blue-600 mt-1.5">{stores.length}곳</p>
+            <div className="grid grid-cols-3 gap-2 sm:gap-5">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
+                <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">활성 구독 매장</p>
+                <p className="text-lg sm:text-3xl font-black text-blue-600 mt-1 sm:mt-1.5 whitespace-nowrap">{stores.length}곳</p>
               </div>
-              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-2xs">
-                <p className="text-[13px] font-bold text-gray-500">이번 달 예상 정기결제 매출</p>
-                <p className="text-2xl sm:text-3xl font-black text-emerald-600 mt-1.5">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
+                <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">이번 달 예상 매출</p>
+                <p className="text-lg sm:text-3xl font-black text-emerald-600 mt-1 sm:mt-1.5 whitespace-nowrap">
                   {(stores.length * 9900).toLocaleString()}원
                 </p>
               </div>
-              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-2xs">
-                <p className="text-[13px] font-bold text-gray-500">기본 요금제</p>
-                <p className="text-base sm:text-lg font-extrabold text-gray-900 mt-1.5">
-                  월간 9,900원 / 연간 149,000원
+              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
+                <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">기본 요금제</p>
+                <p className="text-[11.5px] sm:text-lg font-extrabold text-gray-900 mt-1 sm:mt-1.5 leading-snug">
+                  월 9,900원<br className="sm:hidden" /><span className="hidden sm:inline"> / </span>연 14.9만
                 </p>
               </div>
             </div>
