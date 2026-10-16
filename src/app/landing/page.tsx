@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { QrCode, Sparkles, Users, Smartphone, PlusSquare, CreditCard, BarChart3, ArrowRight, CheckCircle2, Printer, Download, UserCheck, Camera, FileCheck, ShieldCheck } from 'lucide-react';
+import { QrCode, Sparkles, Users, Smartphone, PlusSquare, CreditCard, BarChart3, ArrowRight, CheckCircle2, Printer, Download, UserCheck, Camera, FileCheck, ShieldCheck, Search, Truck, MessageSquare, ExternalLink } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -554,6 +554,113 @@ export default function LandingPage() {
               </div>
             </div>
 
+            {/* Feature 7: Non-member Application & Delivery Tracking Lookup */}
+            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+              <div className="flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold">
+                  NEW 고객 만족도 200% 핵심 기능
+                </div>
+                <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center mb-2">
+                  <Search className="w-6 h-6 text-indigo-600" />
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+                  "사장님, 제 택배 언제 와요?" 문의 전화 끝!<br className="hidden sm:block" />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600">회원가입 없이 1초 만에</span> 내 접수 · 실시간 배송조회
+                </h3>
+                <p className="text-lg text-gray-500 font-medium leading-relaxed">
+                  고객에게 번거로운 회원가입이나 앱 설치를 요구하지 마세요. 비회원이어도 고객이 접수했던 매장 링크에서 <strong>[내 접수 / 배송 조회]</strong> 버튼을 눌러 <strong>본인의 이름과 전화번호</strong>만 입력하면 모든 진행상황이 한눈에 조회됩니다.<br/><br/>
+                  사장님이 어드민 리스트에서 <strong>택배사와 송장번호</strong>를 선택하거나 <strong>고객 전달 안내메모</strong>(예: <em>"예약 확정 및 주차 안내"</em>, <em>"입금 확인 완료"</em>)를 적어 <strong>[완료]</strong>만 누르면 끝! 고객은 <strong>송장번호를 따로 물어보거나 복사할 필요 없이 이름·전화번호만으로 접수 진행상태와 실시간 택배 배송위치를 바로 확인</strong>할 수 있어 매장의 문의 전화가 획기적으로 줄어듭니다.
+                </p>
+              </div>
+              <div className="flex-1 w-full relative min-h-[420px] sm:min-h-[460px] flex items-center justify-center mt-10 lg:mt-0">
+                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100 via-violet-100/70 to-blue-50 rounded-[2.5rem] transform rotate-2 scale-105" />
+
+                {/* Customer Lookup & Delivery Tracking Mockup */}
+                <div className="relative w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(79,70,229,0.18)] border border-indigo-100 overflow-hidden z-10 hover:scale-[1.02] transition-transform duration-500">
+                  {/* Top Banner Mockup */}
+                  <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 px-5 py-4 text-white flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/25">
+                        <Search className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-extrabold text-[14.5px]">내 접수 / 배송 조회</span>
+                          <span className="px-2 py-0.5 bg-white/20 text-white text-[10px] font-bold rounded-full">비회원 1초 조회</span>
+                        </div>
+                        <p className="text-[11px] text-indigo-100 mt-0.5">이름과 전화번호만으로 진행상황 · 배송상태 즉시 확인</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mockup Body */}
+                  <div className="p-5 space-y-3.5 bg-gray-50/70">
+                    {/* Search Input Bar Mockup */}
+                    <div className="bg-white p-3 rounded-2xl border border-gray-200 shadow-2xs flex items-center gap-2">
+                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center justify-between">
+                        <span className="text-[11px] text-gray-400 font-semibold">성함</span>
+                        <span className="text-[12px] font-extrabold text-gray-900">홍길동</span>
+                      </div>
+                      <div className="flex-[1.3] bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center justify-between">
+                        <span className="text-[11px] text-gray-400 font-semibold">연락처</span>
+                        <span className="text-[12px] font-extrabold text-indigo-600">010-1234-5678</span>
+                      </div>
+                      <div className="px-3.5 py-2 bg-indigo-600 text-white text-[12px] font-bold rounded-xl shadow-xs shrink-0">
+                        조회
+                      </div>
+                    </div>
+
+                    {/* Result Card 1: Delivery / Order with Tracking */}
+                    <div className="bg-white p-4 rounded-2xl border border-indigo-100 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[11px] font-extrabold rounded-lg border border-indigo-100">🛍️ 상품 주문 · 택배</span>
+                          <span className="text-[12.5px] font-black text-gray-900">프리미엄 선물세트 A</span>
+                        </div>
+                        <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-extrabold">발송완료</span>
+                      </div>
+
+                      {/* Courier & Tracking Box */}
+                      <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div>
+                          <div className="text-[10.5px] font-extrabold text-emerald-700 flex items-center gap-1">
+                            <Truck className="w-3.5 h-3.5" /> 발송 택배사 및 송장번호
+                          </div>
+                          <div className="text-[13px] font-black text-emerald-950 mt-0.5">
+                            우체국택배 · <span className="underline decoration-emerald-400">6890123456789</span>
+                          </div>
+                        </div>
+                        <div className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs shrink-0">
+                          실시간 배송위치 조회 <ExternalLink className="w-3 h-3" />
+                        </div>
+                      </div>
+
+                      {/* Store Customer Notice Box */}
+                      <div className="bg-indigo-50/70 border border-indigo-200/80 rounded-xl p-3">
+                        <div className="text-[10.5px] font-extrabold text-indigo-700 flex items-center gap-1 mb-1">
+                          <MessageSquare className="w-3 h-3" /> 매장 전달 안내사항
+                        </div>
+                        <p className="text-[12px] font-bold text-gray-800 leading-snug">
+                          "입금 확인 완료되어 오늘 오후 우체국택배로 안전하게 포장해 발송해드렸습니다 :)"
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Small floating badge */}
+                <div className="absolute -bottom-4 -left-2 sm:left-2 bg-white px-4 py-3 rounded-2xl shadow-[0_15px_30px_rgba(79,70,229,0.15)] border border-indigo-100 z-20 flex items-center gap-3 animate-bounce">
+                  <div className="w-9 h-9 bg-indigo-600 text-white rounded-full flex items-center justify-center font-black text-sm shadow-sm">
+                    <Truck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-black text-gray-900">문의 전화 90% 감소!</div>
+                    <div className="text-[11px] font-medium text-gray-500">비회원 조회 · 송장추적 · 안내메모 실시간 전달</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -644,7 +751,7 @@ export default function LandingPage() {
               </p>
               
               <ul className="space-y-4 mb-10">
-                {['아날로그 접수 혁신', '무제한 폼 생성 및 커스텀', '자동 고객 및 주문 관리', '모바일 주문서 다운로드 및 출력', '싹다폼의 모든 강력한 기능 포함'].map((item, i) => (
+                {['아날로그 접수 혁신', '비회원 1초 내 접수 · 실시간 배송조회 지원', '무제한 폼 생성 및 커스텀', '자동 고객 및 주문 관리 (송장 엑셀 다운로드)', '모바일 주문서 다운로드 및 출력', '싹다폼의 모든 강력한 기능 포함'].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <CheckCircle2 className="w-6 h-6 text-indigo-500 shrink-0" />
                     <span className="text-gray-700 font-bold text-[15px]">{item}</span>

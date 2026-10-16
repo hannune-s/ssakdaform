@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
+import { Package, Calendar, X, Printer, CheckCircle, MessageSquare } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 export default function ReservationList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
+  const [noticeInputs, setNoticeInputs] = useState<Record<string, string>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [savedFeedbackId, setSavedFeedbackId] = useState<string | null>(null);
 
   const filteredResponses = responses.filter(res => {
     if (!searchQuery) return true;
@@ -45,7 +48,53 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
 
     if (data) {
       setResponses(data);
+      const initialNotices: Record<string, string> = {};
+      data.forEach((item: any) => {
+        initialNotices[item.id] = item.data?._customerNotice || '';
+      });
+      setNoticeInputs(initialNotices);
     }
+  };
+
+  const saveNoticeAndConfirm = async (res: any) => {
+    const noticeText = (noticeInputs[res.id] ?? res.data?._customerNotice ?? '').trim();
+    setSavingId(res.id);
+
+    const updatedData = {
+      ...(res.data || {}),
+      _customerNotice: noticeText,
+    };
+
+    const { error } = await supabase
+      .from('ssakdaform_responses')
+      .update({
+        status: '예약확정',
+        data: updatedData,
+      })
+      .eq('id', res.id);
+
+    setSavingId(null);
+
+    if (error) {
+      alert('저장 실패: ' + error.message);
+      return;
+    }
+
+    setResponses(prev =>
+      prev.map(item =>
+        item.id === res.id ? { ...item, status: '예약확정', data: updatedData } : item
+      )
+    );
+    if (selectedResponse?.id === res.id) {
+      setSelectedResponse((prev: any) =>
+        prev ? { ...prev, status: '예약확정', data: updatedData } : prev
+      );
+    }
+
+    setSavedFeedbackId(res.id);
+    setTimeout(() => {
+      setSavedFeedbackId(prev => (prev === res.id ? null : prev));
+    }, 1800);
   };
 
   const toggleStatus = async (id: string, currentStatus: string) => {
@@ -78,10 +127,6 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
 
   const openDetails = (res: any) => {
     setSelectedResponse(res);
-  };
-
-  const closeDetails = () => {
-    setSelectedResponse(null);
   };
 
   const handlePrint = () => {
@@ -117,7 +162,7 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
       <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">매장 예약 신청 현황</h1>
-          <p className="text-[13px] text-gray-500">고객들이 제출한 매장 예약 신청서 리스트입니다.</p>
+          <p className="text-[13px] text-gray-500">고객들이 제출한 매장 예약 신청서 리스트입니다. 안내메모를 입력하고 완료를 누르면 고객 조회 화면에 바로 전달됩니다.</p>
         </div>
       </div>
 
@@ -130,7 +175,7 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">접수일시</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">예약자 (이름/연락처)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">예약 일정 (날짜/시간)</th>
-                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">상태</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 min-w-[330px]">접수상태 (고객 전달 안내메모)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 text-right">관리</th>
               </tr>
             </thead>
@@ -143,6 +188,7 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                   const resDate = data['예약 날짜'] || '-';
                   const resTime = data['예약 시간'] || '-';
                   const isCompleted = res.status === '예약확정';
+                  const isCancelled = res.status === '취소됨';
 
                   return (
                     <tr key={res.id} className="hover:bg-gray-50 transition-colors group">
@@ -159,20 +205,61 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                         <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{resTime}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <button 
-                            onClick={() => toggleStatus(res.id, res.status)}
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
-                              res.status === '취소됨'
-                                ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
-                                : isCompleted 
-                                  ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
-                                  : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
-                            }`}
-                            title={res.status === '취소됨' ? "취소된 내역입니다" : "상태를 변경하시려면 클릭하세요"}
-                          >
-                            {res.status === '취소됨' ? <X className="w-3 h-3 mr-1" /> : isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
-                            {res.status === '취소됨' ? '취소됨' : isCompleted ? '예약확정' : '접수대기'}
-                          </button>
+                        <div className="flex flex-col gap-1.5 max-w-[360px]">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => toggleStatus(res.id, res.status)}
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-colors ${
+                                isCancelled
+                                  ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                                  : isCompleted
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+                              }`}
+                              title={isCancelled ? '취소된 내역입니다' : '클릭하여 접수대기/예약확정 상태를 변경할 수 있습니다'}
+                            >
+                              {isCancelled ? <X className="w-3 h-3 mr-1" /> : isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
+                              {isCancelled ? '취소됨' : isCompleted ? '예약확정' : '접수대기'}
+                            </button>
+                            {data._customerNotice && (
+                              <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100 truncate max-w-[210px]" title={data._customerNotice}>
+                                안내: {data._customerNotice}
+                              </span>
+                            )}
+                          </div>
+
+                          {!isCancelled && (
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                key={`${res.id}-${data._customerNotice || ''}`}
+                                type="text"
+                                defaultValue={data._customerNotice || ''}
+                                onChange={(e) =>
+                                  setNoticeInputs(prev => ({ ...prev, [res.id]: e.target.value }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    saveNoticeAndConfirm(res);
+                                  }
+                                }}
+                                placeholder="고객 전달 메모 (예: 주차안내, 예약확정 안내 등)"
+                                className="flex-1 min-w-[210px] px-2.5 py-1.5 text-[12px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all placeholder:text-gray-400"
+                              />
+                              <button
+                                onClick={() => saveNoticeAndConfirm(res)}
+                                disabled={savingId === res.id}
+                                className={`px-3 py-1.5 rounded-lg text-[12px] font-bold transition-all active:scale-95 shrink-0 shadow-sm ${
+                                  savedFeedbackId === res.id
+                                    ? 'bg-emerald-600 text-white'
+                                    : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                                } disabled:opacity-50`}
+                              >
+                                {savingId === res.id ? '저장중' : savedFeedbackId === res.id ? '✓ 완료됨' : '완료'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5 sm:gap-2">
@@ -276,17 +363,17 @@ export default function ReservationList({ searchQuery = '' }: { searchQuery?: st
                   <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-medium text-gray-500 mb-1">현재 상태</p>
+                  <p className="text-xs font-medium text-gray-500 mb-1">접수 상태</p>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-sm font-bold">
-                    {selectedResponse.status === '예약완료' || selectedResponse.status === '완료' ? <CheckCircle className="w-4 h-4" /> : null}
-                    {selectedResponse.status || '접수됨'}
+                    {selectedResponse.status === '예약확정' ? <CheckCircle className="w-4 h-4" /> : null}
+                    {selectedResponse.status || '접수대기'}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
                 {(() => {
-                  const dataEntries = Object.entries(selectedResponse.data || { '안내': '내용이 없습니다.' });
+                  const dataEntries = Object.entries(selectedResponse.data || { '안내': '내용이 없습니다.' }).filter(([k]) => !k.startsWith('_'));
                   const personEntries = dataEntries.filter(([k]) => k.includes('예약자') || k.includes('연락처') || k.includes('인원'));
                   const dateEntries = dataEntries.filter(([k]) => k.includes('날짜') || k.includes('시간'));
                   const otherEntries = dataEntries.filter(([k]) => !k.includes('예약자') && !k.includes('연락처') && !k.includes('인원') && !k.includes('날짜') && !k.includes('시간'));

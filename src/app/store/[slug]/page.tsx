@@ -327,53 +327,53 @@ export default function StoreHubPage() {
       <div className="w-full max-w-md mx-auto px-4 mt-6 relative z-20 flex-1 pb-16">
         
         {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
-          <div className="mb-6">
+          <div className="mb-5">
             <button 
               onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
-              className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors mx-auto bg-gray-100 hover:bg-gray-200/80 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[13px] font-extrabold text-indigo-900 hover:text-indigo-950 transition-all mx-auto bg-white hover:bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-300 shadow-sm px-4 py-2 rounded-full active:scale-95"
             >
-              <Store className="w-3.5 h-3.5" />
-              가게 정보 보기
-              {isStoreInfoOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              <Store className="w-4 h-4 text-indigo-600" />
+              <span>가게 정보 보기</span>
+              {isStoreInfoOpen ? <ChevronUp className="w-4 h-4 text-indigo-600" /> : <ChevronDown className="w-4 h-4 text-indigo-600" />}
             </button>
             
             {isStoreInfoOpen && (
-              <div className="mt-3 p-4 bg-white shadow-sm border border-gray-100 rounded-xl text-sm text-gray-700 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="mt-3 p-4 bg-white shadow-md border border-indigo-100 rounded-2xl text-[13.5px] text-gray-800 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
                 {storeInfo.name && (
-                  <div className="flex gap-2">
-                    <Store className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
+                  <div className="flex items-start gap-2.5">
+                    <Store className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-indigo-950 mr-2">상호명:</span><span className="font-semibold text-gray-900">{storeInfo.name}</span></div>
                   </div>
                 )}
 
                 {storeInfo.ownerName && (
-                  <div className="flex gap-2">
-                    <User className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">대표자:</span>{storeInfo.ownerName}</div>
+                  <div className="flex items-start gap-2.5">
+                    <User className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-indigo-950 mr-2">대표자:</span><span className="font-semibold text-gray-900">{storeInfo.ownerName}</span></div>
                   </div>
                 )}
                 {storeInfo.address && (
-                  <div className="flex gap-2">
-                    <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">주소:</span>{storeInfo.address}</div>
+                  <div className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-indigo-950 mr-2">주소:</span><span className="font-semibold text-gray-900">{storeInfo.address}</span></div>
                   </div>
                 )}
                 {storeInfo.phone && (
-                  <div className="flex gap-2">
-                    <Phone className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">전화번호:</span>{storeInfo.phone}</div>
+                  <div className="flex items-start gap-2.5">
+                    <Phone className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-indigo-950 mr-2">전화번호:</span><span className="font-bold text-indigo-700">{storeInfo.phone}</span></div>
                   </div>
                 )}
                 {storeInfo.hours && (
-                  <div className="flex gap-2">
-                    <Clock className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">영업시간:</span>{storeInfo.hours}</div>
+                  <div className="flex items-start gap-2.5">
+                    <Clock className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-indigo-950 mr-2">영업시간:</span><span className="font-semibold text-gray-900">{storeInfo.hours}</span></div>
                   </div>
                 )}
                 {storeInfo.closedDays && (
-                  <div className="flex gap-2">
-                    <CalendarX className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">휴무일:</span>{storeInfo.closedDays}</div>
+                  <div className="flex items-start gap-2.5">
+                    <CalendarX className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-indigo-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
                   </div>
                 )}
               </div>
@@ -584,10 +584,17 @@ export default function StoreHubPage() {
                       const d = item.data || {};
                       const meta = getFormCategoryMeta(item.form_id, d);
                       const status = item.status || meta.defaultPending;
-                      const isDone = status === '발송완료' || status === '예약확정' || status === '확인완료' || status === '결제완료';
+                      const isDone =
+                        status === '발송완료' ||
+                        status === '입금확인' ||
+                        status === '예약확정' ||
+                        status === '확인완료' ||
+                        status === '결제완료';
                       const isCancelled = status === '취소됨';
                       const courier = d._courier || '';
                       const trackingNumber = d._trackingNumber || '';
+                      const isOrderShipped = status === '발송완료';
+                      const isOrderConfirmed = status === '입금확인' || isOrderShipped || Boolean(d._orderConfirmed);
 
                       return (
                         <div
@@ -595,7 +602,7 @@ export default function StoreHubPage() {
                           className="bg-white rounded-2xl border border-gray-200/90 shadow-sm overflow-hidden"
                         >
                           {/* 카드 상단 바 */}
-                          <div className="px-4 py-3 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between gap-2">
+                          <div className="px-4 py-3 bg-gray-50/80 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <span className={`px-2.5 py-0.5 rounded-md text-[11.5px] font-extrabold border ${meta.badgeClass}`}>
                                 {meta.label}
@@ -693,16 +700,109 @@ export default function StoreHubPage() {
                                 )}
                               </>
                             ) : (
-                              /* 예약 / 상품주문 / 간편폼 상세 요약 */
-                              <div className="bg-gray-50 rounded-xl p-3 space-y-1.5 text-[13px]">
-                                {Object.entries(d)
-                                  .filter(([k]) => !k.startsWith('_') && k !== 'formTitle')
-                                  .map(([k, v]) => (
-                                    <div key={k} className="flex justify-between gap-3">
-                                      <span className="text-gray-500 font-semibold shrink-0">{k}</span>
-                                      <span className="text-gray-900 font-bold text-right break-all">{String(v || '-')}</span>
+                              /* 예약 / 상품주문 / 간편폼 상세 요약 및 사장님 전달 메모 + 상품 배송정보 */
+                              <div className="space-y-2.5">
+                                <div className="bg-gray-50 rounded-xl p-3 space-y-1.5 text-[13px]">
+                                  {Object.entries(d)
+                                    .filter(([k]) => !k.startsWith('_') && k !== 'formTitle')
+                                    .map(([k, v]) => (
+                                      <div key={k} className="flex justify-between gap-3">
+                                        <span className="text-gray-500 font-semibold shrink-0">{k}</span>
+                                        <span className="text-gray-900 font-bold text-right break-all">
+                                          {/주소/.test(k) ? maskAddress(String(v || '')) : String(v || '-')}
+                                        </span>
+                                      </div>
+                                    ))}
+                                </div>
+
+                                {/* 상품주문건에 택배사/배송방식이 등록된 경우 */}
+                                {item.form_id === 'order-preset' && courier && (
+                                  <div className="p-3.5 rounded-xl bg-gradient-to-br from-indigo-50 to-emerald-50/60 border border-indigo-200/80 space-y-2.5">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <div>
+                                        <p className="text-[11px] font-bold text-indigo-600 mb-0.5">배송방식 및 송장정보</p>
+                                        <p className="text-[15px] font-extrabold text-gray-900 tracking-tight">
+                                          {courier}{' '}
+                                          {trackingNumber && (
+                                            <span className="text-indigo-700 font-mono">{trackingNumber}</span>
+                                          )}
+                                        </p>
+                                      </div>
+                                      {trackingNumber && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleCopyTracking(trackingNumber)}
+                                          className="px-2.5 py-1.5 bg-white hover:bg-gray-50 text-gray-700 border border-indigo-100 rounded-lg text-[11.5px] font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all shrink-0"
+                                        >
+                                          {copiedTracking === trackingNumber ? (
+                                            <>
+                                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                              <span>복사됨</span>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Copy className="w-3.5 h-3.5 text-gray-400" />
+                                              <span>번호복사</span>
+                                            </>
+                                          )}
+                                        </button>
+                                      )}
                                     </div>
-                                  ))}
+                                    {trackingNumber && !courier.includes('퀵') && !courier.includes('픽업') && (
+                                      <a
+                                        href={`https://search.naver.com/search.naver?query=${encodeURIComponent(`${courier} ${trackingNumber}`)}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-[0.99]"
+                                      >
+                                        <Truck className="w-4 h-4" />
+                                        <span>실시간 배송위치 조회</span>
+                                        <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+
+                                {isCancelled ? (
+                                  <div className="px-3.5 py-2.5 rounded-xl bg-red-50 border border-red-200 text-[12.5px] text-red-700 font-bold">
+                                    취소된 접수 내역입니다.
+                                  </div>
+                                ) : isDone ? (
+                                  <div className="p-3.5 rounded-xl bg-gradient-to-br from-emerald-50 to-indigo-50/60 border border-emerald-200/90 space-y-1.5">
+                                    <p className="text-[13px] font-extrabold text-emerald-800 flex items-center gap-1.5">
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                      {item.form_id === 'reservation-preset'
+                                        ? '예약이 완료(확정)되었습니다!'
+                                        : item.form_id === 'order-preset'
+                                          ? isOrderShipped
+                                            ? '주문하신 상품이 발송 완료되었습니다!'
+                                            : '입금 및 주문 내역이 확인되었습니다!'
+                                          : '접수가 정상적으로 확인되었습니다!'}
+                                    </p>
+                                    {d._customerNotice && (
+                                      <div className="mt-1.5 pt-2 border-t border-emerald-200/70">
+                                        <p className="text-[11px] font-extrabold text-indigo-700 mb-0.5">📢 매장 전달 안내사항</p>
+                                        <p className="text-[13px] font-bold text-gray-900 whitespace-pre-wrap leading-relaxed">
+                                          {d._customerNotice}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-1.5">
+                                    <p className="text-[12.5px] text-amber-800 font-bold">
+                                      현재 매장에서 접수 내역을 확인 중입니다.
+                                    </p>
+                                    {d._customerNotice && (
+                                      <div className="mt-1.5 pt-2 border-t border-amber-200/70">
+                                        <p className="text-[11px] font-extrabold text-indigo-700 mb-0.5">📢 매장 전달 안내사항</p>
+                                        <p className="text-[13px] font-bold text-gray-900 whitespace-pre-wrap leading-relaxed">
+                                          {d._customerNotice}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>

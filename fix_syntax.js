@@ -1,22 +1,27 @@
 const fs = require('fs');
-const files = [
-  'src/app/delivery-list/page.tsx',
-  'src/app/reservation-list/page.tsx',
-  'src/app/order-list/page.tsx'
-];
 
-for (const file of files) {
-  let content = fs.readFileSync(file, 'utf8');
+let page = fs.readFileSync('src/app/form-builder/page.tsx', 'utf8');
 
-  // Fix syntax error
-  content = content.replace(
-    /useEffect\(\(\) => \{\s*const loadData/s,
-    `useEffect(() => {
-    loadData();
-  }, []);
+// I need to find the end of the file:
+//       )}
+// 
+//     </div>
+//   );
+// }
 
-  const loadData`
-  );
+// And replace it with:
+//       )}
+//       </div>
+//       </div>
+//     </div>
+//   );
+// }
 
-  fs.writeFileSync(file, content);
+const regex = /      \)\}\r?\n\r?\n    <\/div>\r?\n  \);\r?\n\}/;
+if (regex.test(page)) {
+  page = page.replace(regex, "      )}\n      </div>\n      </div>\n    </div>\n  );\n}");
+  fs.writeFileSync('src/app/form-builder/page.tsx', page);
+  console.log('Fixed syntax error!');
+} else {
+  console.log('Regex did not match for fixing syntax error');
 }
