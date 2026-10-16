@@ -448,36 +448,87 @@ export default function HqAdminPage() {
   ] as const;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const currentMenuItem = menuItems.find(m => m.id === activeMenu) || menuItems[0];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-sans text-gray-900 break-keep">
-      {/* 모바일/태블릿 상단 고정 헤더 + 가로 스크롤 메뉴 탭 (lg 미만에서만 표시) */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-gray-200/80 shadow-2xs">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[20px] font-black text-blue-600 tracking-tight whitespace-nowrap">싹다폼</span>
-            <span className="text-[12px] font-bold text-gray-400 whitespace-nowrap">Admin</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[12px] flex items-center gap-1.5 shadow-2xs whitespace-nowrap"
-            >
-              <span>📱</span>
-              <span>앱 바로가기</span>
-            </Link>
+      {/* 모바일/태블릿 상단바 (햄버거 버튼 + 현재 메뉴명 + 앱 바로가기 버튼만 깔끔하게 표시) */}
+      <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200/80 shadow-2xs">
+        <div className="flex items-center justify-between px-4 py-3.5">
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(prev => !prev)}
-              className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-[12px] font-bold whitespace-nowrap"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="메뉴 열기"
+              className="p-1.5 -ml-1 rounded-lg text-gray-700 hover:bg-gray-100 active:scale-95 transition-all"
             >
-              {isMobileMenuOpen ? '닫기 ✕' : '메뉴 ☰'}
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[17px] leading-none">{currentMenuItem.emoji}</span>
+              <span className="text-[17px] font-black text-gray-900 tracking-tight whitespace-nowrap">
+                {currentMenuItem.label}
+              </span>
+            </div>
           </div>
+
+          <Link
+            href="/"
+            className="py-1.5 px-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 rounded-lg font-extrabold text-[12px] flex items-center gap-1.5 whitespace-nowrap transition-colors"
+          >
+            <span>📱</span>
+            <span>앱 바로가기</span>
+          </Link>
+        </div>
+      </header>
+
+      {/* 모바일/태블릿 딤드(배경 어둡게) 오버레이 */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/45 z-40 backdrop-blur-[1px] transition-opacity"
+        />
+      )}
+
+      {/* 좌측 사이드바 (모바일에서는 햄버거 클릭 시 좌측에서 슬라이드 인, PC에서는 좌측 고정) */}
+      <aside
+        className={`w-64 bg-white border-r border-gray-200/80 flex flex-col fixed inset-y-0 left-0 z-50 transition-transform duration-200 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* 상단 로고 & 닫기(X) 버튼 */}
+        <div className="px-5 pt-6 pb-5 bg-blue-50/40 border-b border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white font-black text-[18px] flex items-center justify-center shadow-xs shrink-0">
+              싹
+            </div>
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[17px] font-black text-gray-900 tracking-tight whitespace-nowrap">
+                  싹다폼 Admin
+                </span>
+              </div>
+              <p className="text-[11px] font-semibold text-gray-400 whitespace-nowrap">
+                가맹점 &amp; 본사 통합 관리
+              </p>
+            </div>
+          </div>
+
+          {/* 모바일 닫기(X) 버튼 */}
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="메뉴 닫기"
+            className="lg:hidden p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* 모바일 가로 스크롤 빠른 메뉴 바 (글씨 절대 찌그러지지 않게 whitespace-nowrap 적용) */}
-        <div className="flex items-center gap-1.5 px-3 pb-2.5 overflow-x-auto no-scrollbar">
+        {/* 네비게이션 메뉴 */}
+        <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
           {menuItems.map(item => {
             const isActive = activeMenu === item.id;
             return (
@@ -487,95 +538,10 @@ export default function HqAdminPage() {
                   setActiveMenu(item.id);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] whitespace-nowrap shrink-0 transition-all ${
-                  isActive
-                    ? 'bg-blue-600 text-white font-extrabold shadow-2xs'
-                    : 'bg-gray-100/90 text-gray-600 hover:bg-gray-200/70 font-bold'
-                }`}
-              >
-                <span className="text-[13.5px] leading-none">{item.emoji}</span>
-                <span>{item.label}</span>
-                {'badge' in item && item.badge ? (
-                  <span
-                    className={`px-1.5 py-0.2 text-[10px] font-extrabold rounded-full ${
-                      isActive ? 'bg-white text-blue-600' : 'bg-white text-gray-700'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 모바일 드롭다운 전체 메뉴 (메뉴 ☰ 버튼 클릭 시) */}
-        {isMobileMenuOpen && (
-          <div className="border-t border-gray-100 bg-white px-3 py-2.5 space-y-1 shadow-lg">
-            {menuItems.map(item => {
-              const isActive = activeMenu === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveMenu(item.id);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13.5px] whitespace-nowrap ${
-                    isActive
-                      ? 'bg-blue-50 text-blue-600 font-extrabold'
-                      : 'text-gray-700 hover:bg-gray-50 font-bold'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span>{item.emoji}</span>
-                    <span>{item.label}</span>
-                  </div>
-                  {'badge' in item && item.badge ? (
-                    <span className="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-blue-600 text-white">
-                      {item.badge}
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </header>
-
-      {/* 데스크톱 좌측 고정 사이드바 (lg 이상에서만 표시) */}
-      <aside className="hidden lg:flex w-64 bg-white border-r border-gray-200/80 flex-col fixed inset-y-0 left-0 z-40">
-        {/* 상단 로고 */}
-        <div className="px-6 pt-7 pb-5">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[24px] font-black text-blue-600 tracking-tight">싹다폼</span>
-            <span className="text-[13.5px] font-bold text-gray-400">Admin</span>
-          </div>
-        </div>
-
-        {/* 앱 바로가기 버튼 */}
-        <div className="px-4 mb-5">
-          <Link
-            href="/"
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-[13.5px] flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 whitespace-nowrap"
-          >
-            <span>📱</span>
-            <span>싹다폼 앱 바로가기</span>
-          </Link>
-        </div>
-
-        {/* 네비게이션 메뉴 */}
-        <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
-          {menuItems.map(item => {
-            const isActive = activeMenu === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveMenu(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[14px] whitespace-nowrap transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-[14px] whitespace-nowrap transition-all ${
                   isActive
                     ? 'bg-blue-50/90 text-blue-600 font-extrabold shadow-2xs'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-bold'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-bold'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -596,9 +562,18 @@ export default function HqAdminPage() {
           })}
         </nav>
 
-        {/* 하단 카피라이트 */}
-        <div className="p-5 border-t border-gray-100 text-center">
-          <p className="text-[12px] font-semibold text-gray-400 whitespace-nowrap">© 2026 싹다폼 본사 총괄 시스템</p>
+        {/* 하단 버튼 & 카피라이트 */}
+        <div className="p-4 border-t border-gray-100 space-y-3">
+          <Link
+            href="/"
+            className="w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200/80 text-gray-700 rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 transition-all whitespace-nowrap"
+          >
+            <span>📱</span>
+            <span>싹다폼 앱 바로가기</span>
+          </Link>
+          <p className="text-[11.5px] font-semibold text-gray-400 text-center whitespace-nowrap">
+            © 2026 싹다폼 Admin
+          </p>
         </div>
       </aside>
 
