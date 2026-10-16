@@ -11,6 +11,9 @@ import FormBuilder from './form-builder/page';
 import SettingsPage from './settings/page';
 import SubscriptionPage from './subscription/page';
 import AccountPage from './account/page';
+import GuidePage from './guide/page';
+import NoticesPage from './notices/page';
+import InquiryPage from './inquiry/page';
 import DashboardWidget from './components/DashboardWidget';
 import { getActiveStoreId, getLoggedInStore, clearLoggedInStore } from '@/lib/storeSession';
 
@@ -92,9 +95,11 @@ export default function AdminHub() {
     }
   };
 
+  const isSubMyTab = ['my', 'settings', 'account', 'subscription', 'guide', 'notices', 'inquiry'].includes(activeTab);
+
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col px-4 pb-24">
-      {activeTab !== 'my' && activeTab !== 'settings' && activeTab !== 'account' && activeTab !== 'subscription' && (
+    <div className={`w-full min-h-screen bg-gray-50 flex flex-col ${['guide', 'notices', 'inquiry'].includes(activeTab) ? 'px-0' : 'px-4'} pb-24`}>
+      {!isSubMyTab && (
         <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
@@ -268,19 +273,34 @@ export default function AdminHub() {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around pb-safe shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.05)] z-50 h-16 sm:h-16">
         <button 
           onClick={() => setActiveTab('dashboard')}
-          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab !== 'my' && activeTab !== 'account' && activeTab !== 'settings' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${!isSubMyTab ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <Home className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[10px] sm:text-[11px] font-bold">홈</span>
         </button>
         <button 
           onClick={() => setActiveTab('my')}
-          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab === 'my' || activeTab === 'account' || activeTab === 'settings' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isSubMyTab ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <User className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[10px] sm:text-[11px] font-bold">마이</span>
         </button>
       </div>
+
+      {/* 1분 이용 가이드 페이지 */}
+      {activeTab === 'guide' && (
+        <GuidePage onBack={() => setActiveTab('my')} />
+      )}
+
+      {/* 1:1 문의 페이지 */}
+      {activeTab === 'inquiry' && (
+        <InquiryPage onBack={() => setActiveTab('my')} />
+      )}
+
+      {/* 본사 공지사항 페이지 */}
+      {activeTab === 'notices' && (
+        <NoticesPage onBack={() => setActiveTab('my')} />
+      )}
 
       {/* 구독 및 결제 관리 페이지 */}
       {activeTab === 'subscription' && (
@@ -380,14 +400,24 @@ export default function AdminHub() {
           
           <div className="bg-white rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.03)] border border-gray-100/80 overflow-hidden divide-y divide-gray-100/80">
             {[
-              { title: '이용 가이드', type: 'normal' },
-              { title: '1:1 문의', type: 'normal' },
+              { title: '이용 가이드', type: 'guide' },
+              { title: '1:1 문의', type: 'inquiry' },
               { title: '본사 공지사항', type: 'notice' },
               { title: '로그아웃', type: 'logout' }
             ].map((menu, idx) => (
               <div 
                 key={idx}
-                onClick={menu.type === 'logout' ? handleLogout : undefined}
+                onClick={
+                  menu.type === 'logout'
+                    ? handleLogout
+                    : menu.type === 'guide'
+                      ? () => setActiveTab('guide')
+                      : menu.type === 'inquiry'
+                        ? () => setActiveTab('inquiry')
+                        : menu.type === 'notice'
+                          ? () => setActiveTab('notices')
+                          : undefined
+                }
                 className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors group"
               >
                 <div className="flex items-center gap-2">

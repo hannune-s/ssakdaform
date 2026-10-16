@@ -10,6 +10,7 @@ import ResumeList from '../resume-list/page';
 import FormBuilder from '../form-builder/page';
 import SettingsPage from '../settings/page';
 import AccountPage from '../account/page';
+import GuidePage from '../guide/page';
 import DashboardWidget from '../components/DashboardWidget';
 
 export default function DemoAdminHub() {
@@ -64,7 +65,7 @@ export default function DemoAdminHub() {
          </a>
       </div>
 
-      {activeTab !== 'my' && activeTab !== 'settings' && activeTab !== 'account' && (
+      {activeTab !== 'my' && activeTab !== 'settings' && activeTab !== 'account' && activeTab !== 'guide' && (
         <div className="pt-12 sm:pt-16 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
@@ -231,6 +232,13 @@ export default function DemoAdminHub() {
         </button>
       </div>
 
+      {/* 1분 이용 가이드 페이지 */}
+      {activeTab === 'guide' && (
+        <div className="pt-10 w-full -mx-4">
+          <GuidePage onBack={() => setActiveTab('my')} />
+        </div>
+      )}
+
       {/* 계정 정보 페이지 */}
       {activeTab === 'account' && (
         <div className="pt-12 sm:pt-16 pb-10 w-full">
@@ -320,13 +328,14 @@ export default function DemoAdminHub() {
           
           <div className="bg-white rounded-2xl shadow-[0_2px_10px_rgb(0,0,0,0.03)] border border-gray-100/80 overflow-hidden divide-y divide-gray-100/80">
             {[
-              { title: '이용 가이드', type: 'normal' },
+              { title: '이용 가이드', type: 'guide' },
               { title: '1:1 문의', type: 'normal' },
               { title: '본사 공지사항', type: 'notice' },
               { title: '로그아웃', type: 'logout' }
             ].map((menu, idx) => (
               <div 
                 key={idx}
+                onClick={menu.type === 'guide' ? () => setActiveTab('guide') : undefined}
                 className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors group"
               >
                 <div className="flex items-center gap-2">
