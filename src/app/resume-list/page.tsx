@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { UserCheck, X, Printer, CheckCircle, User, Download, FileText } from 'lucide-react';
+import { UserCheck, X, Printer, Check, User, Download, FileText, Save } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 export default function ResumeList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
+  const [memoInputs, setMemoInputs] = useState<Record<string, string>>({});
+  const [savedMemoId, setSavedMemoId] = useState<string | null>(null);
 
   const filteredResponses = responses.filter(res => {
     if (!searchQuery) return true;
@@ -52,26 +54,39 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
 
     if (data) {
       setResponses(data);
+      const initialMemos: Record<string, string> = {};
+      data.forEach(r => {
+        initialMemos[r.id] = r.data?._adminMemo || '';
+      });
+      setMemoInputs(initialMemos);
     }
   };
 
-  const toggleStatus = async (id: string, currentStatus: string) => {
-    if (currentStatus === '취소됨') return;
-    const newStatus = currentStatus === '검토완료' ? '접수대기' : '검토완료';
-    await supabase
-      .from('ssakdaform_responses')
-      .update({ status: newStatus })
-      .eq('id', id);
-    loadData();
-  };
+  const handleSaveMemo = async (res: any, customMemo?: string) => {
+    const newMemo = customMemo !== undefined ? customMemo : (memoInputs[res.id] ?? '');
+    const updatedData = {
+      ...(res.data || {}),
+      _adminMemo: newMemo
+    };
 
-  const cancelStatus = async (id: string) => {
-    if (!window.confirm('이 지원 내역을 정말 취소 처리하시겠습니까?')) return;
-    await supabase
+    const { error } = await supabase
       .from('ssakdaform_responses')
-      .update({ status: '취소됨' })
-      .eq('id', id);
-    loadData();
+      .update({ data: updatedData })
+      .eq('id', res.id);
+
+    if (error) {
+      alert('메모 저장 실패: ' + error.message);
+      return;
+    }
+
+    setResponses(prev => prev.map(item => (item.id === res.id ? { ...item, data: updatedData } : item)));
+    if (selectedResponse && selectedResponse.id === res.id) {
+      setSelectedResponse((prev: any) => (prev ? { ...prev, data: updatedData } : null));
+    }
+    setSavedMemoId(res.id);
+    setTimeout(() => {
+      setSavedMemoId(prev => (prev === res.id ? null : prev));
+    }, 1800);
   };
 
   const deleteItem = async (id: string) => {
@@ -120,7 +135,7 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
       <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">이력서접수 (직원채용)</h1>
-          <p className="text-[13px] text-gray-500">지원자들이 제출한 간편 이력서 및 증빙서류 리스트입니다.</p>
+          <p className="text-[13px] text-gray-500">지원자들이 제출한 간편 이력서 리스트입니다. 비고란에 면접 일정이나 근무 특이사항을 자유롭게 메모해보세요.</p>
         </div>
       </div>
 
@@ -133,7 +148,7 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">접수일시</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">지원자 (이름/연락처)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">지원파트 / 희망근무</th>
-                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">상태</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">비고 (특이사항 / 근무메모)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 text-right">관리</th>
               </tr>
             </thead>
@@ -148,7 +163,7 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                   const workDays = data['근무가능요일'] || '';
                   const workHours = data['근무가능시간'] || '';
                   const workSchedule = [workDays, workHours].filter(Boolean).join(' · ') || '-';
-                  const isCompleted = res.status === '검토완료';
+                  const isMemoSaved = savedMemoId === res.id;
 
                   return (
                     <tr key={res.id} className="hover:bg-gray-50 transition-colors group">
@@ -177,23 +192,39 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{applyPart}</p>
-                        <p className="text-[12.5px] font-semibold text-emerald-700 truncate max-w-[220px] mt-0.5" title={workSchedule}>{workSchedule}</p>
+                        <p className="text-[12.5px] font-semibold text-emerald-700 truncate max-w-[200px] mt-0.5" title={workSchedule}>{workSchedule}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <button 
-                          onClick={() => toggleStatus(res.id, res.status)}
-                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
-                            res.status === '취소됨'
-                              ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
-                              : isCompleted 
-                                ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
-                                : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
-                          }`}
-                          title={res.status === '취소됨' ? "취소된 내역입니다" : "상태를 변경하시려면 클릭하세요"}
-                        >
-                          {res.status === '취소됨' ? <X className="w-3 h-3 mr-1" /> : isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
-                          {res.status === '취소됨' ? '취소됨' : isCompleted ? '검토완료' : '접수대기'}
-                        </button>
+                        <div className="flex items-center gap-1.5 min-w-[240px] max-w-[320px]">
+                          <input
+                            type="text"
+                            defaultValue={data._adminMemo || ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setMemoInputs(prev => ({ ...prev, [res.id]: val }));
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSaveMemo(res, (e.currentTarget as HTMLInputElement).value);
+                              }
+                            }}
+                            placeholder="면접일정, 시급, 특이사항 등 메모"
+                            className="flex-1 px-2.5 py-1.5 text-[12.5px] font-medium text-gray-800 bg-amber-50/40 border border-gray-200 rounded-lg focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder:text-gray-400"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveMemo(res)}
+                            className={`px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold transition-all shrink-0 flex items-center gap-1 border ${
+                              isMemoSaved
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100'
+                            }`}
+                          >
+                            {isMemoSaved ? <Check className="w-3 h-3" /> : null}
+                            {isMemoSaved ? '저장됨' : '저장'}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5 sm:gap-2">
@@ -203,14 +234,6 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                           >
                             상세 내용
                           </button>
-                          {res.status !== '취소됨' && (
-                            <button 
-                              onClick={() => cancelStatus(res.id)} 
-                              className="inline-flex items-center px-2.5 py-1.5 bg-amber-50 text-amber-700 border border-amber-200/80 hover:bg-amber-100 rounded-lg text-[12px] font-bold transition-all"
-                            >
-                              지원 취소
-                            </button>
-                          )}
                           <button 
                             onClick={() => deleteItem(res.id)} 
                             className="inline-flex items-center px-2.5 py-1.5 bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 hover:text-red-700 rounded-lg text-[12px] font-bold transition-all"
@@ -291,17 +314,37 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
             </div>
             
             <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0 space-y-6">
-              {/* 상단 접수일시 및 상태 */}
-              <div className="bg-white rounded-2xl p-5 shadow-md shadow-gray-200/50 flex justify-between items-center">
-                <div>
-                  <p className="text-xs font-medium text-gray-500 mb-1">지원 일시</p>
-                  <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
+              {/* 상단 지원일시 및 사장님 비고 메모 */}
+              <div className="bg-white rounded-2xl p-5 shadow-md shadow-gray-200/50 space-y-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-xs font-medium text-gray-500 mb-0.5">지원 일시</p>
+                    <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-medium text-gray-500 mb-1">현재 상태</p>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-bold">
-                    {selectedResponse.status === '검토완료' ? <CheckCircle className="w-4 h-4" /> : null}
-                    {selectedResponse.status || '접수대기'}
+                <div className="pt-3 border-t border-gray-100">
+                  <label className="block text-xs font-bold text-indigo-900 mb-1.5">
+                    비고 (사장님 메모 · 면접/근무 특이사항)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      defaultValue={selectedResponse.data?._adminMemo || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setMemoInputs(prev => ({ ...prev, [selectedResponse.id]: val }));
+                      }}
+                      placeholder="예: 면접완료, 10월 20일 첫출근, 시급 11,000원 등"
+                      className="flex-1 px-3 py-2 text-sm font-medium text-gray-800 bg-amber-50/50 border border-amber-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleSaveMemo(selectedResponse)}
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0"
+                    >
+                      <Save className="w-3.5 h-3.5" />
+                      {savedMemoId === selectedResponse.id ? '저장됨' : '메모 저장'}
+                    </button>
                   </div>
                 </div>
               </div>

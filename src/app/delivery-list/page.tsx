@@ -1,13 +1,30 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Package, Search, Calendar, ChevronRight, X, Printer, CheckCircle } from 'lucide-react';
+import { Package, X, Printer, CheckCircle, Download } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveAdminStoreId } from '@/lib/storeSession';
+
+const COURIER_LIST = [
+  'CJ대한통운',
+  '우체국택배',
+  '롯데택배',
+  '한진택배',
+  '로젠택배',
+  '경동택배',
+  'CU편의점택배',
+  'GS25편의점택배',
+  '일양로지스',
+  '직접배송/기타',
+];
 
 export default function DeliveryList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [courierInputs, setCourierInputs] = useState<Record<string, string>>({});
+  const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   const filteredResponses = responses.filter(res => {
     if (!searchQuery) return true;
@@ -15,6 +32,27 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
     const dataStr = JSON.stringify(res.data || {}).toLowerCase();
     return dataStr.includes(q);
   });
+
+  const selectableResponses = filteredResponses.filter(r => r.status !== '취소됨');
+  const isAllSelected =
+    selectableResponses.length > 0 &&
+    selectableResponses.every(r => selectedIds.includes(r.id));
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      const selectableIdSet = new Set(selectableResponses.map(r => r.id));
+      setSelectedIds(prev => prev.filter(id => !selectableIdSet.has(id)));
+    } else {
+      const merged = new Set([...selectedIds, ...selectableResponses.map(r => r.id)]);
+      setSelectedIds(Array.from(merged));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -45,7 +83,167 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
 
     if (data) {
       setResponses(data);
+      setSelectedIds(prev => prev.filter(id => data.some((d: any) => d.id === id && d.status !== '취소됨')));
+      const initialCouriers: Record<string, string> = {};
+      const initialTrackings: Record<string, string> = {};
+      data.forEach((item: any) => {
+        initialCouriers[item.id] = item.data?._courier || '';
+        initialTrackings[item.id] = item.data?._trackingNumber || '';
+      });
+      setCourierInputs(initialCouriers);
+      setTrackingInputs(initialTrackings);
     }
+  };
+
+  const saveShippingInfo = async (res: any) => {
+    const courier = (courierInputs[res.id] ?? res.data?._courier ?? '').trim();
+    const trackingNumber = (trackingInputs[res.id] ?? res.data?._trackingNumber ?? '').trim();
+
+    if (!courier) {
+      alert('택배사를 선택해주세요.');
+      return;
+    }
+    if (!trackingNumber) {
+      alert('송장번호를 입력해주세요.');
+      return;
+    }
+
+    setSavingId(res.id);
+    const updatedData = {
+      ...(res.data || {}),
+      _courier: courier,
+      _trackingNumber: trackingNumber,
+    };
+
+    const { error } = await supabase
+      .from('ssakdaform_responses')
+      .update({
+        status: '발송완료',
+        data: updatedData,
+      })
+      .eq('id', res.id);
+
+    setSavingId(null);
+
+    if (error) {
+      alert('송장 정보 저장 실패: ' + error.message);
+      return;
+    }
+
+    setResponses(prev =>
+      prev.map(item =>
+        item.id === res.id ? { ...item, status: '발송완료', data: updatedData } : item
+      )
+    );
+    if (selectedResponse?.id === res.id) {
+      setSelectedResponse((prev: any) =>
+        prev ? { ...prev, status: '발송완료', data: updatedData } : prev
+      );
+    }
+  };
+
+  // 전화번호 하이픈 포맷팅 (엑셀에서 앞자리 0이 사라지는 현상 방지 및 택배사 양식 호환)
+  const formatPhoneForExcel = (raw: string) => {
+    if (!raw) return '';
+    const digits = String(raw).replace(/[^0-9]/g, '');
+    if (digits.length === 11) {
+      return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+    }
+    if (digits.length === 10) {
+      if (digits.startsWith('02')) {
+        return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6)}`;
+      }
+      return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+    }
+    if (digits.length === 9 && digits.startsWith('02')) {
+      return `${digits.slice(0, 2)}-${digits.slice(2, 5)}-${digits.slice(5)}`;
+    }
+    return raw;
+  };
+
+  // CSV 셀 이스케이프 처리
+  const escapeCsvCell = (val: any) => {
+    const str = val === null || val === undefined ? '' : String(val).replace(/\r?\n/g, ' ');
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  // 택배 송장용 엑셀(CSV) 다운로드 함수 (체크박스로 선택한 항목만 다운로드)
+  const handleDownloadWaybillExcel = () => {
+    const validTargets = filteredResponses.filter(
+      r => selectedIds.includes(r.id) && r.status !== '취소됨'
+    );
+    if (validTargets.length === 0) {
+      alert('다운로드할 택배 신청서를 왼쪽 체크박스로 먼저 선택해주세요.');
+      return;
+    }
+
+    // 택배사(우체국/CJ/롯데/한진 등) 송장 대량 등록 표준 컬럼 순서
+    const headers = [
+      '받는분성명',
+      '받는분전화번호',
+      '받는분주소',
+      '품목명',
+      '수량',
+      '배송메시지',
+      '보내는분성명',
+      '보내는분전화번호',
+      '기타요청사항',
+      '택배사',
+      '송장번호',
+      '배송상태',
+      '접수일시'
+    ];
+
+    const rows = validTargets.map(res => {
+      const d = res.data || {};
+      const receiverName = d['받는 분 - 이름'] || res.receiverName || '';
+      const receiverPhone = formatPhoneForExcel(d['받는 분 - 연락처'] || res.receiverPhone || '');
+      const receiverAddress = d['받는 분 - 주소'] || res.receiverAddress || '';
+      const itemName = d['보내는 분 - 상품명'] || '매장 발송 상품';
+      const quantity = '1';
+      const deliveryMsg = d['배송 기사님께 남길 말씀'] || '';
+      const senderName = d['보내는 분 - 이름'] || res.senderName || '';
+      const senderPhone = formatPhoneForExcel(d['보내는 분 - 연락처'] || res.senderPhone || '');
+      const memo = d['기타 전달하고 싶은 내용'] || '';
+      const courier = d._courier || '';
+      const trackingNumber = d._trackingNumber || '';
+      const status = res.status || '접수대기';
+      const submittedAt = res.submitted_at ? new Date(res.submitted_at).toLocaleString('ko-KR') : '';
+
+      return [
+        receiverName,
+        receiverPhone,
+        receiverAddress,
+        itemName,
+        quantity,
+        deliveryMsg,
+        senderName,
+        senderPhone,
+        memo,
+        courier,
+        trackingNumber,
+        status,
+        submittedAt
+      ].map(escapeCsvCell).join(',');
+    });
+
+    // 한글 깨짐 방지를 위한 UTF-8 BOM(\uFEFF) 추가
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `택배송장_선택목록_${validTargets.length}건_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const toggleStatus = async (id: string, currentStatus: string) => {
@@ -80,10 +278,6 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
     setSelectedResponse(res);
   };
 
-  const closeDetails = () => {
-    setSelectedResponse(null);
-  };
-
   const handlePrint = () => {
     window.print();
   };
@@ -114,11 +308,23 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
         }
       `}</style>
       
-      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">택배접수</h1>
-          <p className="text-[13px] text-gray-500">고객들이 제출한 택배 배송 신청서 리스트입니다.</p>
+          <p className="text-[13px] text-gray-500">고객들이 제출한 택배 배송 신청서 리스트입니다. 원하는 내역을 체크하여 송장용 엑셀로 다운로드하세요.</p>
         </div>
+        <button
+          onClick={handleDownloadWaybillExcel}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[13.5px] font-bold rounded-xl shadow-sm transition-all active:scale-95 shrink-0"
+        >
+          <Download className="w-4 h-4" />
+          택배 송장용 엑셀 다운로드
+          {selectedIds.length > 0 && (
+            <span className="px-2 py-0.5 bg-white/20 rounded-full text-[12px] font-extrabold">
+              {selectedIds.length}건
+            </span>
+          )}
+        </button>
       </div>
 
       {/* 리스트 테이블 */}
@@ -127,10 +333,19 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
               <tr className="bg-indigo-50/70 border-b border-indigo-100">
+                <th className="pl-4 pr-2 py-3 w-10 text-center">
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    onChange={toggleSelectAll}
+                    title="전체 선택 / 해제"
+                    className="w-4 h-4 rounded border-indigo-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                  />
+                </th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">접수일시</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">보내는 분 (이름/연락처)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">받는 분 (이름/주소)</th>
-                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">상태</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 min-w-[340px]">배송상태 (택배사 / 송장번호)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 text-right">관리</th>
               </tr>
             </thead>
@@ -143,9 +358,27 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                   const receiverName = data['받는 분 - 이름'] || res.receiverName || '-';
                   const receiverAddress = data['받는 분 - 주소'] || res.receiverAddress || '-';
                   const isCompleted = res.status === '발송완료';
+                  const isCancelled = res.status === '취소됨';
+                  const isSelected = selectedIds.includes(res.id);
+                  const currentCourier = courierInputs[res.id] ?? data._courier ?? '';
 
                   return (
-                    <tr key={res.id} className="hover:bg-gray-50 transition-colors group">
+                    <tr
+                      key={res.id}
+                      className={`transition-colors group ${
+                        isSelected ? 'bg-emerald-50/40 hover:bg-emerald-50/70' : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <td className="pl-4 pr-2 py-3 align-middle text-center w-10">
+                        <input
+                          type="checkbox"
+                          disabled={isCancelled}
+                          checked={isSelected && !isCancelled}
+                          onChange={() => toggleSelectOne(res.id)}
+                          title={isCancelled ? '취소된 내역은 선택할 수 없습니다' : '송장 엑셀 다운로드 선택'}
+                          className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed accent-emerald-600"
+                        />
+                      </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-semibold text-gray-900 text-[13px]">{new Date(res.submitted_at).toLocaleDateString('ko-KR')}</p>
                         <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute:'2-digit' })}</p>
@@ -156,23 +389,75 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{receiverName}</p>
-                        <p className="text-[12.5px] font-semibold text-indigo-600 truncate max-w-[200px] mt-0.5" title={receiverAddress}>{receiverAddress}</p>
+                        <p className="text-[12.5px] font-semibold text-indigo-600 truncate max-w-[180px] mt-0.5" title={receiverAddress}>{receiverAddress}</p>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <button 
-                            onClick={() => toggleStatus(res.id, res.status)}
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors ${
-                              res.status === '취소됨'
-                                ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
-                                : isCompleted 
-                                  ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
-                                  : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
-                            }`}
-                            title={res.status === '취소됨' ? "취소된 내역입니다" : "상태를 변경하시려면 클릭하세요"}
-                          >
-                            {res.status === '취소됨' ? <X className="w-3 h-3 mr-1" /> : isCompleted ? <CheckCircle className="w-3 h-3 mr-1" /> : null}
-                            {res.status === '취소됨' ? '취소됨' : isCompleted ? '발송완료' : '접수대기'}
-                          </button>
+                        {isCancelled ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border bg-red-50 text-red-700 border-red-200">
+                            <X className="w-3 h-3 mr-1" />
+                            취소됨
+                          </span>
+                        ) : (
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => toggleStatus(res.id, res.status)}
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-colors ${
+                                  isCompleted
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
+                                }`}
+                                title="클릭하여 접수대기/발송완료 상태를 직접 전환할 수도 있습니다"
+                              >
+                                {isCompleted && <CheckCircle className="w-3 h-3 mr-1" />}
+                                {isCompleted ? '발송완료' : '접수대기'}
+                              </button>
+                              {isCompleted && data._courier && data._trackingNumber && (
+                                <span className="text-[11.5px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                                  {data._courier} · {data._trackingNumber}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              <select
+                                value={currentCourier}
+                                onChange={(e) =>
+                                  setCourierInputs(prev => ({ ...prev, [res.id]: e.target.value }))
+                                }
+                                className="px-2.5 py-1.5 text-[12px] font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all cursor-pointer"
+                              >
+                                <option value="">택배사 선택</option>
+                                {COURIER_LIST.map(c => (
+                                  <option key={c} value={c}>{c}</option>
+                                ))}
+                              </select>
+                              <input
+                                key={`${res.id}-${data._trackingNumber || ''}`}
+                                type="text"
+                                defaultValue={data._trackingNumber || ''}
+                                onChange={(e) =>
+                                  setTrackingInputs(prev => ({ ...prev, [res.id]: e.target.value }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    saveShippingInfo(res);
+                                  }
+                                }}
+                                placeholder="송장번호 입력"
+                                className="w-[140px] sm:w-[155px] px-2.5 py-1.5 text-[12px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none transition-all placeholder:text-gray-400"
+                              />
+                              <button
+                                onClick={() => saveShippingInfo(res)}
+                                disabled={savingId === res.id}
+                                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[12px] font-bold transition-all active:scale-95 shrink-0 shadow-sm disabled:opacity-50"
+                              >
+                                {savingId === res.id ? '저장중' : '완료'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5 sm:gap-2">
@@ -203,7 +488,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                 })
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={6} className="px-6 py-12 text-center">
                     <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <h3 className="text-gray-900 font-medium text-lg">아직 접수된 택배가 없습니다</h3>
                     <p className="text-gray-500 mt-1 text-sm">고객에게 통합 링크를 전달하여 접수를 받아보세요.</p>
@@ -271,23 +556,30 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
             
             <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0">
               {/* 상단 상태 티켓 */}
-              <div className="bg-white rounded-2xl p-5 mb-6 shadow-md shadow-gray-200/50 flex justify-between items-center">
+              <div className="bg-white rounded-2xl p-5 mb-6 shadow-md shadow-gray-200/50 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                 <div>
                   <p className="text-xs font-medium text-gray-500 mb-1">접수 일시</p>
                   <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-medium text-gray-500 mb-1">현재 상태</p>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-sm font-bold">
-                    {selectedResponse.status === '발송완료' ? <CheckCircle className="w-4 h-4" /> : null}
-                    {selectedResponse.status === '발송완료' ? '발송완료' : '접수대기'}
+                <div className="sm:text-right">
+                  <p className="text-xs font-medium text-gray-500 mb-1">배송 상태 및 송장 정보</p>
+                  <div className="flex flex-wrap items-center sm:justify-end gap-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-sm font-bold">
+                      {selectedResponse.status === '발송완료' ? <CheckCircle className="w-4 h-4" /> : null}
+                      {selectedResponse.status === '발송완료' ? '발송완료' : '접수대기'}
+                    </div>
+                    {selectedResponse.data?._courier && selectedResponse.data?._trackingNumber && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-sm font-bold">
+                        {selectedResponse.data._courier} · {selectedResponse.data._trackingNumber}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
                 {(() => {
-                  const dataEntries = Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' });
+                  const dataEntries = Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' }).filter(([k]) => !k.startsWith('_'));
                   const senderEntries = dataEntries.filter(([k]) => k.includes('보내는 분'));
                   const receiverEntries = dataEntries.filter(([k]) => k.includes('받는 분'));
                   const otherEntries = dataEntries.filter(([k]) => !k.includes('보내는 분') && !k.includes('받는 분'));
