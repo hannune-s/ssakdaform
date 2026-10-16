@@ -447,10 +447,104 @@ export default function HqAdminPage() {
     { id: 'security', label: '보안 설정', emoji: '⚙️' }
   ] as const;
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-gray-900">
-      {/* 좌측 고정 사이드바 */}
-      <aside className="w-64 bg-white border-r border-gray-200/80 flex flex-col fixed inset-y-0 left-0 z-40">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row font-sans text-gray-900 break-keep">
+      {/* 모바일/태블릿 상단 고정 헤더 + 가로 스크롤 메뉴 탭 (lg 미만에서만 표시) */}
+      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-gray-200/80 shadow-2xs">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[20px] font-black text-blue-600 tracking-tight whitespace-nowrap">싹다폼</span>
+            <span className="text-[12px] font-bold text-gray-400 whitespace-nowrap">Admin</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[12px] flex items-center gap-1.5 shadow-2xs whitespace-nowrap"
+            >
+              <span>📱</span>
+              <span>앱 바로가기</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(prev => !prev)}
+              className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-[12px] font-bold whitespace-nowrap"
+            >
+              {isMobileMenuOpen ? '닫기 ✕' : '메뉴 ☰'}
+            </button>
+          </div>
+        </div>
+
+        {/* 모바일 가로 스크롤 빠른 메뉴 바 (글씨 절대 찌그러지지 않게 whitespace-nowrap 적용) */}
+        <div className="flex items-center gap-1.5 px-3 pb-2.5 overflow-x-auto no-scrollbar">
+          {menuItems.map(item => {
+            const isActive = activeMenu === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveMenu(item.id);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] whitespace-nowrap shrink-0 transition-all ${
+                  isActive
+                    ? 'bg-blue-600 text-white font-extrabold shadow-2xs'
+                    : 'bg-gray-100/90 text-gray-600 hover:bg-gray-200/70 font-bold'
+                }`}
+              >
+                <span className="text-[13.5px] leading-none">{item.emoji}</span>
+                <span>{item.label}</span>
+                {'badge' in item && item.badge ? (
+                  <span
+                    className={`px-1.5 py-0.2 text-[10px] font-extrabold rounded-full ${
+                      isActive ? 'bg-white text-blue-600' : 'bg-white text-gray-700'
+                    }`}
+                  >
+                    {item.badge}
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 모바일 드롭다운 전체 메뉴 (메뉴 ☰ 버튼 클릭 시) */}
+        {isMobileMenuOpen && (
+          <div className="border-t border-gray-100 bg-white px-3 py-2.5 space-y-1 shadow-lg">
+            {menuItems.map(item => {
+              const isActive = activeMenu === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveMenu(item.id);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13.5px] whitespace-nowrap ${
+                    isActive
+                      ? 'bg-blue-50 text-blue-600 font-extrabold'
+                      : 'text-gray-700 hover:bg-gray-50 font-bold'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span>{item.emoji}</span>
+                    <span>{item.label}</span>
+                  </div>
+                  {'badge' in item && item.badge ? (
+                    <span className="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-blue-600 text-white">
+                      {item.badge}
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </header>
+
+      {/* 데스크톱 좌측 고정 사이드바 (lg 이상에서만 표시) */}
+      <aside className="hidden lg:flex w-64 bg-white border-r border-gray-200/80 flex-col fixed inset-y-0 left-0 z-40">
         {/* 상단 로고 */}
         <div className="px-6 pt-7 pb-5">
           <div className="flex items-baseline gap-1.5">
@@ -463,7 +557,7 @@ export default function HqAdminPage() {
         <div className="px-4 mb-5">
           <Link
             href="/"
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-[13.5px] flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95"
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-[13.5px] flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 whitespace-nowrap"
           >
             <span>📱</span>
             <span>싹다폼 앱 바로가기</span>
@@ -478,7 +572,7 @@ export default function HqAdminPage() {
               <button
                 key={item.id}
                 onClick={() => setActiveMenu(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[14px] transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[14px] whitespace-nowrap transition-all ${
                   isActive
                     ? 'bg-blue-50/90 text-blue-600 font-extrabold shadow-2xs'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-bold'
@@ -504,42 +598,42 @@ export default function HqAdminPage() {
 
         {/* 하단 카피라이트 */}
         <div className="p-5 border-t border-gray-100 text-center">
-          <p className="text-[12px] font-semibold text-gray-400">© 2026 싹다폼 본사 총괄 시스템</p>
+          <p className="text-[12px] font-semibold text-gray-400 whitespace-nowrap">© 2026 싹다폼 본사 총괄 시스템</p>
         </div>
       </aside>
 
-      {/* 우측 메인 콘텐츠 영역 */}
-      <main className="flex-1 ml-64 p-6 sm:p-10 max-w-7xl">
+      {/* 우측 메인 콘텐츠 영역 (모바일 전체폭 w-full, 데스크톱 lg:ml-64) */}
+      <main className="flex-1 w-full lg:ml-64 p-4 sm:p-6 lg:p-10 max-w-7xl min-w-0">
         {/* ================= 1. 대시보드 (방문자 접속 통계 + 전체 현황) ================= */}
         {activeMenu === 'dashboard' && (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* 상단 헤더 */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
               <div>
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="text-2xl sm:text-[26px] font-black text-gray-900 tracking-tight">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-xl sm:text-[26px] font-black text-gray-900 tracking-tight whitespace-nowrap">
                     방문자 접속 통계
                   </h1>
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11.5px] sm:text-[12px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
                     🛡️ 관리자·로컬·배포봇 자동 제외됨
                   </span>
                 </div>
-                <p className="text-[13.5px] font-medium text-gray-500 mt-1.5">
+                <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1.5 leading-relaxed">
                   실제 외부 방문자만 하루 1회(자정 기준) 순방문자로 정확히 집계됩니다.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2.5 shrink-0">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={loadHqData}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-[13px] font-bold shadow-2xs transition-all active:scale-95"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-[12.5px] sm:text-[13px] font-bold shadow-2xs transition-all active:scale-95 whitespace-nowrap"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isLoading ? 'animate-spin' : ''}`} />
                   새로고침
                 </button>
                 <button
                   onClick={handleResetTodayVisits}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-rose-50/70 border border-rose-200 hover:bg-rose-100/70 text-rose-600 rounded-xl text-[13px] font-bold transition-all active:scale-95"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-50/70 border border-rose-200 hover:bg-rose-100/70 text-rose-600 rounded-xl text-[12.5px] sm:text-[13px] font-bold transition-all active:scale-95 whitespace-nowrap"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   오늘 기록 초기화
@@ -548,15 +642,15 @@ export default function HqAdminPage() {
             </div>
 
             {/* 상단 3대 방문자/설치 KPI 카드 (좌측 컬러 바 디자인) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
               {/* 카드 1: 오늘 순수 방문자 */}
-              <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500" />
                 <div className="pl-2">
-                  <p className="text-[14px] font-extrabold text-gray-600 mb-3">오늘 순수 방문자</p>
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-4xl font-black text-blue-600">{webVisitorsCount}</span>
-                    <span className="text-[14px] font-bold text-gray-500">명</span>
+                  <p className="text-[13.5px] sm:text-[14px] font-extrabold text-gray-600 mb-2">오늘 순수 방문자</p>
+                  <div className="flex items-baseline gap-1.5 mb-1.5">
+                    <span className="text-3xl sm:text-4xl font-black text-blue-600">{webVisitorsCount}</span>
+                    <span className="text-[13.5px] font-bold text-gray-500">명</span>
                   </div>
                   <p className="text-[12px] font-medium text-gray-400">
                     관리자·봇을 제외한 오늘 실제 방문자 수
@@ -565,26 +659,26 @@ export default function HqAdminPage() {
               </div>
 
               {/* 카드 2: 인스타그램 유입 */}
-              <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-pink-500" />
                 <div className="pl-2">
-                  <p className="text-[14px] font-extrabold text-gray-600 mb-3">인스타그램 유입 (오늘)</p>
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-4xl font-black text-pink-600">{instaVisitorsCount}</span>
-                    <span className="text-[14px] font-bold text-gray-500">명</span>
+                  <p className="text-[13.5px] sm:text-[14px] font-extrabold text-gray-600 mb-2">인스타그램 유입 (오늘)</p>
+                  <div className="flex items-baseline gap-1.5 mb-1.5">
+                    <span className="text-3xl sm:text-4xl font-black text-pink-600">{instaVisitorsCount}</span>
+                    <span className="text-[13.5px] font-bold text-gray-500">명</span>
                   </div>
                   <p className="text-[12px] font-medium text-gray-400">비중: {instaRatio}%</p>
                 </div>
               </div>
 
               {/* 카드 3: 앱 설치 횟수 */}
-              <div className="bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500" />
                 <div className="pl-2">
-                  <p className="text-[14px] font-extrabold text-gray-600 mb-3">앱 설치 횟수 (오늘)</p>
-                  <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-4xl font-black text-emerald-600">{appInstallCount}</span>
-                    <span className="text-[14px] font-bold text-gray-500">건</span>
+                  <p className="text-[13.5px] sm:text-[14px] font-extrabold text-gray-600 mb-2">앱 설치 횟수 (오늘)</p>
+                  <div className="flex items-baseline gap-1.5 mb-1.5">
+                    <span className="text-3xl sm:text-4xl font-black text-emerald-600">{appInstallCount}</span>
+                    <span className="text-[13.5px] font-bold text-gray-500">건</span>
                   </div>
                   <p className="text-[12px] font-medium text-gray-400">
                     &apos;홈 화면 추가&apos;를 통해 설치된 기기 수
@@ -594,62 +688,62 @@ export default function HqAdminPage() {
             </div>
 
             {/* 싹다폼 가맹점 & 주문 접수 실시간 요약 배너 */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
               <div
                 onClick={() => setActiveMenu('stores')}
-                className="bg-indigo-600 text-white rounded-2xl p-5 shadow-sm flex items-center justify-between cursor-pointer hover:bg-indigo-700 transition-colors"
+                className="bg-indigo-600 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex items-center justify-between cursor-pointer hover:bg-indigo-700 transition-colors"
               >
                 <div>
                   <p className="text-[12.5px] font-bold text-indigo-100">전체 가입 가맹 매장</p>
-                  <p className="text-2xl font-black mt-1">{stores.length}개 매장</p>
+                  <p className="text-xl sm:text-2xl font-black mt-1">{stores.length}개 매장</p>
                 </div>
-                <Store className="w-8 h-8 text-indigo-200" />
+                <Store className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-200 shrink-0" />
               </div>
 
-              <div className="bg-white border border-gray-200/80 rounded-2xl p-5 shadow-2xs flex items-center justify-between">
+              <div className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs flex items-center justify-between">
                 <div>
                   <p className="text-[12.5px] font-bold text-gray-500">전체 누적 고객 접수 건수</p>
-                  <p className="text-2xl font-black text-gray-900 mt-1">{allResponses.length}건</p>
+                  <p className="text-xl sm:text-2xl font-black text-gray-900 mt-1">{allResponses.length}건</p>
                 </div>
-                <FileText className="w-8 h-8 text-blue-500" />
+                <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500 shrink-0" />
               </div>
 
-              <div className="bg-white border border-gray-200/80 rounded-2xl p-5 shadow-2xs flex items-center justify-between">
+              <div className="bg-white border border-gray-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs flex items-center justify-between">
                 <div>
                   <p className="text-[12.5px] font-bold text-gray-500">오늘 신규 접수 건수 (전 매장)</p>
-                  <p className="text-2xl font-black text-emerald-600 mt-1">{todayResponsesCount}건</p>
+                  <p className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">{todayResponsesCount}건</p>
                 </div>
-                <BarChart3 className="w-8 h-8 text-emerald-500" />
+                <BarChart3 className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-500 shrink-0" />
               </div>
             </div>
 
             {/* 최근 접속/설치 기록 테이블 */}
             <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 overflow-hidden">
-              <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <h2 className="text-[16px] font-extrabold text-gray-900">
+              <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                <h2 className="text-[15px] sm:text-[16px] font-extrabold text-gray-900">
                   최근 접속/설치 기록 (최근 10건)
                 </h2>
                 <span className="text-[12px] font-medium text-gray-400">
-                  불필요한 기록은 우측 삭제 버튼으로 지울 수 있습니다
+                  좌우로 밀어서 확인 · 우측 삭제 버튼으로 지울 수 있습니다
                 </span>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse min-w-max">
                   <thead>
-                    <tr className="border-b border-gray-100 text-[12.5px] font-bold text-gray-500 bg-gray-50/50">
-                      <th className="px-6 py-3.5">분류 / 접속 시간</th>
-                      <th className="px-6 py-3.5">유입 경로 (Referrer)</th>
-                      <th className="px-6 py-3.5 text-center">인스타그램 여부</th>
-                      <th className="px-6 py-3.5">접속 페이지</th>
-                      <th className="px-6 py-3.5 text-right">관리</th>
+                    <tr className="border-b border-gray-100 text-[12px] sm:text-[12.5px] font-bold text-gray-500 bg-gray-50/50 whitespace-nowrap">
+                      <th className="px-4 sm:px-6 py-3.5">분류 / 접속 시간</th>
+                      <th className="px-4 sm:px-6 py-3.5">유입 경로 (Referrer)</th>
+                      <th className="px-4 sm:px-6 py-3.5 text-center">인스타그램 여부</th>
+                      <th className="px-4 sm:px-6 py-3.5">접속 페이지</th>
+                      <th className="px-4 sm:px-6 py-3.5 text-right">관리</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 text-[13px]">
+                  <tbody className="divide-y divide-gray-100 text-[12.5px] sm:text-[13px] whitespace-nowrap">
                     {visitLogs.length > 0 ? (
                       visitLogs.slice(0, 10).map(log => (
                         <tr key={log.id} className="hover:bg-gray-50/70 transition-colors">
-                          <td className="px-6 py-4">
+                          <td className="px-4 sm:px-6 py-3.5">
                             <span
                               className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-extrabold mb-1 ${
                                 log.type === '앱 설치'
@@ -659,10 +753,10 @@ export default function HqAdminPage() {
                             >
                               {log.type}
                             </span>
-                            <div className="text-[12px] font-medium text-gray-500">{log.timestamp}</div>
+                            <div className="text-[11.5px] font-medium text-gray-500">{log.timestamp}</div>
                           </td>
-                          <td className="px-6 py-4 font-bold text-gray-800">{log.referrer}</td>
-                          <td className="px-6 py-4 text-center">
+                          <td className="px-4 sm:px-6 py-3.5 font-bold text-gray-800">{log.referrer}</td>
+                          <td className="px-4 sm:px-6 py-3.5 text-center">
                             {log.isInstagram ? (
                               <span className="px-2.5 py-0.5 bg-pink-50 text-pink-600 rounded-full text-[11px] font-extrabold">
                                 Instagram 유입
@@ -671,8 +765,8 @@ export default function HqAdminPage() {
                               <span className="text-gray-400">-</span>
                             )}
                           </td>
-                          <td className="px-6 py-4 font-semibold text-gray-600">{log.path}</td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-4 sm:px-6 py-3.5 font-semibold text-gray-600">{log.path}</td>
+                          <td className="px-4 sm:px-6 py-3.5 text-right">
                             <button
                               onClick={() => handleDeleteVisitLog(log.id)}
                               className="text-[12px] font-bold text-gray-400 hover:text-rose-600 transition-colors"
@@ -698,11 +792,11 @@ export default function HqAdminPage() {
 
         {/* ================= 2. 가맹 매장 관리 ================= */}
         {activeMenu === 'stores' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-5 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
               <div>
-                <h1 className="text-2xl font-black text-gray-900">가맹 매장 관리</h1>
-                <p className="text-[13.5px] font-medium text-gray-500 mt-1">
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900">가맹 매장 관리</h1>
+                <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
                   싹다폼에 가입된 전체 매장 목록과 매장별 누적 접수 건수, 전용 스토어 링크를 관리합니다.
                 </p>
               </div>
@@ -720,19 +814,19 @@ export default function HqAdminPage() {
 
             <div className="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-max">
+                <table className="w-full text-left border-collapse min-w-max whitespace-nowrap">
                   <thead>
-                    <tr className="bg-gray-50/80 border-b border-gray-100 text-[12.5px] font-extrabold text-gray-600">
-                      <th className="px-5 py-3.5">가입일</th>
-                      <th className="px-5 py-3.5">상호명 / 스토어 주소</th>
-                      <th className="px-5 py-3.5">대표자 / 아이디</th>
-                      <th className="px-5 py-3.5">연락처 / 이메일</th>
-                      <th className="px-5 py-3.5 text-center">누적 접수</th>
-                      <th className="px-5 py-3.5 text-center">이용 상태</th>
-                      <th className="px-5 py-3.5 text-right">관리</th>
+                    <tr className="bg-gray-50/80 border-b border-gray-100 text-[12px] sm:text-[12.5px] font-extrabold text-gray-600">
+                      <th className="px-4 sm:px-5 py-3.5">가입일</th>
+                      <th className="px-4 sm:px-5 py-3.5">상호명 / 스토어 주소</th>
+                      <th className="px-4 sm:px-5 py-3.5">대표자 / 아이디</th>
+                      <th className="px-4 sm:px-5 py-3.5">연락처 / 이메일</th>
+                      <th className="px-4 sm:px-5 py-3.5 text-center">누적 접수</th>
+                      <th className="px-4 sm:px-5 py-3.5 text-center">이용 상태</th>
+                      <th className="px-4 sm:px-5 py-3.5 text-right">관리</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 text-[13px]">
+                  <tbody className="divide-y divide-gray-100 text-[12.5px] sm:text-[13px]">
                     {filteredStores.map(store => {
                       const storeRespCount = allResponses.filter(r => r.store_id === store.store_id).length;
                       const subInfo = storeSubscriptions[store.store_id] || {
@@ -743,11 +837,11 @@ export default function HqAdminPage() {
 
                       return (
                         <tr key={store.id} className="hover:bg-gray-50/70 transition-colors">
-                          <td className="px-5 py-4 text-gray-500 font-medium">
+                          <td className="px-4 sm:px-5 py-4 text-gray-500 font-medium">
                             {new Date(store.created_at).toLocaleDateString('ko-KR')}
                           </td>
-                          <td className="px-5 py-4">
-                            <div className="font-extrabold text-gray-900 text-[14px]">{store.store_name}</div>
+                          <td className="px-4 sm:px-5 py-4">
+                            <div className="font-extrabold text-gray-900 text-[13.5px] sm:text-[14px]">{store.store_name}</div>
                             <a
                               href={`/store/${store.store_id}`}
                               target="_blank"
@@ -757,20 +851,20 @@ export default function HqAdminPage() {
                               /store/{store.store_id} <ExternalLink className="w-3 h-3" />
                             </a>
                           </td>
-                          <td className="px-5 py-4">
+                          <td className="px-4 sm:px-5 py-4">
                             <div className="font-bold text-gray-900">{store.owner_name || '-'}</div>
                             <div className="text-[12px] text-gray-500">ID: {store.username}</div>
                           </td>
-                          <td className="px-5 py-4">
+                          <td className="px-4 sm:px-5 py-4">
                             <div className="font-bold text-indigo-600">{store.phone || '-'}</div>
                             <div className="text-[12px] text-gray-400">{store.email || '-'}</div>
                           </td>
-                          <td className="px-5 py-4 text-center">
+                          <td className="px-4 sm:px-5 py-4 text-center">
                             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-extrabold bg-indigo-50 text-indigo-700">
                               {storeRespCount}건
                             </span>
                           </td>
-                          <td className="px-5 py-4 text-center">
+                          <td className="px-4 sm:px-5 py-4 text-center">
                             <select
                               value={subInfo.status}
                               onChange={e => handleUpdateSubscription(store.store_id, 'status', e.target.value)}
@@ -787,7 +881,7 @@ export default function HqAdminPage() {
                               <option value="이용정지">이용정지</option>
                             </select>
                           </td>
-                          <td className="px-5 py-4 text-right">
+                          <td className="px-4 sm:px-5 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <a
                                 href={`/store/${store.store_id}`}
@@ -819,95 +913,97 @@ export default function HqAdminPage() {
 
         {/* ================= 3. 구독 · 매출 관리 ================= */}
         {activeMenu === 'subscriptions' && (
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">구독 · 매출 관리</h1>
-              <p className="text-[13.5px] font-medium text-gray-500 mt-1">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900">구독 · 매출 관리</h1>
+              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
                 가맹 매장별 구독 플랜(월간 9,900원 / 연간 149,000원) 및 결제 상태를 관리합니다.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-2xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-2xs">
                 <p className="text-[13px] font-bold text-gray-500">활성 구독 매장 수</p>
-                <p className="text-3xl font-black text-blue-600 mt-2">{stores.length}곳</p>
+                <p className="text-2xl sm:text-3xl font-black text-blue-600 mt-1.5">{stores.length}곳</p>
               </div>
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-2xs">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-2xs">
                 <p className="text-[13px] font-bold text-gray-500">이번 달 예상 정기결제 매출</p>
-                <p className="text-3xl font-black text-emerald-600 mt-2">
+                <p className="text-2xl sm:text-3xl font-black text-emerald-600 mt-1.5">
                   {(stores.length * 9900).toLocaleString()}원
                 </p>
               </div>
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-2xs">
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-2xs">
                 <p className="text-[13px] font-bold text-gray-500">기본 요금제</p>
-                <p className="text-lg font-extrabold text-gray-900 mt-2">
+                <p className="text-base sm:text-lg font-extrabold text-gray-900 mt-1.5">
                   월간 9,900원 / 연간 149,000원
                 </p>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-2xs overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100 text-[12.5px] font-extrabold text-gray-600">
-                    <th className="px-6 py-3.5">매장명</th>
-                    <th className="px-6 py-3.5">대표자 / 연락처</th>
-                    <th className="px-6 py-3.5">이용 플랜 변경</th>
-                    <th className="px-6 py-3.5">구독 상태</th>
-                    <th className="px-6 py-3.5">다음 결제 예정일</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 text-[13px]">
-                  {stores.map(store => {
-                    const subInfo = storeSubscriptions[store.store_id] || {
-                      plan: '월간 이용권 (9,900원)',
-                      status: '정상 이용중',
-                      nextBilling: '2026-11-16'
-                    };
-                    return (
-                      <tr key={store.id} className="hover:bg-gray-50/60">
-                        <td className="px-6 py-4 font-extrabold text-gray-900">{store.store_name}</td>
-                        <td className="px-6 py-4 font-semibold text-gray-600">
-                          {store.owner_name} ({store.phone || '-'})
-                        </td>
-                        <td className="px-6 py-4">
-                          <select
-                            value={subInfo.plan}
-                            onChange={e => handleUpdateSubscription(store.store_id, 'plan', e.target.value)}
-                            className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[12.5px] font-bold text-gray-800 outline-none"
-                          >
-                            <option value="월간 이용권 (9,900원)">월간 이용권 (9,900원)</option>
-                            <option value="연간 구독 플랜 (149,000원)">연간 구독 플랜 (149,000원)</option>
-                            <option value="오픈 무료 프로모션">오픈 무료 프로모션</option>
-                          </select>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold ${
-                              subInfo.status === '정상 이용중'
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : 'bg-amber-50 text-amber-700'
-                            }`}
-                          >
-                            {subInfo.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 font-semibold text-gray-500">{subInfo.nextBilling}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-max whitespace-nowrap">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-100 text-[12px] sm:text-[12.5px] font-extrabold text-gray-600">
+                      <th className="px-4 sm:px-6 py-3.5">매장명</th>
+                      <th className="px-4 sm:px-6 py-3.5">대표자 / 연락처</th>
+                      <th className="px-4 sm:px-6 py-3.5">이용 플랜 변경</th>
+                      <th className="px-4 sm:px-6 py-3.5">구독 상태</th>
+                      <th className="px-4 sm:px-6 py-3.5">다음 결제 예정일</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 text-[12.5px] sm:text-[13px]">
+                    {stores.map(store => {
+                      const subInfo = storeSubscriptions[store.store_id] || {
+                        plan: '월간 이용권 (9,900원)',
+                        status: '정상 이용중',
+                        nextBilling: '2026-11-16'
+                      };
+                      return (
+                        <tr key={store.id} className="hover:bg-gray-50/60">
+                          <td className="px-4 sm:px-6 py-4 font-extrabold text-gray-900">{store.store_name}</td>
+                          <td className="px-4 sm:px-6 py-4 font-semibold text-gray-600">
+                            {store.owner_name} ({store.phone || '-'})
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <select
+                              value={subInfo.plan}
+                              onChange={e => handleUpdateSubscription(store.store_id, 'plan', e.target.value)}
+                              className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[12.5px] font-bold text-gray-800 outline-none"
+                            >
+                              <option value="월간 이용권 (9,900원)">월간 이용권 (9,900원)</option>
+                              <option value="연간 구독 플랜 (149,000원)">연간 구독 플랜 (149,000원)</option>
+                              <option value="오픈 무료 프로모션">오픈 무료 프로모션</option>
+                            </select>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4">
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold ${
+                                subInfo.status === '정상 이용중'
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : 'bg-amber-50 text-amber-700'
+                              }`}
+                            >
+                              {subInfo.status}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 font-semibold text-gray-500">{subInfo.nextBilling}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
 
         {/* ================= 4. 제휴 · 1:1 문의 내역 ================= */}
         {activeMenu === 'inquiries' && (
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">제휴 · 1:1 문의 내역</h1>
-              <p className="text-[13.5px] font-medium text-gray-500 mt-1">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900">제휴 · 1:1 문의 내역</h1>
+              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
                 가맹 매장 사장님들이 어드민 &apos;마이 메뉴 &gt; 1:1 문의&apos;에서 남긴 문의를 확인하고 답변을 등록합니다.
               </p>
             </div>
@@ -916,12 +1012,12 @@ export default function HqAdminPage() {
               {inquiries.map(inq => (
                 <div
                   key={inq.id}
-                  className="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-2xs space-y-4"
+                  className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200/80 shadow-2xs space-y-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold ${
+                        className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${
                           inq.status === '답변완료'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : 'bg-amber-50 text-amber-700 border border-amber-200'
@@ -938,8 +1034,8 @@ export default function HqAdminPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-[15.5px] font-extrabold text-gray-900 mb-1">{inq.title}</h3>
-                    <p className="text-[13.5px] font-medium text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-100 whitespace-pre-wrap">
+                    <h3 className="text-[15px] sm:text-[15.5px] font-extrabold text-gray-900 mb-1.5">{inq.title}</h3>
+                    <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-700 bg-gray-50 p-3.5 sm:p-4 rounded-xl border border-gray-100 whitespace-pre-wrap">
                       {inq.content}
                     </p>
                   </div>
@@ -954,7 +1050,7 @@ export default function HqAdminPage() {
                     />
                     <button
                       onClick={() => handleSaveInquiryReply(inq)}
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13px] font-bold shrink-0 shadow-xs transition-all active:scale-95"
+                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13px] font-bold shrink-0 shadow-xs transition-all active:scale-95 whitespace-nowrap"
                     >
                       답변 저장 / 완료
                     </button>
@@ -967,17 +1063,17 @@ export default function HqAdminPage() {
 
         {/* ================= 5. 푸시 발송 ================= */}
         {activeMenu === 'push' && (
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">푸시 발송</h1>
-              <p className="text-[13.5px] font-medium text-gray-500 mt-1">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900">푸시 발송</h1>
+              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
                 전체 가맹 매장 또는 특정 매장 사장님에게 공지 및 안내 푸시 알림을 발송합니다.
               </p>
             </div>
 
             <form
               onSubmit={handleSendPush}
-              className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/80 shadow-2xs space-y-4"
+              className="bg-white rounded-2xl p-5 sm:p-8 border border-gray-200/80 shadow-2xs space-y-4"
             >
               <div>
                 <label className="block text-[13px] font-extrabold text-gray-700 mb-1.5">발송 대상 선택</label>
@@ -1020,7 +1116,7 @@ export default function HqAdminPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[14px] font-bold shadow-sm transition-all active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[14px] font-bold shadow-sm transition-all active:scale-95 whitespace-nowrap"
                 >
                   <Send className="w-4 h-4" />
                   푸시 알림 즉시 발송
@@ -1029,12 +1125,12 @@ export default function HqAdminPage() {
             </form>
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-2xs overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 font-extrabold text-[15px]">
+              <div className="px-5 sm:px-6 py-4 border-b border-gray-100 font-extrabold text-[15px]">
                 최근 푸시 발송 내역
               </div>
               <div className="divide-y divide-gray-100">
                 {pushHistory.map(item => (
-                  <div key={item.id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div key={item.id} className="px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                       <span className="inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 rounded-md text-[11px] font-extrabold mb-1">
                         대상: {item.target}
@@ -1052,21 +1148,21 @@ export default function HqAdminPage() {
 
         {/* ================= 6. 공지사항 관리 ================= */}
         {activeMenu === 'notices' && (
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">공지사항 관리</h1>
-              <p className="text-[13.5px] font-medium text-gray-500 mt-1">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900">공지사항 관리</h1>
+              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
                 본사에서 공지사항을 등록하면 모든 가맹점 사장님 어드민의 &apos;마이 메뉴 &gt; 본사 공지사항&apos;에 즉시 게시됩니다.
               </p>
             </div>
 
             <form
               onSubmit={handleCreateNotice}
-              className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/80 shadow-2xs space-y-4"
+              className="bg-white rounded-2xl p-5 sm:p-8 border border-gray-200/80 shadow-2xs space-y-4"
             >
-              <div className="flex items-center justify-between">
-                <h2 className="text-[16px] font-extrabold text-gray-900">새 본사 공지사항 작성</h2>
-                <label className="flex items-center gap-2 text-[13px] font-bold text-indigo-700 cursor-pointer">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h2 className="text-[15.5px] sm:text-[16px] font-extrabold text-gray-900">새 본사 공지사항 작성</h2>
+                <label className="flex items-center gap-2 text-[13px] font-bold text-indigo-700 cursor-pointer whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={newNoticeImportant}
@@ -1096,7 +1192,7 @@ export default function HqAdminPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13.5px] font-bold shadow-xs transition-all active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13.5px] font-bold shadow-xs transition-all active:scale-95 whitespace-nowrap"
                 >
                   <Plus className="w-4 h-4" />
                   공지사항 등록하기
@@ -1108,25 +1204,25 @@ export default function HqAdminPage() {
               {notices.map(notice => (
                 <div
                   key={notice.id}
-                  className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-2xs flex items-start justify-between gap-4"
+                  className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-start justify-between gap-3"
                 >
                   <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {notice.important && (
-                        <span className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-full text-[11px] font-extrabold">
+                        <span className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-full text-[11px] font-extrabold whitespace-nowrap">
                           필독 공지
                         </span>
                       )}
-                      <h3 className="text-[15px] font-extrabold text-gray-900">{notice.title}</h3>
+                      <h3 className="text-[14.5px] sm:text-[15px] font-extrabold text-gray-900">{notice.title}</h3>
                     </div>
-                    <p className="text-[13.5px] font-medium text-gray-600 whitespace-pre-wrap leading-relaxed">
+                    <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-600 whitespace-pre-wrap leading-relaxed">
                       {notice.content}
                     </p>
                     <p className="text-[11.5px] text-gray-400 font-medium">{notice.createdAt}</p>
                   </div>
                   <button
                     onClick={() => handleDeleteNotice(notice.id)}
-                    className="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[12px] font-bold shrink-0"
+                    className="self-end sm:self-start px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[12px] font-bold shrink-0 whitespace-nowrap"
                   >
                     삭제
                   </button>
@@ -1136,23 +1232,23 @@ export default function HqAdminPage() {
           </div>
         )}
 
-        {/* ================= 8. 보안 설정 ================= */}
+        {/* ================= 7. 보안 설정 ================= */}
         {activeMenu === 'security' && (
-          <div className="space-y-6 max-w-2xl">
+          <div className="space-y-5 sm:space-y-6 max-w-2xl">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">보안 설정</h1>
-              <p className="text-[13.5px] font-medium text-gray-500 mt-1">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900">보안 설정</h1>
+              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
                 본사 총괄 어드민 접근 비밀번호 및 방문자 통계 필터링 옵션을 관리합니다.
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/80 shadow-2xs space-y-6">
-              <div className="flex items-center justify-between pb-5 border-b border-gray-100">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 border border-gray-200/80 shadow-2xs space-y-6">
+              <div className="flex items-center justify-between gap-4 pb-5 border-b border-gray-100">
                 <div>
-                  <h3 className="text-[15px] font-extrabold text-gray-900">
+                  <h3 className="text-[14.5px] sm:text-[15px] font-extrabold text-gray-900">
                     관리자·로컬·배포봇 접속 자동 제외
                   </h3>
-                  <p className="text-[13px] text-gray-500 mt-0.5">
+                  <p className="text-[12.5px] sm:text-[13px] text-gray-500 mt-0.5">
                     본사 관리자와 크롤러/봇 트래픽을 방문자 통계에서 자동으로 제외합니다.
                   </p>
                 </div>
@@ -1160,7 +1256,7 @@ export default function HqAdminPage() {
                   type="checkbox"
                   checked={excludeAdminTraffic}
                   onChange={e => setExcludeAdminTraffic(e.target.checked)}
-                  className="w-5 h-5 accent-blue-600 rounded cursor-pointer"
+                  className="w-5 h-5 accent-blue-600 rounded cursor-pointer shrink-0"
                 />
               </div>
 
@@ -1188,7 +1284,7 @@ export default function HqAdminPage() {
                     setSavedSecurity(true);
                     setTimeout(() => setSavedSecurity(false), 2000);
                   }}
-                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13.5px] font-bold shadow-xs transition-all active:scale-95"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13.5px] font-bold shadow-xs transition-all active:scale-95 whitespace-nowrap"
                 >
                   {savedSecurity ? '✓ 설정 저장됨' : '보안 설정 저장'}
                 </button>
