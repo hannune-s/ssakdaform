@@ -2,7 +2,7 @@
 import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useState, useEffect } from 'react';
-import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle, ExternalLink } from 'lucide-react';
+import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle, ExternalLink, GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore } from '@/lib/storeSession';
 
@@ -25,6 +25,8 @@ export default function FormBuilder() {
   const [editingFormId, setEditingFormId] = useState<string | null>(null);
   const [copiedFormId, setCopiedFormId] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const [fields, setFields] = useState<FormField[]>([
     { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true }
   ]);
@@ -119,6 +121,46 @@ export default function FormBuilder() {
 
   const removeField = (id: number) => {
     setFields(fields.filter(f => f.id !== id));
+  };
+
+  const moveField = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= fields.length) return;
+    const nextFields = [...fields];
+    const [moved] = nextFields.splice(index, 1);
+    nextFields.splice(targetIndex, 0, moved);
+    setFields(nextFields);
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIdx(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragOverIdx !== index) {
+      setDragOverIdx(index);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIndex) {
+      setDraggedIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+    const nextFields = [...fields];
+    const [moved] = nextFields.splice(draggedIdx, 1);
+    nextFields.splice(dropIndex, 0, moved);
+    setFields(nextFields);
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIdx(null);
+    setDragOverIdx(null);
   };
 
   const updateField = (id: number, key: keyof FormField, value: any) => {
@@ -329,9 +371,16 @@ export default function FormBuilder() {
 
         {/* 오른쪽: 입력 항목 리스트 (빌더) */}
         <div className="lg:col-span-2 space-y-3 flex-1">
-          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm mb-3">
-            <h3 className="font-semibold text-[15px] text-gray-800">입력 항목 관리</h3>
-            <p className="text-[13px] text-gray-500 mt-1">고객이 입력할 항목의 이름과 설명을 설정하세요.</p>
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm mb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 className="font-semibold text-[15px] text-gray-800">입력 항목 관리</h3>
+              <p className="text-[13px] text-gray-500 mt-1">
+                고객이 입력할 항목의 이름과 설명을 설정하세요.
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-lg whitespace-nowrap self-start sm:self-center">
+              ⠿ 드래그 또는 ▲▼ 버튼으로 순서 변경 가능
+            </span>
           </div>
 
           {fields.length === 0 ? (
@@ -342,37 +391,99 @@ export default function FormBuilder() {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-3">
               
               <div className="divide-y divide-gray-100">
-                {fields.map((field) => (
-                  <div key={field.id} className="flex items-end gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4 group hover:bg-gray-50/50 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">항목 이름</label>
-                      <input 
-                        type="text" 
-                        defaultValue={field.label}
-                        onChange={(e) => updateField(field.id, 'label', e.target.value)}
-                        placeholder="예: 연락처"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">안내 문구</label>
-                      <input 
-                        type="text" 
-                        defaultValue={field.placeholder}
-                        onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
-                        placeholder={getSmartPlaceholder(field.label)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
-                      />
-                    </div>
-                    <button 
-                      onClick={() => removeField(field.id)}
-                      className="w-8 h-8 shrink-0 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors mb-0.5"
-                      title="삭제"
+                {fields.map((field, idx) => {
+                  const isDragging = draggedIdx === idx;
+                  const isDragOver = dragOverIdx === idx && draggedIdx !== idx;
+                  return (
+                    <div
+                      key={field.id}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDrop={(e) => handleDrop(e, idx)}
+                      onDragEnd={handleDragEnd}
+                      className={`flex items-end gap-2 sm:gap-3 px-3 sm:px-4 py-3.5 sm:py-4 group transition-all ${
+                        isDragging
+                          ? 'opacity-45 bg-indigo-50/60'
+                          : isDragOver
+                            ? 'bg-indigo-50/80 border-t-2 border-t-indigo-500'
+                            : 'hover:bg-gray-50/50'
+                      }`}
                     >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                ))}
+                      {/* 좌측: 드래그 손잡이 (⠿) + 위/아래 순서 이동 (▲/▼ 세로 배치) */}
+                      <div className="flex items-center gap-1 h-[38px] shrink-0">
+                        <div
+                          className="h-full px-1 text-gray-400 hover:text-indigo-600 cursor-grab active:cursor-grabbing flex items-center justify-center"
+                          title="마우스로 잡고 끌어서 위치 이동"
+                        >
+                          <GripVertical className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </div>
+
+                        <div className="flex flex-col border border-gray-200 rounded-lg overflow-hidden bg-gray-50/80 h-[38px] w-7 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => moveField(idx, 'up')}
+                            disabled={idx === 0}
+                            className={`flex-1 flex items-center justify-center border-b border-gray-200 transition-colors ${
+                              idx === 0
+                                ? 'text-gray-300 cursor-not-allowed bg-gray-50'
+                                : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 bg-white'
+                            }`}
+                            title="위로 이동"
+                          >
+                            <span className="text-[9px] leading-none font-bold">▲</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveField(idx, 'down')}
+                            disabled={idx === fields.length - 1}
+                            className={`flex-1 flex items-center justify-center transition-colors ${
+                              idx === fields.length - 1
+                                ? 'text-gray-300 cursor-not-allowed bg-gray-50'
+                                : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 bg-white'
+                            }`}
+                            title="아래로 이동"
+                          >
+                            <span className="text-[9px] leading-none font-bold">▼</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">
+                          <span className="text-indigo-600 font-extrabold mr-1">{idx + 1}.</span>항목 이름
+                        </label>
+                        <input 
+                          type="text" 
+                          value={field.label}
+                          onChange={(e) => updateField(field.id, 'label', e.target.value)}
+                          placeholder="예: 연락처"
+                          className="w-full h-[38px] px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <label className="block text-[12px] font-semibold text-gray-700 mb-1.5 text-left">안내 문구</label>
+                        <input 
+                          type="text" 
+                          value={field.placeholder}
+                          onChange={(e) => updateField(field.id, 'placeholder', e.target.value)}
+                          placeholder={getSmartPlaceholder(field.label)}
+                          className="w-full h-[38px] px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white transition-shadow" 
+                        />
+                      </div>
+
+                      {/* 우측: 삭제 버튼 (✕) - 입력창 높이(38px)에 정확히 중앙 정렬 */}
+                      <button 
+                        type="button"
+                        onClick={() => removeField(field.id)}
+                        className="w-9 h-[38px] shrink-0 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="삭제"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
