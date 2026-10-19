@@ -379,7 +379,7 @@ export default function FormBuilder() {
               </p>
             </div>
             <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-lg whitespace-nowrap self-start sm:self-center">
-              ⠿ 드래그 또는 ▲▼ 버튼으로 순서 변경 가능
+              ⠿ 마우스로 잡고 끌어서 순서 변경 가능
             </span>
           </div>
 
@@ -410,43 +410,12 @@ export default function FormBuilder() {
                             : 'hover:bg-gray-50/50'
                       }`}
                     >
-                      {/* 좌측: 드래그 손잡이 (⠿) + 위/아래 순서 이동 (▲/▼ 세로 배치) */}
-                      <div className="flex items-center gap-1 h-[38px] shrink-0">
-                        <div
-                          className="h-full px-1 text-gray-400 hover:text-indigo-600 cursor-grab active:cursor-grabbing flex items-center justify-center"
-                          title="마우스로 잡고 끌어서 위치 이동"
-                        >
-                          <GripVertical className="w-4 h-4 sm:w-5 sm:h-5" />
-                        </div>
-
-                        <div className="flex flex-col border border-gray-200 rounded-lg overflow-hidden bg-gray-50/80 h-[38px] w-7 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => moveField(idx, 'up')}
-                            disabled={idx === 0}
-                            className={`flex-1 flex items-center justify-center border-b border-gray-200 transition-colors ${
-                              idx === 0
-                                ? 'text-gray-300 cursor-not-allowed bg-gray-50'
-                                : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 bg-white'
-                            }`}
-                            title="위로 이동"
-                          >
-                            <span className="text-[9px] leading-none font-bold">▲</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => moveField(idx, 'down')}
-                            disabled={idx === fields.length - 1}
-                            className={`flex-1 flex items-center justify-center transition-colors ${
-                              idx === fields.length - 1
-                                ? 'text-gray-300 cursor-not-allowed bg-gray-50'
-                                : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 bg-white'
-                            }`}
-                            title="아래로 이동"
-                          >
-                            <span className="text-[9px] leading-none font-bold">▼</span>
-                          </button>
-                        </div>
+                      {/* 좌측: 드래그 손잡이 (⠿) */}
+                      <div
+                        className="h-[38px] px-1 text-gray-400 hover:text-indigo-600 cursor-grab active:cursor-grabbing flex items-center justify-center shrink-0"
+                        title="마우스로 잡고 끌어서 위치 이동"
+                      >
+                        <GripVertical className="w-5 h-5" />
                       </div>
 
                       <div className="flex-1 min-w-0">
