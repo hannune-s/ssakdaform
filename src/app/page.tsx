@@ -98,12 +98,12 @@ export default function AdminHub() {
   const isSubMyTab = ['my', 'settings', 'account', 'subscription', 'guide', 'notices', 'inquiry'].includes(activeTab);
 
   return (
-    <div className={`w-full min-h-screen bg-gray-50 flex flex-col ${['guide', 'notices', 'inquiry'].includes(activeTab) ? 'px-0' : 'px-4'} pb-24`}>
+    <div className={`w-full min-h-screen print:min-h-0 bg-gray-50 print:bg-white flex flex-col ${['guide', 'notices', 'inquiry'].includes(activeTab) ? 'px-0' : 'px-4 print:px-0'} pb-24 print:pb-0`}>
       {!isSubMyTab && (
-        <div className="pt-12 sm:pt-16 flex flex-col w-full">
+        <div className="pt-12 sm:pt-16 print:pt-0 flex flex-col w-full">
       
       {/* 상단 로고 및 타이틀 */}
-      <div className="text-center mb-10 relative">
+      <div className="text-center mb-10 relative no-print">
         <button 
           onClick={handleInstallApp} 
           className="absolute top-0 right-0 sm:-top-4 sm:right-4 text-[12px] font-bold bg-white text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-200 shadow-sm flex items-center gap-1.5 hover:bg-indigo-50 transition-colors active:scale-95 z-10"
@@ -121,7 +121,7 @@ export default function AdminHub() {
 
 
       {/* 매장 통합 링크 (고객 전송용) - 최상단 고정 */}
-      <div className="w-full max-w-4xl mx-auto mb-6">
+      <div className="w-full max-w-4xl mx-auto mb-6 no-print">
         <div className="bg-gradient-to-br from-[#EEF2FF] via-[#F5F3FF] to-[#E0E7FF] rounded-[20px] sm:rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-indigo-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             {/* 텍스트 영역 */}
@@ -168,7 +168,7 @@ export default function AdminHub() {
 
 
       {/* 탭 및 검색 카드 영역 */}
-      <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8">
+      <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8 no-print">
         
         {/* 메뉴(카테고리) 탭 버튼 */}
         <div className="flex flex-col items-center gap-2 sm:gap-3 w-full px-1">
@@ -270,7 +270,7 @@ export default function AdminHub() {
       )}
 
       {/* 🔹 하단 네비게이션바 (홈 / 마이) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around pb-safe shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.05)] z-50 h-16 sm:h-16">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around pb-safe shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.05)] z-50 h-16 sm:h-16 no-print">
         <button 
           onClick={() => setActiveTab('dashboard')}
           className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${!isSubMyTab ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}

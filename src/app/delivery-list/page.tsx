@@ -283,32 +283,8 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
   };
 
   return (
-    <div className="max-w-6xl mx-auto pb-12">
-      <style>{`
-        @media print {
-          body * { visibility: hidden; }
-          .fixed.inset-0 {
-            position: absolute !important;
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
-          }
-          .print-area, .print-area * { visibility: visible; }
-          .print-area {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
-          }
-        }
-      `}</style>
-      
-      <div className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+    <div className="max-w-6xl mx-auto pb-12 print:pb-0">
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-end justify-between gap-3 no-print">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">택배접수</h1>
           <p className="text-[13px] text-gray-500">고객들이 제출한 택배 배송 신청서 리스트입니다. 원하는 내역을 체크하여 송장용 엑셀로 다운로드하세요.</p>
@@ -328,7 +304,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       </div>
 
       {/* 리스트 테이블 */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px] no-print">
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
@@ -539,37 +515,37 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
 
       {/* 모달 */}
       {selectedResponse && (
-        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-white rounded-[20px] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden ring-1 ring-black/5">
-            <div className="px-6 py-5 flex items-center justify-between bg-gradient-to-r from-indigo-700 to-indigo-900 text-white shadow-md">
-              <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 print-modal-root">
+          <div className="bg-white rounded-[20px] w-full max-w-2xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden ring-1 ring-black/5 print-modal-card">
+            <div className="px-5 py-3.5 flex items-center justify-between bg-gradient-to-r from-indigo-700 to-indigo-900 text-white shadow-md">
+              <h2 className="text-[17px] font-bold tracking-tight flex items-center gap-2">
                 <Package className="w-5 h-5 text-indigo-200" />
                 택배 접수 상세 정보
               </h2>
               <button 
                 onClick={() => setSelectedResponse(null)}
-                className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors no-print"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0">
+            <div className="p-4 sm:p-5 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0 space-y-3">
               {/* 상단 상태 티켓 */}
-              <div className="bg-white rounded-2xl p-5 mb-6 shadow-md shadow-gray-200/50 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <div className="bg-white rounded-xl px-4 py-3 shadow-xs border border-gray-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div>
-                  <p className="text-xs font-medium text-gray-500 mb-1">접수 일시</p>
-                  <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
+                  <p className="text-[11px] font-medium text-gray-500 mb-0.5">접수 일시</p>
+                  <p className="text-[13.5px] font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
                 </div>
                 <div className="sm:text-right">
-                  <p className="text-xs font-medium text-gray-500 mb-1">배송 상태 및 송장 정보</p>
-                  <div className="flex flex-wrap items-center sm:justify-end gap-2">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-sm font-bold">
-                      {selectedResponse.status === '발송완료' ? <CheckCircle className="w-4 h-4" /> : null}
+                  <p className="text-[11px] font-medium text-gray-500 mb-0.5">배송 상태 및 송장 정보</p>
+                  <div className="flex flex-wrap items-center sm:justify-end gap-1.5">
+                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold">
+                      {selectedResponse.status === '발송완료' ? <CheckCircle className="w-3.5 h-3.5" /> : null}
                       {selectedResponse.status === '발송완료' ? '발송완료' : '접수대기'}
                     </div>
                     {selectedResponse.data?._courier && selectedResponse.data?._trackingNumber && (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-sm font-bold">
+                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
                         {selectedResponse.data._courier} · {selectedResponse.data._trackingNumber}
                       </div>
                     )}
@@ -577,61 +553,59 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                 </div>
               </div>
 
-              <div className="space-y-6">
-                {(() => {
-                  const dataEntries = Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' }).filter(([k]) => !k.startsWith('_'));
-                  const senderEntries = dataEntries.filter(([k]) => k.includes('보내는 분'));
-                  const receiverEntries = dataEntries.filter(([k]) => k.includes('받는 분'));
-                  const otherEntries = dataEntries.filter(([k]) => !k.includes('보내는 분') && !k.includes('받는 분'));
+              {(() => {
+                const dataEntries = Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' }).filter(([k]) => !k.startsWith('_'));
+                const senderEntries = dataEntries.filter(([k]) => k.includes('보내는 분'));
+                const receiverEntries = dataEntries.filter(([k]) => k.includes('받는 분'));
+                const otherEntries = dataEntries.filter(([k]) => !k.includes('보내는 분') && !k.includes('받는 분'));
 
-                  const renderSection = (title: string, entries: any[], isReceiver: boolean) => {
-                    if (entries.length === 0) return null;
-                    return (
-                      <div className={`bg-white rounded-2xl p-6 shadow-md ${isReceiver ? "shadow-indigo-100/50 border border-indigo-100" : "shadow-gray-200/50 border border-transparent"}`}>
-                        <h3 className={`text-sm font-extrabold mb-5 pb-3 border-b-2 ${isReceiver ? 'text-indigo-900 border-indigo-900' : 'text-gray-900 border-gray-900'} flex items-center gap-2`}>
-                           {title}
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
-                          {entries.map(([key, value]: any) => {
-                            const cleanKey = key.replace(/보내는 분 - |받는 분 - /g, '');
-                            const isFullWidth = /주소|요청사항|상세|메모|내용/.test(cleanKey) || (value && String(value).length > 25);
-                            const isHighlight = /이름|연락처|전화번호|고객명/.test(cleanKey);
-
-                            return (
-                              <div key={key} className={isFullWidth ? "col-span-1 sm:col-span-2" : ""}>
-                                <p className="text-[13px] font-semibold text-gray-500 mb-1.5">{cleanKey}</p>
-                                <p className={`text-gray-900 ${isHighlight ? 'text-[17px] font-extrabold tracking-tight' : 'text-[15px] font-medium'} leading-relaxed whitespace-pre-wrap`}>
-                                  {value || '-'}
-                                </p>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  };
-
+                const renderSection = (title: string, entries: any[], isReceiver: boolean) => {
+                  if (entries.length === 0) return null;
                   return (
-                    <div className="space-y-6">
-                      {renderSection('보내는 분 (발송인)', senderEntries, false)}
-                      {renderSection('받는 분 (수령인)', receiverEntries, true)}
-                      {renderSection('물품 및 기타 정보', otherEntries, false)}
+                    <div className={`bg-white rounded-xl p-4 shadow-xs border ${isReceiver ? "border-indigo-200" : "border-gray-100"}`}>
+                      <h3 className={`text-[13px] font-extrabold mb-3 pb-2 border-b-2 ${isReceiver ? 'text-indigo-900 border-indigo-900' : 'text-gray-900 border-gray-900'} flex items-center gap-2`}>
+                         {title}
+                      </h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-5">
+                        {entries.map(([key, value]: any) => {
+                          const cleanKey = key.replace(/보내는 분 - |받는 분 - /g, '');
+                          const isFullWidth = /주소|요청사항|상세|메모|내용/.test(cleanKey) || (value && String(value).length > 22);
+                          const isHighlight = /이름|연락처|전화번호|고객명/.test(cleanKey);
+
+                          return (
+                            <div key={key} className={isFullWidth ? "col-span-2 sm:col-span-3" : ""}>
+                              <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">{cleanKey}</p>
+                              <p className={`text-gray-900 ${isHighlight ? 'text-[15px] font-extrabold tracking-tight' : 'text-[13.5px] font-semibold'} leading-snug whitespace-pre-wrap`}>
+                                {value || '-'}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
-                })()}
-              </div>
+                };
+
+                return (
+                  <div className="space-y-3">
+                    {renderSection('보내는 분 (발송인)', senderEntries, false)}
+                    {renderSection('받는 분 (수령인)', receiverEntries, true)}
+                    {renderSection('물품 및 기타 정보', otherEntries, false)}
+                  </div>
+                );
+              })()}
             </div>
 
-            <div className="px-6 py-5 border-t border-gray-100 bg-white flex justify-end gap-3 rounded-b-[20px]">
+            <div className="px-5 py-3.5 border-t border-gray-100 bg-white flex justify-end gap-2.5 rounded-b-[20px] no-print">
               <button 
                 onClick={() => setSelectedResponse(null)}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                className="px-5 py-2 rounded-xl text-xs sm:text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
               >
                 닫기
               </button>
               <button 
                 onClick={handlePrint}
-                className="flex items-center justify-center gap-2 px-7 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all font-bold shadow-md"
+                className="flex items-center justify-center gap-2 px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all text-xs sm:text-sm font-bold shadow-md"
               >
                 <Printer className="w-4 h-4" />
                 출력 / PDF 저장

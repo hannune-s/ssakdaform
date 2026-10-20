@@ -107,32 +107,8 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
   };
 
   return (
-    <div className="max-w-6xl mx-auto pb-12">
-      <style>{`
-        @media print {
-          body * { visibility: hidden; }
-          .fixed.inset-0 {
-            position: absolute !important;
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
-          }
-          .print-area, .print-area * { visibility: visible; }
-          .print-area {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
-          }
-        }
-      `}</style>
-      
-      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3">
+    <div className="max-w-6xl mx-auto pb-12 print:pb-0">
+      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3 no-print">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">이력서접수 (직원채용)</h1>
           <p className="text-[13px] text-gray-500">지원자들이 제출한 간편 이력서 리스트입니다. 비고란에 면접 일정이나 근무 특이사항을 자유롭게 메모해보세요.</p>
@@ -140,7 +116,7 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
       </div>
 
       {/* 리스트 테이블 */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px] no-print">
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
@@ -298,32 +274,32 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
 
       {/* 이력서 상세 보기 모달 */}
       {selectedResponse && (
-        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-white rounded-[20px] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden ring-1 ring-black/5">
-            <div className="px-6 py-5 flex items-center justify-between bg-gradient-to-r from-emerald-700 to-teal-900 text-white shadow-md">
-              <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-emerald-200" />
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 print-modal-root">
+          <div className="bg-white rounded-[20px] w-full max-w-2xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden ring-1 ring-black/5 print-modal-card">
+            <div className="px-5 py-3.5 flex items-center justify-between bg-gradient-to-r from-emerald-700 to-teal-900 text-white shadow-sm print:bg-none print:text-gray-900 print:border-b-2 print:border-gray-900 print:px-0 print:py-2">
+              <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-emerald-200 print:text-emerald-700" />
                 직원채용 이력서 상세 정보
               </h2>
               <button 
                 onClick={() => setSelectedResponse(null)}
-                className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors no-print"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto print-area bg-gray-100 flex-1 min-h-0 space-y-6">
+            <div className="p-4 sm:p-5 overflow-y-auto print-area bg-gray-50 flex-1 min-h-0 space-y-3 print:bg-white print:p-0 print:pt-3">
               {/* 상단 지원일시 및 사장님 비고 메모 */}
-              <div className="bg-white rounded-2xl p-5 shadow-md shadow-gray-200/50 space-y-3">
+              <div className="bg-white rounded-xl px-4 py-3 border border-gray-200/80 shadow-sm space-y-2.5 print:shadow-none print:border-gray-300">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">지원 일시</p>
-                    <p className="text-sm font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
+                    <p className="text-[11px] font-medium text-gray-500">지원 일시</p>
+                    <p className="text-[13px] font-bold text-gray-900">{new Date(selectedResponse.submitted_at).toLocaleString('ko-KR')}</p>
                   </div>
                 </div>
-                <div className="pt-3 border-t border-gray-100">
-                  <label className="block text-xs font-bold text-indigo-900 mb-1.5">
+                <div className="pt-2 border-t border-gray-100">
+                  <label className="block text-[11.5px] font-bold text-indigo-900 mb-1">
                     비고 (사장님 메모 · 면접/근무 특이사항)
                   </label>
                   <div className="flex gap-2">
@@ -335,12 +311,12 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                         setMemoInputs(prev => ({ ...prev, [selectedResponse.id]: val }));
                       }}
                       placeholder="예: 면접완료, 10월 20일 첫출근, 시급 11,000원 등"
-                      className="flex-1 px-3 py-2 text-sm font-medium text-gray-800 bg-amber-50/50 border border-amber-200 rounded-xl focus:bg-white focus:border-indigo-500 outline-none"
+                      className="flex-1 px-3 py-1.5 text-[13px] font-medium text-gray-800 bg-amber-50/50 border border-amber-200 rounded-lg focus:bg-white focus:border-indigo-500 outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => handleSaveMemo(selectedResponse)}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0"
+                      className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shrink-0 no-print"
                     >
                       <Save className="w-3.5 h-3.5" />
                       {savedMemoId === selectedResponse.id ? '저장됨' : '메모 저장'}
@@ -355,65 +331,65 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                 const docUrl = d['증빙서류 (보건증 등 파일첨부)'] || '';
 
                 return (
-                  <div className="space-y-6">
+                  <div className="space-y-3">
                     {/* 1. 기본 인적사항 (사진 포함) */}
-                    <div className="bg-white rounded-2xl p-6 shadow-md shadow-emerald-100/40 border border-emerald-100">
-                      <h3 className="text-sm font-extrabold mb-5 pb-3 border-b-2 text-emerald-900 border-emerald-900 flex items-center gap-2">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-emerald-200 print:shadow-none">
+                      <h3 className="text-[13px] font-extrabold mb-3 pb-2 border-b text-emerald-900 border-emerald-200 flex items-center gap-2">
                         기본 인적사항
                       </h3>
-                      <div className="flex flex-col sm:flex-row gap-6 items-start">
+                      <div className="flex flex-col sm:flex-row gap-4 items-start">
                         <div className="shrink-0 mx-auto sm:mx-0">
                           {photoUrl && photoUrl.startsWith('data:image/') ? (
                             <img 
                               src={photoUrl} 
                               alt="지원자 사진" 
-                              className="w-28 h-36 object-cover rounded-xl border-2 border-gray-200 shadow-sm"
+                              className="w-24 h-28 object-cover rounded-xl border border-gray-200 shadow-sm"
                             />
                           ) : (
-                            <div className="w-28 h-36 rounded-xl bg-gray-100 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400">
-                              <User className="w-8 h-8 mb-1" />
-                              <span className="text-[11px] font-medium">사진 미첨부</span>
+                            <div className="w-24 h-28 rounded-xl bg-gray-100 border border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400">
+                              <User className="w-6 h-6 mb-1" />
+                              <span className="text-[10.5px] font-medium">사진 미첨부</span>
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 w-full">
+                        <div className="flex-1 grid grid-cols-2 gap-y-2.5 gap-x-4 w-full">
                           <div>
-                            <p className="text-[12.5px] font-semibold text-gray-500 mb-1">이름</p>
-                            <p className="text-[18px] font-extrabold text-gray-900">{d['이름'] || '-'}</p>
+                            <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">이름</p>
+                            <p className="text-[15.5px] font-extrabold text-gray-900">{d['이름'] || '-'}</p>
                           </div>
                           <div>
-                            <p className="text-[12.5px] font-semibold text-gray-500 mb-1">연락처</p>
-                            <p className="text-[17px] font-extrabold text-indigo-700">{d['연락처'] || '-'}</p>
+                            <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">연락처</p>
+                            <p className="text-[15px] font-extrabold text-indigo-700">{d['연락처'] || '-'}</p>
                           </div>
-                          <div className="sm:col-span-2">
-                            <p className="text-[12.5px] font-semibold text-gray-500 mb-1">거주지 주소</p>
-                            <p className="text-[15px] font-medium text-gray-900 leading-relaxed">{d['주소'] || '-'}</p>
+                          <div className="col-span-2">
+                            <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">거주지 주소</p>
+                            <p className="text-[13.5px] font-medium text-gray-900 leading-snug">{d['주소'] || '-'}</p>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* 2. 지원 조건 및 경력사항 */}
-                    <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50">
-                      <h3 className="text-sm font-extrabold mb-5 pb-3 border-b-2 text-gray-900 border-gray-900">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200/80 print:shadow-none print:border-gray-300">
+                      <h3 className="text-[13px] font-extrabold mb-3 pb-2 border-b text-gray-900 border-gray-200">
                         지원 조건 및 경력사항
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-2.5 gap-x-4">
                         <div>
-                          <p className="text-[12.5px] font-semibold text-gray-500 mb-1">지원파트</p>
-                          <p className="text-[16px] font-extrabold text-emerald-700">{d['지원파트'] || '-'}</p>
+                          <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">지원파트</p>
+                          <p className="text-[14.5px] font-extrabold text-emerald-700">{d['지원파트'] || '-'}</p>
                         </div>
                         <div>
-                          <p className="text-[12.5px] font-semibold text-gray-500 mb-1">근무가능요일</p>
-                          <p className="text-[15px] font-bold text-gray-900">{d['근무가능요일'] || '-'}</p>
+                          <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">근무가능요일</p>
+                          <p className="text-[13.5px] font-bold text-gray-900">{d['근무가능요일'] || '-'}</p>
                         </div>
-                        <div className="sm:col-span-2">
-                          <p className="text-[12.5px] font-semibold text-gray-500 mb-1">근무가능시간</p>
-                          <p className="text-[15px] font-bold text-gray-900">{d['근무가능시간'] || '-'}</p>
+                        <div className="col-span-2 sm:col-span-1">
+                          <p className="text-[11.5px] font-semibold text-gray-500 mb-0.5">근무가능시간</p>
+                          <p className="text-[13.5px] font-bold text-gray-900">{d['근무가능시간'] || '-'}</p>
                         </div>
-                        <div className="sm:col-span-2">
-                          <p className="text-[12.5px] font-semibold text-gray-500 mb-1">관련업종 경력유무 및 상세</p>
-                          <p className="text-[15px] font-medium text-gray-900 whitespace-pre-wrap leading-relaxed bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                        <div className="col-span-2 sm:col-span-3">
+                          <p className="text-[11.5px] font-semibold text-gray-500 mb-1">관련업종 경력유무 및 상세</p>
+                          <p className="text-[13.5px] font-medium text-gray-900 whitespace-pre-wrap leading-snug bg-gray-50 p-2.5 rounded-lg border border-gray-100">
                             {d['관련업종경력유무'] || '-'}
                           </p>
                         </div>
@@ -421,24 +397,24 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                     </div>
 
                     {/* 3. 간단한 소개 또는 각오 */}
-                    <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50">
-                      <h3 className="text-sm font-extrabold mb-4 pb-3 border-b-2 text-gray-900 border-gray-900">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200/80 print:shadow-none print:border-gray-300">
+                      <h3 className="text-[13px] font-extrabold mb-2 pb-2 border-b text-gray-900 border-gray-200">
                         간단한 소개 또는 각오
                       </h3>
-                      <p className="text-[15px] font-medium text-gray-900 whitespace-pre-wrap leading-relaxed">
+                      <p className="text-[13.5px] font-medium text-gray-900 whitespace-pre-wrap leading-snug">
                         {d['간단한 소개 또는 각오'] || '-'}
                       </p>
                     </div>
 
                     {/* 4. 증빙서류 (보건증 등 파일첨부) */}
-                    <div className="bg-white rounded-2xl p-6 shadow-md shadow-gray-200/50">
-                      <h3 className="text-sm font-extrabold mb-4 pb-3 border-b-2 text-gray-900 border-gray-900 flex items-center justify-between">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200/80 print:shadow-none print:border-gray-300">
+                      <h3 className="text-[13px] font-extrabold mb-2 pb-2 border-b text-gray-900 border-gray-200 flex items-center justify-between">
                         <span>증빙서류 (보건증 등 첨부파일)</span>
                         {docUrl && (
                           <a
                             href={docUrl}
                             download={`증빙서류_${d['이름'] || '지원자'}`}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-bold transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-bold transition-colors no-print"
                           >
                             <Download className="w-3.5 h-3.5" /> 파일 저장
                           </a>
@@ -446,24 +422,24 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
                       </h3>
                       {docUrl ? (
                         docUrl.startsWith('data:image/') ? (
-                          <div className="mt-2">
+                          <div className="mt-1">
                             <img 
                               src={docUrl} 
                               alt="첨부 증빙서류" 
-                              className="max-h-96 w-auto mx-auto rounded-xl border border-gray-200 shadow-sm"
+                              className="max-h-48 print:max-h-36 w-auto mx-auto rounded-lg border border-gray-200 shadow-sm"
                             />
                           </div>
                         ) : (
-                          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                            <FileText className="w-6 h-6 text-indigo-600 shrink-0" />
+                          <div className="flex items-center gap-2.5 p-2.5 bg-gray-50 rounded-lg border border-gray-200">
+                            <FileText className="w-5 h-5 text-indigo-600 shrink-0" />
                             <div className="flex-1">
-                              <p className="text-sm font-bold text-gray-800">증빙서류 파일이 첨부되어 있습니다.</p>
-                              <p className="text-xs text-gray-500">우측 상단의 [파일 저장] 버튼을 눌러 확인하세요.</p>
+                              <p className="text-xs font-bold text-gray-800">증빙서류 파일이 첨부되어 있습니다.</p>
+                              <p className="text-[11px] text-gray-500 no-print">우측 상단의 [파일 저장] 버튼을 눌러 확인하세요.</p>
                             </div>
                           </div>
                         )
                       ) : (
-                        <p className="text-sm text-gray-400">첨부된 증빙서류가 없습니다.</p>
+                        <p className="text-xs text-gray-400">첨부된 증빙서류가 없습니다.</p>
                       )}
                     </div>
                   </div>
@@ -471,16 +447,16 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
               })()}
             </div>
 
-            <div className="px-6 py-5 border-t border-gray-100 bg-white flex justify-end gap-3 rounded-b-[20px]">
+            <div className="px-5 py-3.5 border-t border-gray-100 bg-white flex justify-end gap-2.5 rounded-b-[20px] no-print">
               <button 
                 onClick={() => setSelectedResponse(null)}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
+                className="px-5 py-2 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors"
               >
                 닫기
               </button>
               <button 
                 onClick={handlePrint}
-                className="flex items-center justify-center gap-2 px-7 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all font-bold shadow-md"
+                className="flex items-center justify-center gap-2 px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:scale-95 transition-all text-sm font-bold shadow-md"
               >
                 <Printer className="w-4 h-4" />
                 출력 / PDF 저장
