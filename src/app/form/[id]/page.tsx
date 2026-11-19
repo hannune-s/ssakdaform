@@ -7,6 +7,7 @@ import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX,
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 import { getActiveStoreId } from '@/lib/storeSession';
+import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 
 export default function CustomerFormPage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function CustomerFormPage() {
   const [storeInfo, setStoreInfo] = useState<any>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
   const [targetStoreId, setTargetStoreId] = useState<string>('demo');
+  const [isLinkSuspended, setIsLinkSuspended] = useState(false);
   
   // 주소 검색 모달 관련 상태
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
@@ -120,6 +122,9 @@ export default function CustomerFormPage() {
         .select('*')
         .eq('store_id', resolvedStoreId)
         .maybeSingle();
+
+      const subInfo = await fetchStoreSubscription(resolvedStoreId, storeRow?.created_at);
+      setIsLinkSuspended(isSubscriptionExpired(subInfo, resolvedStoreId));
 
       if (storeRow) {
         resolvedInfo = {
@@ -279,6 +284,29 @@ export default function CustomerFormPage() {
       });
     }
   }, [params.id]);
+
+  if (isLinkSuspended) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F8] p-4">
+        <div className="bg-white rounded-3xl p-8 max-w-md w-full border border-amber-200 shadow-lg text-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+            <Store className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-extrabold text-gray-900">현재 온라인 접수 기간이 아닙니다</h2>
+          <p className="text-[14px] text-gray-600 leading-relaxed break-keep">
+            현재 해당 매장의 온라인 신청서 접수가 일시 중지된 상태입니다.<br />
+            기존에 신청하신 내역이나 배송(송장번호) 조회는 매장 홈에서 확인하실 수 있습니다.
+          </p>
+          <a
+            href={`/store/${encodeURIComponent(targetStoreId)}`}
+            className="inline-flex items-center justify-center w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px]"
+          >
+            매장 홈 (기존 접수/배송 조회) 이동
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   if (!data) {
     return (
@@ -769,9 +797,9 @@ export default function CustomerFormPage() {
       
       <div className="mt-8 text-center text-sm text-stone-400 font-medium">
         Powered by{' '}
-        <a href="/landing" className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-colors">
+        <span className="text-indigo-600 font-semibold">
           싹다폼
-        </a>
+        </span>
       </div>
 
       {/* 카카오 우편번호 검색 모달 */}

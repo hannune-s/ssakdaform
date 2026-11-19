@@ -26,6 +26,12 @@ import {
   X
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import {
+  fetchAllStoreSubscriptions,
+  saveStoreSubscription,
+  getDefaultNextBillingDate,
+  isSubscriptionExpired
+} from '@/lib/subscriptionUtils';
 
 interface VisitLog {
   id: string;
@@ -89,6 +95,10 @@ export default function HqAdminPage() {
   const [newNoticeTitle, setNewNoticeTitle] = useState('');
   const [newNoticeContent, setNewNoticeContent] = useState('');
   const [newNoticeImportant, setNewNoticeImportant] = useState(true);
+  const [editingNoticeId, setEditingNoticeId] = useState<string | null>(null);
+  const [editNoticeTitle, setEditNoticeTitle] = useState('');
+  const [editNoticeContent, setEditNoticeContent] = useState('');
+  const [editNoticeImportant, setEditNoticeImportant] = useState(false);
 
   // 6. 보안 설정 상태
   const [adminPassword, setAdminPassword] = useState('');
@@ -232,11 +242,9 @@ export default function HqAdminPage() {
         localStorage.setItem('ssakdaform_hq_visit_logs', JSON.stringify(initialLogs));
       }
 
-      // 매장별 구독 상태 로드
-      const savedSubs = localStorage.getItem('ssakdaform_hq_subscriptions');
-      if (savedSubs) {
-        setStoreSubscriptions(JSON.parse(savedSubs));
-      }
+      // 매장별 구독 상태 로드 (Supabase DB + 로컬 동기화)
+      const allSubs = await fetchAllStoreSubscriptions();
+      setStoreSubscriptions(allSubs);
 
       // 푸시 발송 이력 로드
       const savedPush = localStorage.getItem('ssakdaform_hq_push_history');
@@ -277,19 +285,71 @@ export default function HqAdminPage() {
     localStorage.setItem('ssakdaform_hq_visit_logs', JSON.stringify([]));
   };
 
-  // 매장 구독 플랜/상태 변경
-  const handleUpdateSubscription = (storeId: string, field: 'plan' | 'status', value: string) => {
+  // 매장 구독 플랜/상태/만료일 변경 (DB 즉시 저장)
+  const handleUpdateSubscription = async (
+    storeId: string,
+    field: 'plan' | 'status' | 'nextBilling',
+    value: string,
+    storeCreatedAt?: string
+  ) => {
     const current = storeSubscriptions[storeId] || {
       plan: '월간 이용권 (9,900원)',
       status: '정상 이용중',
-      nextBilling: '2026-11-16'
+      nextBilling: getDefaultNextBillingDate(storeCreatedAt)
     };
+    const nextEntry = { ...current, [field]: value };
+
+    // 플랜 변경 시 만료일도 자연스럽게 갱신 (단, 직접 날짜를 수정한 경우가 아닐 때)
+    if (field === 'plan') {
+      const base = new Date();
+      if (value.includes('연간')) {
+        base.setDate(base.getDate() + 365);
+        nextEntry.nextBilling = base.toISOString().split('T')[0];
+      } else if (value.includes('월간')) {
+        base.setDate(base.getDate() + 30);
+        nextEntry.nextBilling = base.toISOString().split('T')[0];
+      }
+    }
+
     const updated = {
       ...storeSubscriptions,
-      [storeId]: { ...current, [field]: value }
+      [storeId]: nextEntry
     };
     setStoreSubscriptions(updated);
-    localStorage.setItem('ssakdaform_hq_subscriptions', JSON.stringify(updated));
+
+    await saveStoreSubscription({
+      storeId,
+      plan: nextEntry.plan,
+      status: nextEntry.status as '정상 이용중' | '무료체험' | '이용정지',
+      nextBilling: nextEntry.nextBilling
+    });
+  };
+
+  // +1개월 즉시 연장 버튼 핸들러
+  const handleExtendOneMonth = async (storeId: string, storeCreatedAt?: string) => {
+    const current = storeSubscriptions[storeId] || {
+      plan: '월간 이용권 (9,900원)',
+      status: '정상 이용중',
+      nextBilling: getDefaultNextBillingDate(storeCreatedAt)
+    };
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const baseDate = current.nextBilling && current.nextBilling > todayStr ? new Date(current.nextBilling) : now;
+    baseDate.setDate(baseDate.getDate() + 30);
+    const newNextBilling = baseDate.toISOString().split('T')[0];
+
+    const nextEntry = {
+      ...current,
+      status: '정상 이용중',
+      nextBilling: newNextBilling
+    };
+    setStoreSubscriptions(prev => ({ ...prev, [storeId]: nextEntry }));
+    await saveStoreSubscription({
+      storeId,
+      plan: nextEntry.plan,
+      status: '정상 이용중',
+      nextBilling: newNextBilling
+    });
   };
 
   // 가맹 매장 삭제
@@ -343,6 +403,23 @@ export default function HqAdminPage() {
       return;
     }
 
+    // 기본 샘플 공지가 화면에 떠 있는 상태에서 첫 DB 공지를 등록할 경우, 기존 기본 공지도 DB에 함께 저장하여 사라지지 않게 유지
+    const defaultNotices = notices.filter(n => n.id.startsWith('default-'));
+    if (defaultNotices.length > 0) {
+      await supabase.from('ssakdaform_responses').insert(
+        [...defaultNotices].reverse().map(n => ({
+          store_id: '__hq__',
+          form_id: '__hq_notice__',
+          status: '게시중',
+          data: {
+            title: n.title,
+            content: n.content,
+            important: n.important
+          }
+        }))
+      );
+    }
+
     const { error } = await supabase.from('ssakdaform_responses').insert([
       {
         store_id: '__hq__',
@@ -366,10 +443,85 @@ export default function HqAdminPage() {
     loadHqData();
   };
 
+  const handleStartEditNotice = (notice: NoticeItem) => {
+    setEditingNoticeId(notice.id);
+    setEditNoticeTitle(notice.title);
+    setEditNoticeContent(notice.content);
+    setEditNoticeImportant(notice.important);
+  };
+
+  const handleSaveEditNotice = async (id: string) => {
+    if (!editNoticeTitle.trim() || !editNoticeContent.trim()) {
+      alert('공지사항 제목과 내용을 모두 입력해주세요.');
+      return;
+    }
+
+    if (id.startsWith('default-')) {
+      // 기본 샘플 공지를 수정한 경우 전체 목록을 DB에 정식 저장하여 사장님 화면에도 즉시 반영되도록 처리
+      const updatedList = notices.map(n =>
+        n.id === id
+          ? { ...n, title: editNoticeTitle.trim(), content: editNoticeContent.trim(), important: editNoticeImportant }
+          : n
+      );
+      const { error } = await supabase.from('ssakdaform_responses').insert(
+        [...updatedList].reverse().map(n => ({
+          store_id: '__hq__',
+          form_id: '__hq_notice__',
+          status: '게시중',
+          data: {
+            title: n.title,
+            content: n.content,
+            important: n.important
+          }
+        }))
+      );
+      if (error) {
+        alert('공지 수정 중 오류가 발생했습니다: ' + error.message);
+        return;
+      }
+    } else {
+      const { error } = await supabase
+        .from('ssakdaform_responses')
+        .update({
+          data: {
+            title: editNoticeTitle.trim(),
+            content: editNoticeContent.trim(),
+            important: editNoticeImportant
+          }
+        })
+        .eq('id', id);
+
+      if (error) {
+        alert('공지 수정 중 오류가 발생했습니다: ' + error.message);
+        return;
+      }
+    }
+
+    setEditingNoticeId(null);
+    loadHqData();
+  };
+
   const handleDeleteNotice = async (id: string) => {
     if (!window.confirm('이 공지사항을 삭제하시겠습니까?')) return;
     if (id.startsWith('default-')) {
-      setNotices(prev => prev.filter(n => n.id !== id));
+      const remaining = notices.filter(n => n.id !== id);
+      if (remaining.length > 0 && remaining.every(n => n.id.startsWith('default-'))) {
+        await supabase.from('ssakdaform_responses').insert(
+          [...remaining].reverse().map(n => ({
+            store_id: '__hq__',
+            form_id: '__hq_notice__',
+            status: '게시중',
+            data: {
+              title: n.title,
+              content: n.content,
+              important: n.important
+            }
+          }))
+        );
+        loadHqData();
+        return;
+      }
+      setNotices(remaining);
       return;
     }
     await supabase.from('ssakdaform_responses').delete().eq('id', id);
@@ -828,8 +980,17 @@ export default function HqAdminPage() {
                       const subInfo = storeSubscriptions[store.store_id] || {
                         plan: '월간 이용권 (9,900원)',
                         status: '정상 이용중',
-                        nextBilling: '2026-11-16'
+                        nextBilling: getDefaultNextBillingDate(store.created_at)
                       };
+                      const expired = isSubscriptionExpired(
+                        {
+                          storeId: store.store_id,
+                          plan: subInfo.plan,
+                          status: subInfo.status as '정상 이용중' | '무료체험' | '이용정지',
+                          nextBilling: subInfo.nextBilling
+                        },
+                        store.store_id
+                      );
 
                       return (
                         <tr key={store.id} className="hover:bg-gray-50/70 transition-colors">
@@ -861,21 +1022,32 @@ export default function HqAdminPage() {
                             </span>
                           </td>
                           <td className="px-4 sm:px-5 py-4 text-center">
-                            <select
-                              value={subInfo.status}
-                              onChange={e => handleUpdateSubscription(store.store_id, 'status', e.target.value)}
-                              className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold border outline-none cursor-pointer ${
-                                subInfo.status === '정상 이용중'
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : subInfo.status === '무료체험'
-                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                    : 'bg-rose-50 text-rose-700 border-rose-200'
-                              }`}
-                            >
-                              <option value="정상 이용중">정상 이용중</option>
-                              <option value="무료체험">무료체험</option>
-                              <option value="이용정지">이용정지</option>
-                            </select>
+                            <div className="flex flex-col items-center gap-1">
+                              <select
+                                value={subInfo.status}
+                                onChange={e =>
+                                  handleUpdateSubscription(store.store_id, 'status', e.target.value, store.created_at)
+                                }
+                                className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold border outline-none cursor-pointer ${
+                                  subInfo.status === '정상 이용중'
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                    : subInfo.status === '무료체험'
+                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                                }`}
+                              >
+                                <option value="정상 이용중">정상 이용중</option>
+                                <option value="무료체험">무료체험</option>
+                                <option value="이용정지">이용정지 (링크차단)</option>
+                              </select>
+                              <span
+                                className={`text-[10.5px] font-bold ${
+                                  expired ? 'text-rose-600' : 'text-emerald-600'
+                                }`}
+                              >
+                                {expired ? '링크 정지됨 (자료보관)' : `만료일: ${subInfo.nextBilling}`}
+                              </span>
+                            </div>
                           </td>
                           <td className="px-4 sm:px-5 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
@@ -908,91 +1080,189 @@ export default function HqAdminPage() {
         )}
 
         {/* ================= 3. 구독 · 매출 관리 ================= */}
-        {activeMenu === 'subscriptions' && (
-          <div className="space-y-5 sm:space-y-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900">구독 · 매출 관리</h1>
-              <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
-                가맹 매장별 구독 플랜(월간 9,900원 / 연간 149,000원) 및 결제 상태를 관리합니다.
-              </p>
-            </div>
+        {activeMenu === 'subscriptions' && (() => {
+          const activeStoresCount = stores.filter(store => {
+            const s = storeSubscriptions[store.store_id] || {
+              plan: '월간 이용권 (9,900원)',
+              status: '정상 이용중',
+              nextBilling: getDefaultNextBillingDate(store.created_at)
+            };
+            return !isSubscriptionExpired(
+              {
+                storeId: store.store_id,
+                plan: s.plan,
+                status: s.status as '정상 이용중' | '무료체험' | '이용정지',
+                nextBilling: s.nextBilling
+              },
+              store.store_id
+            );
+          }).length;
 
-            <div className="grid grid-cols-3 gap-2 sm:gap-5">
-              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
-                <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">활성 구독 매장</p>
-                <p className="text-lg sm:text-3xl font-black text-blue-600 mt-1 sm:mt-1.5 whitespace-nowrap">{stores.length}곳</p>
-              </div>
-              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
-                <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">이번 달 예상 매출</p>
-                <p className="text-lg sm:text-3xl font-black text-emerald-600 mt-1 sm:mt-1.5 whitespace-nowrap">
-                  {(stores.length * 9900).toLocaleString()}원
+          const expectedRevenue = stores.reduce((sum, store) => {
+            const s = storeSubscriptions[store.store_id] || {
+              plan: '월간 이용권 (9,900원)',
+              status: '정상 이용중',
+              nextBilling: getDefaultNextBillingDate(store.created_at)
+            };
+            const expired = isSubscriptionExpired(
+              {
+                storeId: store.store_id,
+                plan: s.plan,
+                status: s.status as '정상 이용중' | '무료체험' | '이용정지',
+                nextBilling: s.nextBilling
+              },
+              store.store_id
+            );
+            if (expired || s.status === '무료체험') return sum;
+            if (s.plan.includes('149,000')) return sum + 149000;
+            if (s.plan.includes('9,900')) return sum + 9900;
+            return sum;
+          }, 0);
+
+          return (
+            <div className="space-y-5 sm:space-y-6">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900">구독 · 매출 관리</h1>
+                <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-500 mt-1">
+                  1개월 단기(명절·이벤트) 이용 매장은 만료일이 지나거나 &apos;이용정지&apos;로 변경되면 <strong>기존 접수 자료와 맞춤폼은 그대로 보관되고 고객 접수 링크만 자동 일시 정지</strong>됩니다.
                 </p>
               </div>
-              <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
-                <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">기본 요금제</p>
-                <p className="text-[11.5px] sm:text-lg font-extrabold text-gray-900 mt-1 sm:mt-1.5 leading-snug">
-                  월 9,900원<br className="sm:hidden" /><span className="hidden sm:inline"> / </span>연 14.9만
-                </p>
-              </div>
-            </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-2xs overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-max whitespace-nowrap">
-                  <thead>
-                    <tr className="bg-gray-50 border-b border-gray-100 text-[12px] sm:text-[12.5px] font-extrabold text-gray-600">
-                      <th className="px-4 sm:px-6 py-3.5">매장명</th>
-                      <th className="px-4 sm:px-6 py-3.5">대표자 / 연락처</th>
-                      <th className="px-4 sm:px-6 py-3.5">이용 플랜 변경</th>
-                      <th className="px-4 sm:px-6 py-3.5">구독 상태</th>
-                      <th className="px-4 sm:px-6 py-3.5">다음 결제 예정일</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-[12.5px] sm:text-[13px]">
-                    {stores.map(store => {
-                      const subInfo = storeSubscriptions[store.store_id] || {
-                        plan: '월간 이용권 (9,900원)',
-                        status: '정상 이용중',
-                        nextBilling: '2026-11-16'
-                      };
-                      return (
-                        <tr key={store.id} className="hover:bg-gray-50/60">
-                          <td className="px-4 sm:px-6 py-4 font-extrabold text-gray-900">{store.store_name}</td>
-                          <td className="px-4 sm:px-6 py-4 font-semibold text-gray-600">
-                            {store.owner_name} ({store.phone || '-'})
-                          </td>
-                          <td className="px-4 sm:px-6 py-4">
-                            <select
-                              value={subInfo.plan}
-                              onChange={e => handleUpdateSubscription(store.store_id, 'plan', e.target.value)}
-                              className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[12.5px] font-bold text-gray-800 outline-none"
-                            >
-                              <option value="월간 이용권 (9,900원)">월간 이용권 (9,900원)</option>
-                              <option value="연간 구독 플랜 (149,000원)">연간 구독 플랜 (149,000원)</option>
-                              <option value="오픈 무료 프로모션">오픈 무료 프로모션</option>
-                            </select>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4">
-                            <span
-                              className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold ${
-                                subInfo.status === '정상 이용중'
-                                  ? 'bg-emerald-50 text-emerald-700'
-                                  : 'bg-amber-50 text-amber-700'
-                              }`}
-                            >
-                              {subInfo.status}
-                            </span>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 font-semibold text-gray-500">{subInfo.nextBilling}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <div className="grid grid-cols-3 gap-2 sm:gap-5">
+                <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
+                  <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">활성 구독 매장</p>
+                  <p className="text-lg sm:text-3xl font-black text-blue-600 mt-1 sm:mt-1.5 whitespace-nowrap">
+                    {activeStoresCount}곳 <span className="text-xs sm:text-sm font-bold text-gray-400">/ 총 {stores.length}곳</span>
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
+                  <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">이번 달 예상 매출</p>
+                  <p className="text-lg sm:text-3xl font-black text-emerald-600 mt-1 sm:mt-1.5 whitespace-nowrap">
+                    {expectedRevenue.toLocaleString()}원
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-gray-100 shadow-2xs">
+                  <p className="text-[11px] sm:text-[13px] font-bold text-gray-500 whitespace-nowrap">기본 요금제</p>
+                  <p className="text-[11.5px] sm:text-lg font-extrabold text-gray-900 mt-1 sm:mt-1.5 leading-snug">
+                    월 9,900원<br className="sm:hidden" /><span className="hidden sm:inline"> / </span>연 14.9만
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-2xs overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-max whitespace-nowrap">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100 text-[12px] sm:text-[12.5px] font-extrabold text-gray-600">
+                        <th className="px-4 sm:px-6 py-3.5">매장명</th>
+                        <th className="px-4 sm:px-6 py-3.5">대표자 / 연락처</th>
+                        <th className="px-4 sm:px-6 py-3.5">이용 플랜 변경</th>
+                        <th className="px-4 sm:px-6 py-3.5">구독 / 링크 상태</th>
+                        <th className="px-4 sm:px-6 py-3.5">이용 만료일 (연장 관리)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 text-[12.5px] sm:text-[13px]">
+                      {stores.map(store => {
+                        const subInfo = storeSubscriptions[store.store_id] || {
+                          plan: '월간 이용권 (9,900원)',
+                          status: '정상 이용중',
+                          nextBilling: getDefaultNextBillingDate(store.created_at)
+                        };
+                        const expired = isSubscriptionExpired(
+                          {
+                            storeId: store.store_id,
+                            plan: subInfo.plan,
+                            status: subInfo.status as '정상 이용중' | '무료체험' | '이용정지',
+                            nextBilling: subInfo.nextBilling
+                          },
+                          store.store_id
+                        );
+                        return (
+                          <tr key={store.id} className="hover:bg-gray-50/60">
+                            <td className="px-4 sm:px-6 py-4">
+                              <div className="font-extrabold text-gray-900">{store.store_name}</div>
+                              <div className="text-[11.5px] text-gray-400 font-medium">/store/{store.store_id}</div>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 font-semibold text-gray-600">
+                              {store.owner_name} ({store.phone || '-'})
+                            </td>
+                            <td className="px-4 sm:px-6 py-4">
+                              <select
+                                value={subInfo.plan}
+                                onChange={e =>
+                                  handleUpdateSubscription(store.store_id, 'plan', e.target.value, store.created_at)
+                                }
+                                className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[12.5px] font-bold text-gray-800 outline-none cursor-pointer"
+                              >
+                                <option value="월간 이용권 (9,900원)">월간 이용권 (9,900원)</option>
+                                <option value="연간 구독 플랜 (149,000원)">연간 구독 플랜 (149,000원)</option>
+                                <option value="오픈 무료 프로모션">무료 프로모션</option>
+                              </select>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <select
+                                  value={subInfo.status}
+                                  onChange={e =>
+                                    handleUpdateSubscription(store.store_id, 'status', e.target.value, store.created_at)
+                                  }
+                                  className={`px-2.5 py-1 rounded-full text-[11.5px] font-extrabold border outline-none cursor-pointer ${
+                                    subInfo.status === '정상 이용중'
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                      : subInfo.status === '무료체험'
+                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                        : 'bg-rose-50 text-rose-700 border-rose-200'
+                                  }`}
+                                >
+                                  <option value="정상 이용중">정상 이용중</option>
+                                  <option value="무료체험">무료체험</option>
+                                  <option value="이용정지">이용정지 (링크차단)</option>
+                                </select>
+                                {expired ? (
+                                  <span className="px-2 py-0.5 bg-rose-100 text-rose-700 rounded-md text-[11px] font-extrabold">
+                                    링크 일시정지 (자료보관)
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md text-[11px] font-extrabold">
+                                    링크 열림
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="date"
+                                  value={subInfo.nextBilling}
+                                  onChange={e =>
+                                    handleUpdateSubscription(
+                                      store.store_id,
+                                      'nextBilling',
+                                      e.target.value,
+                                      store.created_at
+                                    )
+                                  }
+                                  className="px-2.5 py-1 bg-gray-50 border border-gray-200 rounded-lg text-[12px] font-bold text-gray-700 outline-none"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleExtendOneMonth(store.store_id, store.created_at)}
+                                  className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-[11.5px] font-extrabold transition-colors"
+                                >
+                                  +1개월 연장
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ================= 4. 제휴 · 1:1 문의 내역 (게시판 형태 - 제목 클릭 시 상세/답변 펼침) ================= */}
         {activeMenu === 'inquiries' && (
@@ -1299,33 +1569,98 @@ export default function HqAdminPage() {
             </form>
 
             <div className="space-y-3">
-              {notices.map(notice => (
-                <div
-                  key={notice.id}
-                  className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-start justify-between gap-3"
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {notice.important && (
-                        <span className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-full text-[11px] font-extrabold whitespace-nowrap">
-                          필독 공지
-                        </span>
-                      )}
-                      <h3 className="text-[14.5px] sm:text-[15px] font-extrabold text-gray-900">{notice.title}</h3>
-                    </div>
-                    <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-600 whitespace-pre-wrap leading-relaxed">
-                      {notice.content}
-                    </p>
-                    <p className="text-[11.5px] text-gray-400 font-medium">{notice.createdAt}</p>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteNotice(notice.id)}
-                    className="self-end sm:self-start px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[12px] font-bold shrink-0 whitespace-nowrap"
+              {notices.map(notice => {
+                const isEditing = editingNoticeId === notice.id;
+                return (
+                  <div
+                    key={notice.id}
+                    className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200/80 shadow-2xs"
                   >
-                    삭제
-                  </button>
-                </div>
-              ))}
+                    {isEditing ? (
+                      <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <span className="text-[13px] font-extrabold text-indigo-600">공지사항 수정 중</span>
+                          <label className="flex items-center gap-2 text-[12.5px] font-bold text-indigo-700 cursor-pointer whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              checked={editNoticeImportant}
+                              onChange={e => setEditNoticeImportant(e.target.checked)}
+                              className="w-4 h-4 accent-indigo-600 rounded"
+                            />
+                            중요 공지 (필독 공지 배지 표시)
+                          </label>
+                        </div>
+
+                        <input
+                          type="text"
+                          value={editNoticeTitle}
+                          onChange={e => setEditNoticeTitle(e.target.value)}
+                          placeholder="공지사항 제목"
+                          className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-[13.5px] font-bold outline-none focus:bg-white focus:border-blue-500"
+                        />
+
+                        <textarea
+                          rows={3}
+                          value={editNoticeContent}
+                          onChange={e => setEditNoticeContent(e.target.value)}
+                          placeholder="공지사항 상세 내용"
+                          className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] font-medium outline-none focus:bg-white focus:border-blue-500"
+                        />
+
+                        <div className="flex items-center justify-end gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setEditingNoticeId(null)}
+                            className="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg text-[12.5px] font-bold transition-colors"
+                          >
+                            취소
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSaveEditNotice(notice.id)}
+                            className="px-4 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[12.5px] font-bold shadow-2xs transition-colors"
+                          >
+                            수정 완료
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            {notice.important && (
+                              <span className="px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-full text-[11px] font-extrabold whitespace-nowrap">
+                                필독 공지
+                              </span>
+                            )}
+                            <h3 className="text-[14.5px] sm:text-[15px] font-extrabold text-gray-900">{notice.title}</h3>
+                          </div>
+                          <p className="text-[13px] sm:text-[13.5px] font-medium text-gray-600 whitespace-pre-wrap leading-relaxed">
+                            {notice.content}
+                          </p>
+                          <p className="text-[11.5px] text-gray-400 font-medium">{notice.createdAt}</p>
+                        </div>
+                        <div className="flex items-center gap-1.5 self-end sm:self-start shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditNotice(notice)}
+                            className="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-[12px] font-bold whitespace-nowrap transition-colors"
+                          >
+                            수정
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteNotice(notice.id)}
+                            className="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[12px] font-bold whitespace-nowrap transition-colors"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

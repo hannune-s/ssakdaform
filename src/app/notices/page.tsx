@@ -95,7 +95,6 @@ export default function NoticesPage({ onBack }: NoticesPageProps) {
                     </span>
                   )}
                 </div>
-                <span className="text-[12px] text-gray-400 font-medium">{notice.createdAt}</span>
               </div>
               <h2 className="text-[16px] font-extrabold text-gray-900">{notice.title}</h2>
               <p className="text-[14px] font-medium text-gray-600 whitespace-pre-wrap leading-relaxed pt-1">

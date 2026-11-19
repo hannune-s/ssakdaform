@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId } from '@/lib/storeSession';
+import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 
 export default function StoreHubPage() {
   const params = useParams();
@@ -62,6 +63,7 @@ export default function StoreHubPage() {
   const [storeInfo, setStoreInfo] = useState<any>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
+  const [isLinkSuspended, setIsLinkSuspended] = useState(false);
 
   // 내 접수/배송 조회 모달 상태
   const [isLookupOpen, setIsLookupOpen] = useState(false);
@@ -99,6 +101,10 @@ export default function StoreHubPage() {
         .select('*')
         .eq('store_id', slug)
         .maybeSingle();
+
+      // 1-1. 해당 매장의 구독 만료/이용정지 여부 확인
+      const subInfo = await fetchStoreSubscription(slug, storeRow?.created_at);
+      setIsLinkSuspended(isSubscriptionExpired(subInfo, slug));
 
       if (storeRow) {
         resolvedStore = {
@@ -456,48 +462,65 @@ export default function StoreHubPage() {
           </button>
         </div>
 
-        {/* 기본 고객 서비스 폼 3종 */}
-        <div className="space-y-4">
-          {standardForms.map((form) => (
-            <Link href={`/form/${form.id}?store=${encodeURIComponent(slug)}`} key={form.id} className="block group">
-              <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                <div className={`relative z-10 p-3 rounded-xl ${form.color} transition-colors border shadow-sm`}>
-                  {form.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 text-lg mb-0.5">{form.title}</h3>
-                  <p className="text-sm text-gray-500">{form.description}</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" />
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* 기본 폼과 분리된 직원채용 간편이력서 영역 */}
-        <div className="mt-10 pt-7 border-t border-gray-200/90">
-          <h3 className="text-xs font-bold text-gray-400 mb-3 px-1 uppercase tracking-wider">직원 채용 안내</h3>
-          <Link href={`/form/resume-preset?store=${encodeURIComponent(slug)}`} className="block group">
-            <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-emerald-200/80 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-emerald-300 group-hover:border-b-emerald-400 cursor-pointer overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/0 via-emerald-50/0 to-emerald-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-              <div className="relative z-10 p-3 rounded-xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-300 transition-colors shadow-sm">
-                <UserCheck className="w-6 h-6 text-emerald-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-900 text-lg mb-0.5">직원채용 간편이력서</h3>
-                <p className="text-sm text-gray-500">매장 근무 지원을 위한 간편 이력서를 작성합니다.</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-emerald-600 transition-colors" />
+        {isLinkSuspended ? (
+          <div className="bg-white rounded-3xl p-7 sm:p-8 border border-amber-200 shadow-sm text-center space-y-3 mt-2">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-7 h-7" />
             </div>
-          </Link>
-        </div>
+            <h3 className="text-lg sm:text-xl font-extrabold text-gray-900">
+              현재 온라인 접수 기간이 아닙니다
+            </h3>
+            <p className="text-[13.5px] text-gray-600 leading-relaxed font-medium break-keep">
+              현재 매장의 온라인 신청서 접수가 일시 중지된 상태입니다.<br />
+              기존에 신청하신 내역이나 송장번호 확인은 상단의 <strong>[내 접수 / 배송 조회]</strong> 버튼을 이용해 주세요.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* 기본 고객 서비스 폼 3종 */}
+            <div className="space-y-4">
+              {standardForms.map((form) => (
+                <Link href={`/form/${form.id}?store=${encodeURIComponent(slug)}`} key={form.id} className="block group">
+                  <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-gray-200 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-indigo-200 group-hover:border-b-indigo-300 cursor-pointer overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/0 via-indigo-50/0 to-indigo-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    <div className={`relative z-10 p-3 rounded-xl ${form.color} transition-colors border shadow-sm`}>
+                      {form.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900 text-lg mb-0.5">{form.title}</h3>
+                      <p className="text-sm text-gray-500">{form.description}</p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* 기본 폼과 분리된 직원채용 간편이력서 영역 */}
+            <div className="mt-10 pt-7 border-t border-gray-200/90">
+              <h3 className="text-xs font-bold text-gray-400 mb-3 px-1 uppercase tracking-wider">직원 채용 안내</h3>
+              <Link href={`/form/resume-preset?store=${encodeURIComponent(slug)}`} className="block group">
+                <div className="relative p-5 sm:p-6 rounded-2xl bg-white border border-emerald-200/80 border-b-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300 flex items-center gap-4 group-hover:-translate-y-1 group-hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] group-hover:border-emerald-300 group-hover:border-b-emerald-400 cursor-pointer overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/0 via-emerald-50/0 to-emerald-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="relative z-10 p-3 rounded-xl bg-emerald-50 border border-emerald-100 group-hover:border-emerald-300 transition-colors shadow-sm">
+                    <UserCheck className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 text-lg mb-0.5">직원채용 간편이력서</h3>
+                    <p className="text-sm text-gray-500">매장 근무 지원을 위한 간편 이력서를 작성합니다.</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-emerald-600 transition-colors" />
+                </div>
+              </Link>
+            </div>
+          </>
+        )}
 
         <div className="mt-12 text-center text-sm text-stone-400 font-medium">
           Powered by{' '}
-          <Link href="/landing" className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-colors">
+          <span className="text-indigo-600 font-semibold">
             싹다폼
-          </Link>
+          </span>
         </div>
       </div>
 

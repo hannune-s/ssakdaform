@@ -736,7 +736,7 @@ export default function LandingPage() {
             {/* Monthly Plan (Event) */}
             <div className="relative bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border-2 border-indigo-500 p-8 sm:p-10 z-10 transform md:-translate-y-4">
               <div className="absolute -top-5 right-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[13px] font-black px-4 py-2 rounded-full shadow-lg animate-bounce">
-                현재 특별 이벤트 특가 🚀
+                소상공인 상생 응원가 🚀
               </div>
               
               <h4 className="text-2xl font-black text-gray-900 mb-2">월간 이용권</h4>
@@ -747,7 +747,7 @@ export default function LandingPage() {
                 <span className="text-5xl sm:text-6xl font-black text-indigo-600 tracking-tight">9,900<span className="text-xl font-bold text-gray-500 ml-1">원 / 월</span></span>
               </div>
               <p className="text-indigo-600 text-sm font-black mb-8 pb-6 border-b border-gray-100">
-                오픈 기념 한시적 특별 이벤트가
+                소상공인 상생 응원 특별 할인가
               </p>
               
               <ul className="space-y-4 mb-10">

@@ -16,6 +16,7 @@ import NoticesPage from './notices/page';
 import InquiryPage from './inquiry/page';
 import DashboardWidget from './components/DashboardWidget';
 import { getActiveStoreId, getLoggedInStore, clearLoggedInStore } from '@/lib/storeSession';
+import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 
 export default function AdminHub() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -24,6 +25,7 @@ export default function AdminHub() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [storeId, setStoreId] = useState('demo');
   const [storeName, setStoreName] = useState('');
+  const [isLinkSuspended, setIsLinkSuspended] = useState(false);
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
@@ -34,6 +36,10 @@ export default function AdminHub() {
     if (store?.store_name) {
       setStoreName(store.store_name);
     }
+
+    fetchStoreSubscription(activeId, store?.created_at).then(sub => {
+      setIsLinkSuspended(isSubscriptionExpired(sub, activeId));
+    });
 
     const handler = (e: any) => {
       e.preventDefault();
@@ -121,7 +127,27 @@ export default function AdminHub() {
 
 
       {/* 매장 통합 링크 (고객 전송용) - 최상단 고정 */}
-      <div className="w-full max-w-4xl mx-auto mb-6 no-print">
+      <div className="w-full max-w-4xl mx-auto mb-6 no-print space-y-3">
+        {isLinkSuspended && (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="space-y-1">
+              <p className="text-[14px] sm:text-[15px] font-extrabold text-amber-900">
+                ⚠️ 이용기간이 만료되어 고객 접수 링크(/store/{storeId})가 일시 정지되었습니다.
+              </p>
+              <p className="text-[12.5px] sm:text-[13px] font-medium text-amber-800">
+                기존 접수 내역과 만들어둔 맞춤폼은 삭제되지 않고 안전하게 보관 중입니다. 다시 접수를 받으시려면 이용권을 연장해 주세요.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab('subscription')}
+              className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-[13px] font-bold shrink-0 shadow-xs transition-colors whitespace-nowrap"
+            >
+              이용권 연장하고 링크 다시 열기 →
+            </button>
+          </div>
+        )}
+
         <div className="bg-gradient-to-br from-[#EEF2FF] via-[#F5F3FF] to-[#E0E7FF] rounded-[20px] sm:rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-indigo-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             {/* 텍스트 영역 */}
@@ -131,6 +157,15 @@ export default function AdminHub() {
                 <span className="text-[11px] sm:text-[12px] font-bold bg-indigo-600/10 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200">
                   /store/{storeId}
                 </span>
+                {isLinkSuspended ? (
+                  <span className="text-[11px] font-extrabold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full border border-rose-200">
+                    링크 일시정지됨 (자료 보관중)
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-extrabold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    링크 정상 열림
+                  </span>
+                )}
               </div>
               <p className="text-indigo-900/70 text-[12.5px] sm:text-[14px] font-medium leading-snug tracking-tighter whitespace-nowrap">
                 인스타, 카톡 등에 링크를 공유해 고객에게 안내해 보세요.
