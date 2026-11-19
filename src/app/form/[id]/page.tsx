@@ -11,14 +11,17 @@ import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptio
 
 export default function CustomerFormPage() {
   const params = useParams();
-  const id = params?.id as string;
+  // /f/[storeId]/[code] 경로와 기존 /form/[id]?store=[storeId] 경로를 모두 완벽 호환 지원
+  const paramStoreId = params?.storeId ? decodeURIComponent(params.storeId as string) : null;
+  const id = decodeURIComponent(((params?.code || params?.id) as string) || '');
 
   const [data, setData] = useState<any>(null);
+  const [actualFormId, setActualFormId] = useState<string>(id);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
   const [storeInfo, setStoreInfo] = useState<any>(null);
   const [isStoreInfoOpen, setIsStoreInfoOpen] = useState(false);
-  const [targetStoreId, setTargetStoreId] = useState<string>('demo');
+  const [targetStoreId, setTargetStoreId] = useState<string>(paramStoreId || 'demo');
   const [isLinkSuspended, setIsLinkSuspended] = useState(false);
   
   // 주소 검색 모달 관련 상태
@@ -112,11 +115,37 @@ export default function CustomerFormPage() {
 
   useEffect(() => {
     const paramsObj = new URLSearchParams(window.location.search);
-    const resolvedStoreId = paramsObj.get('store') || getActiveStoreId() || 'demo';
+    const resolvedStoreId = paramStoreId || paramsObj.get('store') || getActiveStoreId() || 'demo';
     setTargetStoreId(resolvedStoreId);
+    setActualFormId(id);
+
+    const findMatchingCustomForm = (forms: any[], codeOrId: string) => {
+      if (!Array.isArray(forms) || forms.length === 0) return null;
+      // 1. id 또는 shortCode 직접 일치 확인
+      const direct = forms.find(
+        (f: any) => String(f.id) === codeOrId || (f.shortCode && String(f.shortCode) === codeOrId)
+      );
+      if (direct) return direct;
+      // 2. 숫자 코드(예: "1", "2", "3")인 경우 해당 순번(1-based index)의 폼 매칭 (기존 생성된 폼도 즉시 호환)
+      if (/^\d+$/.test(codeOrId)) {
+        const idx = parseInt(codeOrId, 10) - 1;
+        if (idx >= 0 && idx < forms.length) {
+          return forms[idx];
+        }
+      }
+      return null;
+    };
+
+    const isPresetForm =
+      id === 'delivery-preset' ||
+      id === 'reservation-preset' ||
+      id === 'order-preset' ||
+      id === 'resume-preset';
 
     async function loadStoreAndAccounts() {
       let resolvedInfo: any = null;
+      let dbMatchedForm: any = null;
+
       const { data: storeRow } = await supabase
         .from('ssakdaform_stores')
         .select('*')
@@ -137,9 +166,10 @@ export default function CustomerFormPage() {
           paymentLink: ''
         };
         if (Array.isArray(storeRow.custom_forms)) {
-          const dbFoundForm = storeRow.custom_forms.find((f: any) => f.id === id);
-          if (dbFoundForm) {
-            setData(dbFoundForm);
+          dbMatchedForm = findMatchingCustomForm(storeRow.custom_forms, id);
+          if (dbMatchedForm) {
+            setData(dbMatchedForm);
+            if (dbMatchedForm.id) setActualFormId(dbMatchedForm.id);
           }
         }
       }
@@ -206,17 +236,59 @@ export default function CustomerFormPage() {
       } else {
         setAccounts([]);
       }
+
+      // 커스텀 폼인데 DB에서 못 찾은 경우 로컬 스토리지 및 초안에서 보조 탐색
+      if (!isPresetForm && !dbMatchedForm) {
+        const localRaw =
+          localStorage.getItem(`ssakdaform_custom_forms_${resolvedStoreId}`) ||
+          localStorage.getItem('ssakdaform_custom_forms');
+        if (localRaw) {
+          try {
+            const localForms = JSON.parse(localRaw);
+            const localFound = findMatchingCustomForm(localForms, id);
+            if (localFound) {
+              setData(localFound);
+              if (localFound.id) setActualFormId(localFound.id);
+              return;
+            }
+          } catch {}
+        }
+
+        const storedDraft =
+          localStorage.getItem(`ssakdaform_draft_${resolvedStoreId}`) ||
+          localStorage.getItem('ssakdaform_draft');
+        if (storedDraft) {
+          setData(JSON.parse(storedDraft));
+        } else {
+          setData({
+            storeName: resolvedInfo?.name || '데모 스토어',
+            formTitle: '고객용 신청서',
+            fields: [
+              { id: 1, type: 'text', label: '이름', placeholder: '이름을 입력하세요', required: true },
+              { id: 2, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true }
+            ]
+          });
+        }
+      }
     }
     loadStoreAndAccounts();
 
-    const storedForms = localStorage.getItem('ssakdaform_custom_forms');
-    if (storedForms) {
-      const forms = JSON.parse(storedForms);
-      const foundForm = forms.find((f: any) => f.id === id);
-      if (foundForm) {
-        setData(foundForm);
-        return;
+    if (!isPresetForm) {
+      const localRaw =
+        localStorage.getItem(`ssakdaform_custom_forms_${resolvedStoreId}`) ||
+        localStorage.getItem('ssakdaform_custom_forms');
+      if (localRaw) {
+        try {
+          const forms = JSON.parse(localRaw);
+          const foundForm = findMatchingCustomForm(forms, id);
+          if (foundForm) {
+            setData(foundForm);
+            if (foundForm.id) setActualFormId(foundForm.id);
+            return;
+          }
+        } catch {}
       }
+      return;
     }
 
     if (id === 'delivery-preset') {
@@ -302,7 +374,7 @@ export default function CustomerFormPage() {
         ]
       });
     }
-  }, [params.id]);
+  }, [id, paramStoreId]);
 
   if (isLinkSuspended) {
     return (
@@ -390,7 +462,7 @@ export default function CustomerFormPage() {
 
     const newResponse = {
       store_id: targetStoreId,
-      form_id: id,
+      form_id: actualFormId || id,
       data: dataObj,
       status: '접수대기'
     };

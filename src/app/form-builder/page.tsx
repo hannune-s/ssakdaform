@@ -227,10 +227,17 @@ export default function FormBuilder() {
     setFormKey(prev => prev + 1);
   };
 
+  const getFormShortCode = (form: any, idx: number) => {
+    return form?.shortCode ? String(form.shortCode) : String(idx + 1);
+  };
+
   const handleCopyLink = () => {
     const activeStoreId = getActiveStoreId();
     if (editingFormId) {
-      const editLink = `${window.location.origin}/form/${editingFormId}?store=${encodeURIComponent(activeStoreId)}`;
+      const idx = savedForms.findIndex(f => f.id === editingFormId);
+      const found = idx >= 0 ? savedForms[idx] : null;
+      const shortCode = found ? getFormShortCode(found, idx) : editingFormId;
+      const editLink = `${window.location.origin}/f/${encodeURIComponent(activeStoreId)}/${encodeURIComponent(shortCode)}`;
       navigator.clipboard.writeText(editLink).then(() => {
         alert(`현재 수정 중인 폼의 고객용 링크가 복사되었습니다!\n\n${editLink}`);
       });
@@ -239,9 +246,10 @@ export default function FormBuilder() {
     alert('먼저 우측의 [폼 저장하기] 버튼을 눌러 폼을 저장하신 후,\n하단 [저장된 맞춤형 폼 관리] 목록에서 개별 [링크 복사] 버튼을 눌러주세요!');
   };
 
-  const handleCopySavedFormLink = (form: any) => {
+  const handleCopySavedFormLink = (form: any, idx: number) => {
     const activeStoreId = getActiveStoreId();
-    const link = `${window.location.origin}/form/${form.id}?store=${encodeURIComponent(activeStoreId)}`;
+    const shortCode = getFormShortCode(form, idx);
+    const link = `${window.location.origin}/f/${encodeURIComponent(activeStoreId)}/${encodeURIComponent(shortCode)}`;
     navigator.clipboard.writeText(link).then(() => {
       setCopiedFormId(form.id);
       setTimeout(() => setCopiedFormId(null), 2000);
@@ -278,32 +286,44 @@ export default function FormBuilder() {
     const existingForms = [...savedForms];
 
     if (editingFormId) {
-      // 기존 폼 수정 덮어쓰기 (링크 ID 유지)
-      const updatedForms = existingForms.map(f => {
+      // 기존 폼 수정 덮어쓰기 (링크 ID 및 짧은 번호 유지)
+      const updatedForms = existingForms.map((f, idx) => {
         if (f.id === editingFormId) {
           return {
             ...f,
+            shortCode: getFormShortCode(f, idx),
             storeName,
             formTitle,
             formDescription,
             fields
           };
         }
-        return f;
+        return { ...f, shortCode: getFormShortCode(f, idx) };
       });
       setSavedForms(updatedForms);
       await syncCustomFormsToDb(updatedForms);
       alert('폼 수정사항이 성공적으로 저장되었습니다!');
     } else {
-      // 새 폼 추가
+      // 새 폼 추가 (짧고 깔끔한 고유 번호 발급: 1, 2, 3...)
+      const maxCode = existingForms.reduce((max, f, idx) => {
+        const num = parseInt(getFormShortCode(f, idx), 10);
+        return !isNaN(num) && num > max ? num : max;
+      }, 0);
+      const nextShortCode = String(maxCode + 1);
+
       const newFormData = {
         id: `custom-${Date.now()}`,
+        shortCode: nextShortCode,
         storeName,
         formTitle,
         formDescription,
         fields
       };
-      const updatedForms = [...existingForms, newFormData];
+      const normalizedExisting = existingForms.map((f, idx) => ({
+        ...f,
+        shortCode: getFormShortCode(f, idx)
+      }));
+      const updatedForms = [...normalizedExisting, newFormData];
       setSavedForms(updatedForms);
       await syncCustomFormsToDb(updatedForms);
       alert('새로운 맞춤형 폼이 저장되었습니다!\n아래 [저장된 맞춤형 폼 관리] 목록에서 링크를 복사해 고객에게 전달해 보세요.');
@@ -520,18 +540,23 @@ export default function FormBuilder() {
                 {savedForms.map((form, idx) => {
                   const isEditingThis = editingFormId === form.id;
                   const isCopiedThis = copiedFormId === form.id;
+                  const shortCode = getFormShortCode(form, idx);
+                  const shortPath = `/f/${encodeURIComponent(getActiveStoreId())}/${encodeURIComponent(shortCode)}`;
                   return (
                     <div 
                       key={form.id || idx} 
                       className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-xl border transition-all ${
                         isEditingThis 
                           ? 'bg-amber-50/60 border-amber-300 shadow-sm' 
-                          : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-indigo-100 hover:shadow-sm'
+                          : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-purple-200 hover:shadow-sm'
                       }`}
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h4 className="font-bold text-gray-800 text-[14.5px] sm:text-[15px] truncate">{form.formTitle}</h4>
+                          <span className="px-2 py-0.5 text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200 rounded-md shrink-0">
+                            {shortPath}
+                          </span>
                           {isEditingThis && (
                             <span className="px-2 py-0.5 text-[11px] font-bold bg-amber-200/80 text-amber-900 rounded-md shrink-0">
                               수정 중
@@ -547,16 +572,16 @@ export default function FormBuilder() {
                       
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0 self-end sm:self-center">
                         <a
-                          href={`/form/${form.id}?store=${encodeURIComponent(getActiveStoreId())}`}
+                          href={shortPath}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-lg transition-colors whitespace-nowrap"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold text-purple-800 bg-purple-50 border border-purple-200 hover:bg-purple-100 rounded-lg transition-colors whitespace-nowrap"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                           바로가기
                         </a>
                         <button 
-                          onClick={() => handleCopySavedFormLink(form)}
+                          onClick={() => handleCopySavedFormLink(form, idx)}
                           className={`inline-flex items-center gap-1 px-3 py-1.5 text-[12.5px] font-bold rounded-lg transition-colors whitespace-nowrap border ${
                             isCopiedThis
                               ? 'bg-green-50 text-green-700 border-green-200'
