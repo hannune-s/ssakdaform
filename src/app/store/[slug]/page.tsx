@@ -315,18 +315,18 @@ export default function StoreHubPage() {
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col font-sans relative">
       
       {/* 상단 테마 컬러 배너 */}
-      <div className="w-full bg-gradient-to-b from-indigo-700 to-indigo-900 pt-12 pb-12 px-4 text-center relative overflow-hidden flex-shrink-0 shadow-md">
+      <div className="w-full bg-gradient-to-br from-[#3B0764] via-[#5B21B6] to-[#4C1D95] pt-12 pb-12 px-4 text-center relative overflow-hidden flex-shrink-0 shadow-md">
         {/* 고급스러운 패턴 배경 */}
         <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.08]"></div>
         
         <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
-          <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mx-auto mb-5 border-4 border-indigo-400/20">
-            <Store className="w-10 h-10 text-indigo-700" />
+          <div className="w-20 h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center mx-auto mb-5 border-4 border-purple-400/20">
+            <Store className="w-10 h-10 text-[#5B21B6]" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md">
             {displayStoreName}
           </h1>
-          <p className="text-indigo-100 font-medium tracking-wide">원하시는 서비스를 선택해주세요</p>
+          <p className="text-purple-100 font-medium tracking-wide">원하시는 서비스를 선택해주세요</p>
         </div>
       </div>
 
@@ -336,50 +336,50 @@ export default function StoreHubPage() {
           <div className="mb-5">
             <button 
               onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
-              className="flex items-center gap-2 text-[13px] font-extrabold text-indigo-900 hover:text-indigo-950 transition-all mx-auto bg-white hover:bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-300 shadow-sm px-4 py-2 rounded-full active:scale-95"
+              className="flex items-center gap-2 text-[13px] font-extrabold text-purple-950 hover:text-purple-900 transition-all mx-auto bg-white hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-300 shadow-sm px-4 py-2 rounded-full active:scale-95"
             >
-              <Store className="w-4 h-4 text-indigo-600" />
+              <Store className="w-4 h-4 text-purple-700" />
               <span>가게 정보 보기</span>
-              {isStoreInfoOpen ? <ChevronUp className="w-4 h-4 text-indigo-600" /> : <ChevronDown className="w-4 h-4 text-indigo-600" />}
+              {isStoreInfoOpen ? <ChevronUp className="w-4 h-4 text-purple-700" /> : <ChevronDown className="w-4 h-4 text-purple-700" />}
             </button>
             
             {isStoreInfoOpen && (
-              <div className="mt-3 p-4 bg-white shadow-md border border-indigo-100 rounded-2xl text-[13.5px] text-gray-800 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="mt-3 p-4 bg-white shadow-md border border-purple-100 rounded-2xl text-[13.5px] text-gray-800 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
                 {storeInfo.name && (
                   <div className="flex items-start gap-2.5">
-                    <Store className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                    <div><span className="font-extrabold text-indigo-950 mr-2">상호명:</span><span className="font-semibold text-gray-900">{storeInfo.name}</span></div>
+                    <Store className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">상호명:</span><span className="font-semibold text-gray-900">{storeInfo.name}</span></div>
                   </div>
                 )}
 
                 {storeInfo.ownerName && (
                   <div className="flex items-start gap-2.5">
-                    <User className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                    <div><span className="font-extrabold text-indigo-950 mr-2">대표자:</span><span className="font-semibold text-gray-900">{storeInfo.ownerName}</span></div>
+                    <User className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">대표자:</span><span className="font-semibold text-gray-900">{storeInfo.ownerName}</span></div>
                   </div>
                 )}
                 {storeInfo.address && (
                   <div className="flex items-start gap-2.5">
-                    <MapPin className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                    <div><span className="font-extrabold text-indigo-950 mr-2">주소:</span><span className="font-semibold text-gray-900">{storeInfo.address}</span></div>
+                    <MapPin className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">주소:</span><span className="font-semibold text-gray-900">{storeInfo.address}</span></div>
                   </div>
                 )}
                 {storeInfo.phone && (
                   <div className="flex items-start gap-2.5">
-                    <Phone className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                    <div><span className="font-extrabold text-indigo-950 mr-2">전화번호:</span><span className="font-bold text-indigo-700">{storeInfo.phone}</span></div>
+                    <Phone className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">전화번호:</span><span className="font-bold text-purple-800">{storeInfo.phone}</span></div>
                   </div>
                 )}
                 {storeInfo.hours && (
                   <div className="flex items-start gap-2.5">
-                    <Clock className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                    <div><span className="font-extrabold text-indigo-950 mr-2">영업시간:</span><span className="font-semibold text-gray-900">{storeInfo.hours}</span></div>
+                    <Clock className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">영업시간:</span><span className="font-semibold text-gray-900">{storeInfo.hours}</span></div>
                   </div>
                 )}
                 {storeInfo.closedDays && (
                   <div className="flex items-start gap-2.5">
-                    <CalendarX className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                    <div><span className="font-extrabold text-indigo-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
+                    <CalendarX className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
                   </div>
                 )}
               </div>
@@ -389,23 +389,23 @@ export default function StoreHubPage() {
 
         {/* 계좌 안내 영역 */}
         {(accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
-          <div className="mb-6 bg-[#F0F4FF] border border-indigo-200 rounded-2xl px-4 py-3.5">
+          <div className="mb-6 bg-[#F8F5FF] border border-purple-200 rounded-2xl px-4 py-3.5">
             <div className="flex items-center gap-2 mb-2">
-              <CreditCard className="w-4 h-4 text-indigo-400" />
-              <h2 className="font-bold text-indigo-900 text-[14px]">결제 및 계좌 안내</h2>
+              <CreditCard className="w-4 h-4 text-purple-500" />
+              <h2 className="font-bold text-purple-950 text-[14px]">결제 및 계좌 안내</h2>
             </div>
             
             <div className="space-y-1.5">
               {accounts.map((acc, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 flex-1">
-                    <span className="text-[13px] font-bold text-indigo-600">{acc.bank}</span>
+                    <span className="text-[13px] font-bold text-purple-700">{acc.bank}</span>
                     <span className="text-[17px] font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
                     <span className="text-[13px] font-medium text-gray-500">{acc.holder}</span>
                   </div>
                   <button 
                     onClick={() => handleCopyAccount(acc.accountNumber)}
-                    className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-indigo-50"
+                    className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-purple-100"
                   >
                     {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
                     <span>{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
@@ -414,13 +414,13 @@ export default function StoreHubPage() {
               ))}
             </div>
             {storeInfo && storeInfo.paymentLink && (
-              <div className="mt-4 pt-4 border-t border-indigo-200/50">
-                <h3 className="text-[12px] font-bold text-indigo-900 mb-2">비대면 카드 결제</h3>
+              <div className="mt-4 pt-4 border-t border-purple-200/50">
+                <h3 className="text-[12px] font-bold text-purple-950 mb-2">비대면 카드 결제</h3>
                 <a 
                   href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
                 >
                   <CreditCard className="w-4 h-4" />
                   결제하러 가기
@@ -435,11 +435,11 @@ export default function StoreHubPage() {
           <button
             type="button"
             onClick={openLookupModal}
-            className="w-full text-left group relative p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 text-white shadow-[0_8px_24px_rgba(79,70,229,0.28)] hover:shadow-[0_12px_30px_rgba(79,70,229,0.38)] transition-all duration-300 flex items-center gap-4 hover:-translate-y-0.5 active:scale-[0.99] overflow-hidden border border-white/20"
+            className="w-full text-left group relative p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#4C1D95] via-[#6D28D9] to-[#7E22CE] text-white shadow-[0_8px_24px_rgba(91,33,182,0.28)] hover:shadow-[0_12px_30px_rgba(91,33,182,0.38)] transition-all duration-300 flex items-center gap-4 hover:-translate-y-0.5 active:scale-[0.99] overflow-hidden border border-white/20"
           >
             <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/15 rounded-full blur-2xl pointer-events-none"></div>
-            <div className="absolute -left-6 -bottom-8 w-24 h-24 bg-cyan-300/20 rounded-full blur-xl pointer-events-none"></div>
-            <div className="relative z-10 p-3 rounded-xl bg-white text-indigo-600 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="absolute -left-6 -bottom-8 w-24 h-24 bg-fuchsia-300/20 rounded-full blur-xl pointer-events-none"></div>
+            <div className="relative z-10 p-3 rounded-xl bg-white text-[#5B21B6] shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <Search className="w-6 h-6 stroke-[2.4]" />
             </div>
             <div className="relative z-10 flex-1 min-w-0">
@@ -447,11 +447,11 @@ export default function StoreHubPage() {
                 <h3 className="font-extrabold text-white text-[16.5px] sm:text-[17.5px] tracking-tight drop-shadow-sm">
                   내 접수 / 배송 조회
                 </h3>
-                <span className="px-2 py-0.5 text-[10.5px] font-extrabold bg-amber-300 text-indigo-950 rounded-full shadow-sm">
+                <span className="px-2 py-0.5 text-[10.5px] font-extrabold bg-amber-300 text-purple-950 rounded-full shadow-sm">
                   실시간 확인
                 </span>
               </div>
-              <p className="text-[12.5px] sm:text-[13px] text-indigo-50 font-medium truncate">
+              <p className="text-[12.5px] sm:text-[13px] text-purple-50 font-medium truncate">
                 이름과 연락처로 송장번호·예약·주문 상태를 확인하세요
               </p>
             </div>
@@ -518,7 +518,7 @@ export default function StoreHubPage() {
 
         <div className="mt-12 text-center text-sm text-stone-400 font-medium">
           Powered by{' '}
-          <span className="text-indigo-600 font-semibold">
+          <span className="text-purple-700 font-semibold">
             싹다폼
           </span>
         </div>
@@ -529,14 +529,14 @@ export default function StoreHubPage() {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
           <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
             {/* 모달 헤더 */}
-            <div className="px-6 py-5 bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 text-white flex items-center justify-between shrink-0">
+            <div className="px-6 py-5 bg-gradient-to-r from-[#4C1D95] via-[#6D28D9] to-[#7E22CE] text-white flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white text-indigo-600 shadow-sm flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-white text-[#5B21B6] shadow-sm flex items-center justify-center">
                   <Truck className="w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="text-[18px] font-extrabold tracking-tight">내 접수 / 배송 조회</h2>
-                  <p className="text-[12px] text-indigo-100">{displayStoreName} 접수 내역 확인</p>
+                  <p className="text-[12px] text-purple-100">{displayStoreName} 접수 내역 확인</p>
                 </div>
               </div>
               <button

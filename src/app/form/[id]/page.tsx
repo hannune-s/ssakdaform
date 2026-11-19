@@ -413,12 +413,18 @@ export default function CustomerFormPage() {
       
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        <div className={`bg-gradient-to-r ${isResumeForm ? 'from-emerald-700 to-teal-900' : 'from-indigo-700 to-indigo-900'} px-4 sm:px-6 py-6 sm:py-8 text-center relative overflow-hidden`}>
+        <div className={`bg-gradient-to-br ${isResumeForm ? 'from-emerald-700 to-teal-900' : 'from-[#3B0764] via-[#5B21B6] to-[#4C1D95]'} px-4 sm:px-6 py-7 sm:py-9 text-center relative overflow-hidden`}>
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
-          <p className="relative z-10 text-white/80 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">
-            {storeInfo?.name || data.storeName}
-          </p>
-          <h1 className="relative z-10 text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-md">{data.formTitle}</h1>
+          <div className="relative z-10 flex flex-col items-center">
+            <h2 className="text-[22px] sm:text-[26px] font-black text-white tracking-tight drop-shadow-md leading-snug">
+              {storeInfo?.name || data.storeName}
+            </h2>
+            <div className="mt-2.5 inline-flex items-center px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-xs border border-white/20 shadow-xs">
+              <h1 className="text-[16px] sm:text-[18px] font-extrabold text-purple-50 tracking-tight">
+                {data.formTitle}
+              </h1>
+            </div>
+          </div>
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
@@ -427,50 +433,50 @@ export default function CustomerFormPage() {
               <button 
                 type="button"
                 onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
-                className="flex items-center gap-2 text-[13px] font-extrabold text-indigo-900 hover:text-indigo-950 transition-all mx-auto bg-indigo-50/80 hover:bg-indigo-100/80 border-2 border-indigo-200 hover:border-indigo-300 shadow-xs px-4 py-2 rounded-full active:scale-95"
+                className="flex items-center gap-2 text-[13px] font-extrabold text-purple-950 hover:text-purple-900 transition-all mx-auto bg-purple-50/80 hover:bg-purple-100/80 border-2 border-purple-200 hover:border-purple-300 shadow-xs px-4 py-2 rounded-full active:scale-95"
               >
-                <Store className="w-4 h-4 text-indigo-600" />
+                <Store className="w-4 h-4 text-purple-700" />
                 <span>가게 정보 보기</span>
-                {isStoreInfoOpen ? <ChevronUp className="w-4 h-4 text-indigo-600" /> : <ChevronDown className="w-4 h-4 text-indigo-600" />}
+                {isStoreInfoOpen ? <ChevronUp className="w-4 h-4 text-purple-700" /> : <ChevronDown className="w-4 h-4 text-purple-700" />}
               </button>
               
               {isStoreInfoOpen && (
-                <div className="mt-3 p-4 bg-indigo-50/40 border border-indigo-100 rounded-2xl text-[13.5px] text-gray-800 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="mt-3 p-4 bg-purple-50/40 border border-purple-100 rounded-2xl text-[13.5px] text-gray-800 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
                   {storeInfo.name && (
                     <div className="flex items-start gap-2.5">
-                      <Store className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <div><span className="font-extrabold text-indigo-950 mr-2">상호명:</span><span className="font-semibold text-gray-900">{storeInfo.name}</span></div>
+                      <Store className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">상호명:</span><span className="font-semibold text-gray-900">{storeInfo.name}</span></div>
                     </div>
                   )}
 
                   {storeInfo.ownerName && (
                     <div className="flex items-start gap-2.5">
-                      <User className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <div><span className="font-extrabold text-indigo-950 mr-2">대표자:</span><span className="font-semibold text-gray-900">{storeInfo.ownerName}</span></div>
+                      <User className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">대표자:</span><span className="font-semibold text-gray-900">{storeInfo.ownerName}</span></div>
                     </div>
                   )}
                   {storeInfo.address && (
                     <div className="flex items-start gap-2.5">
-                      <MapPin className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <div><span className="font-extrabold text-indigo-950 mr-2">주소:</span><span className="font-semibold text-gray-900">{storeInfo.address}</span></div>
+                      <MapPin className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">주소:</span><span className="font-semibold text-gray-900">{storeInfo.address}</span></div>
                     </div>
                   )}
                   {storeInfo.phone && (
                     <div className="flex items-start gap-2.5">
-                      <Phone className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <div><span className="font-extrabold text-indigo-950 mr-2">전화번호:</span><span className="font-bold text-indigo-700">{storeInfo.phone}</span></div>
+                      <Phone className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">전화번호:</span><span className="font-bold text-purple-800">{storeInfo.phone}</span></div>
                     </div>
                   )}
                   {storeInfo.hours && (
                     <div className="flex items-start gap-2.5">
-                      <Clock className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <div><span className="font-extrabold text-indigo-950 mr-2">영업시간:</span><span className="font-semibold text-gray-900">{storeInfo.hours}</span></div>
+                      <Clock className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">영업시간:</span><span className="font-semibold text-gray-900">{storeInfo.hours}</span></div>
                     </div>
                   )}
                   {storeInfo.closedDays && (
                     <div className="flex items-start gap-2.5">
-                      <CalendarX className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <div><span className="font-extrabold text-indigo-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
+                      <CalendarX className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
                     </div>
                   )}
                 </div>
@@ -480,24 +486,24 @@ export default function CustomerFormPage() {
 
           {/* 이력서 폼이 아닐 때만 결제 및 계좌 안내 노출 */}
           {!isResumeForm && (accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
-            <div className="mb-6 bg-[#F0F4FF] border border-indigo-200 rounded-2xl px-4 py-3.5">
+            <div className="mb-6 bg-[#F8F5FF] border border-purple-200 rounded-2xl px-4 py-3.5">
               <div className="flex items-center gap-2 mb-2">
-                <CreditCard className="w-4 h-4 text-indigo-400" />
-                <h2 className="font-bold text-indigo-900 text-[14px]">결제 및 계좌 안내</h2>
+                <CreditCard className="w-4 h-4 text-purple-500" />
+                <h2 className="font-bold text-purple-950 text-[14px]">결제 및 계좌 안내</h2>
               </div>
               
               <div className="space-y-1.5">
                 {accounts.map((acc, idx) => (
                   <div key={idx} className="flex items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 flex-1">
-                      <span className="text-[13px] font-bold text-indigo-600">{acc.bank}</span>
+                      <span className="text-[13px] font-bold text-purple-700">{acc.bank}</span>
                       <span className="text-[17px] font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
                       <span className="text-[13px] font-medium text-gray-500">{acc.holder}</span>
                     </div>
                     <button 
                       type="button"
                       onClick={() => handleCopyAccount(acc.accountNumber)}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-indigo-50"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-purple-100"
                     >
                       {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
                       <span>{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
@@ -506,13 +512,13 @@ export default function CustomerFormPage() {
                 ))}
               </div>
               {storeInfo && storeInfo.paymentLink && (
-                <div className="mt-4 pt-4 border-t border-indigo-200/50">
-                  <h3 className="text-[12px] font-bold text-indigo-900 mb-2">비대면 카드 결제</h3>
+                <div className="mt-4 pt-4 border-t border-purple-200/50">
+                  <h3 className="text-[12px] font-bold text-purple-950 mb-2">비대면 카드 결제</h3>
                   <a 
                     href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
                   >
                     <CreditCard className="w-4 h-4" />
                     결제하러 가기
@@ -660,7 +666,7 @@ export default function CustomerFormPage() {
                         <input name={field.label} type="checkbox" className={`w-4 h-4 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : groupType === 'receiver' ? 'text-[#8B7355] border-[#D4C4B1] focus:ring-[#8B7355]' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
                         <span className={`text-sm leading-relaxed ${groupType === 'sender' ? 'text-slate-800' : groupType === 'receiver' ? 'text-[#5C4D3C]' : 'text-gray-800'}`}>{field.placeholder || '동의합니다.'}</span>
                       </label>
-                    ) : field.type === 'address' ? (
+                    ) : field.type === 'address' || /주소|배송지/.test(field.label || '') ? (
                       <div className="space-y-2">
                         <input 
                           type="text" 
@@ -776,7 +782,7 @@ export default function CustomerFormPage() {
             {/* 고정 개인정보 수집 동의 */}
             <div className="pt-6">
               <label className="flex items-start gap-2.5 p-3 sm:p-4 rounded-xl border border-gray-300 cursor-pointer transition-colors bg-white hover:bg-gray-50 shadow-sm">
-                <input type="checkbox" required className="w-4 h-4 mt-0.5 sm:mt-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer" />
+                <input type="checkbox" required className="w-4 h-4 mt-0.5 sm:mt-1 rounded border-gray-300 text-purple-700 focus:ring-purple-700 cursor-pointer" />
                 <span className="text-sm sm:text-[15px] font-medium text-gray-800 leading-relaxed">
                   [필수] 개인정보 수집 및 이용에 동의합니다.
                 </span>
@@ -786,7 +792,7 @@ export default function CustomerFormPage() {
             <div className="pt-6 sm:pt-8">
               <button 
                 type="submit"
-                className={`w-full py-4 ${isResumeForm ? 'bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20' : 'bg-indigo-700 hover:bg-indigo-800 shadow-indigo-700/20'} text-white rounded-xl font-semibold text-lg active:transform active:scale-[0.99] transition-all shadow-lg`}
+                className={`w-full py-4 ${isResumeForm ? 'bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20' : 'bg-gradient-to-r from-[#4C1D95] to-[#6D28D9] hover:from-[#3B0764] hover:to-[#5B21B6] shadow-purple-900/20'} text-white rounded-xl font-semibold text-lg active:transform active:scale-[0.99] transition-all shadow-lg`}
               >
                 {isResumeForm ? '이력서 제출하기' : '제출하기'}
               </button>
@@ -797,7 +803,7 @@ export default function CustomerFormPage() {
       
       <div className="mt-8 text-center text-sm text-stone-400 font-medium">
         Powered by{' '}
-        <span className="text-indigo-600 font-semibold">
+        <span className="text-purple-700 font-semibold">
           싹다폼
         </span>
       </div>

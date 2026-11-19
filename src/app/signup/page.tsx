@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, User, Lock, Phone, Store, MapPin, Mail, Globe, ChevronLeft } from 'lucide-react';
+import { Sparkles, User, Lock, Phone, Store, MapPin, Mail, Globe, ChevronLeft, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { setLoggedInStore } from '@/lib/storeSession';
 
@@ -17,9 +18,29 @@ export default function SignUpPage() {
     phone: '',
     storeId: '',
     storeName: '',
-    address: ''
+    address: '',
+    addressDetail: ''
   });
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCompletePostcode = (data: any) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+    }
+
+    setFormData(prev => ({ ...prev, address: fullAddress }));
+    setIsPostcodeOpen(false);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -84,6 +105,9 @@ export default function SignUpPage() {
       }
 
       // 3. ssakdaform_stores 테이블에 신규 매장/계정 저장
+      const combinedAddress = [formData.address.trim(), formData.addressDetail.trim()]
+        .filter(Boolean)
+        .join(' ');
       const newStorePayload = {
         username: cleanUsername,
         email: formData.email.trim(),
@@ -92,7 +116,7 @@ export default function SignUpPage() {
         phone: formData.phone.trim(),
         store_id: cleanStoreId,
         store_name: formData.storeName.trim(),
-        address: formData.address.trim(),
+        address: combinedAddress,
         custom_forms: []
       };
 
@@ -317,19 +341,42 @@ export default function SignUpPage() {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">사업장 주소 <span className="text-rose-500">*</span></label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MapPin className="h-5 w-5 text-gray-400" />
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <MapPin className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          name="address"
+                          type="text"
+                          required
+                          readOnly
+                          onClick={() => setIsPostcodeOpen(true)}
+                          value={formData.address}
+                          className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                          placeholder="클릭하여 사업장 주소 검색"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsPostcodeOpen(true)}
+                        className="px-4 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-sm font-bold flex items-center gap-1.5 shrink-0 transition-colors"
+                      >
+                        <Search className="w-4 h-4" />
+                        주소 검색
+                      </button>
                     </div>
-                    <input
-                      name="address"
-                      type="text"
-                      required
-                      value={formData.address}
-                      onChange={handleChange}
-                      className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
-                      placeholder="매장 주소를 입력해주세요"
-                    />
+                    {formData.address && (
+                      <input
+                        name="addressDetail"
+                        type="text"
+                        value={formData.addressDetail}
+                        onChange={handleChange}
+                        className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm font-medium transition-all"
+                        placeholder="상세 주소를 입력해주세요 (예: 1층 102호)"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -370,6 +417,27 @@ export default function SignUpPage() {
           </form>
         </div>
       </div>
+
+      {/* 다음(카카오) 우편번호 검색 모달 */}
+      {isPostcodeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <h3 className="font-bold text-gray-800">사업장 주소 검색</h3>
+              <button
+                type="button"
+                onClick={() => setIsPostcodeOpen(false)}
+                className="text-gray-500 hover:text-gray-900 font-bold p-1"
+              >
+                닫기 ✕
+              </button>
+            </div>
+            <div className="h-[420px] w-full">
+              <DaumPostcode onComplete={handleCompletePostcode} style={{ height: '100%' }} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

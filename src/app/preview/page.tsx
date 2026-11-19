@@ -4,6 +4,7 @@ import { getSmartPlaceholder } from "@/lib/formUtils";
 import { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
+import { getActiveStoreId, getLoggedInStore } from '@/lib/storeSession';
 import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User } from 'lucide-react';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
@@ -16,12 +17,6 @@ interface FormField {
   required: boolean;
 }
 
-interface PreviewData {
-  storeName: string;
-  formTitle: string;
-  fields: FormField[];
-}
-
 export default function PreviewPage() {
   const [data, setData] = useState<any>(null);
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -32,7 +27,7 @@ export default function PreviewPage() {
   // 주소 검색 모달 관련 상태
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [currentAddressFieldId, setCurrentAddressFieldId] = useState<number | null>(null);
-    const [addressValues, setAddressValues] = useState<Record<number, string>>({});
+  const [addressValues, setAddressValues] = useState<Record<number, string>>({});
   const [timeValues, setTimeValues] = useState<Record<number, { ampm: string, hour: string, minute: string }>>({});
   
   const handleTimeChange = (fieldId: number, part: 'ampm' | 'hour' | 'minute', value: string) => {
@@ -49,10 +44,27 @@ export default function PreviewPage() {
 
   useEffect(() => {
     async function loadData() {
+      const activeStoreId = getActiveStoreId();
+      const loggedIn = getLoggedInStore();
+
       // Load store info
-      const savedStoreInfo = localStorage.getItem('ssakdaform_store_details');
-      if (savedStoreInfo) { 
-        setStoreInfo(JSON.parse(savedStoreInfo)); 
+      const savedStoreInfo = localStorage.getItem(`ssakdaform_store_details_${activeStoreId}`) || localStorage.getItem('ssakdaform_store_details');
+      if (savedStoreInfo) {
+        const parsed = JSON.parse(savedStoreInfo);
+        setStoreInfo({
+          ...parsed,
+          name: loggedIn?.store_name || parsed.name || parsed.storeName || ''
+        });
+      } else if (loggedIn) {
+        setStoreInfo({
+          name: loggedIn.store_name,
+          ownerName: loggedIn.owner_name,
+          address: loggedIn.address,
+          phone: loggedIn.phone,
+          hours: '',
+          closedDays: '',
+          paymentLink: ''
+        });
       } else {
         setStoreInfo({
           name: '싹다폼 (데모 상호명)',
@@ -65,8 +77,12 @@ export default function PreviewPage() {
         });
       }
 
-      // Load accounts from Supabase (like the main page does)
-      const { data } = await supabase.from('ssakdaform_store_accounts').select('*').order('created_at', { ascending: true });
+      // Load accounts from Supabase for active store
+      const { data } = await supabase
+        .from('ssakdaform_store_accounts')
+        .select('*')
+        .eq('store_id', activeStoreId)
+        .order('created_at', { ascending: true });
       if (data && data.length > 0) {
         setAccounts(data.map((d: any) => ({ bank: d.bank, accountNumber: d.account_number, holder: d.holder })));
       }
@@ -127,13 +143,21 @@ export default function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-indigo-100 selection:text-indigo-900 relative">
+    <div className="min-h-screen bg-[#F9F9F8] flex flex-col items-center py-8 sm:py-12 px-2 sm:px-4 font-sans selection:bg-purple-100 selection:text-purple-900 relative">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-stone-100">
         
-        <div className="bg-gradient-to-r from-indigo-700 to-indigo-900 px-4 sm:px-6 py-6 sm:py-8 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#3B0764] via-[#5B21B6] to-[#4C1D95] px-4 sm:px-6 py-7 sm:py-9 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
-          <p className="relative z-10 text-indigo-100 text-sm sm:text-base font-bold tracking-widest mb-3 uppercase drop-shadow-sm">{data.storeName}</p>
-          <h1 className="relative z-10 text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-md">{data.formTitle}</h1>
+          <div className="relative z-10 flex flex-col items-center">
+            <h2 className="text-[22px] sm:text-[26px] font-black text-white tracking-tight drop-shadow-md leading-snug">
+              {storeInfo?.name || data.storeName}
+            </h2>
+            <div className="mt-2.5 inline-flex items-center px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-xs border border-white/20 shadow-xs">
+              <h1 className="text-[16px] sm:text-[18px] font-extrabold text-purple-50 tracking-tight">
+                {data.formTitle}
+              </h1>
+            </div>
+          </div>
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
@@ -141,50 +165,50 @@ export default function PreviewPage() {
             <div className="mb-6">
               <button 
                 onClick={() => setIsStoreInfoOpen(!isStoreInfoOpen)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors mx-auto bg-gray-100/80 hover:bg-gray-200/80 px-3 py-1.5 rounded-full"
+                className="flex items-center gap-2 text-[13px] font-extrabold text-purple-950 hover:text-purple-900 transition-all mx-auto bg-purple-50/80 hover:bg-purple-100/80 border-2 border-purple-200 hover:border-purple-300 shadow-xs px-4 py-2 rounded-full active:scale-95"
               >
-                <Store className="w-3.5 h-3.5" />
+                <Store className="w-4 h-4 text-purple-700" />
                 가게 정보 보기
-                {isStoreInfoOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                {isStoreInfoOpen ? <ChevronUp className="w-4 h-4 text-purple-700" /> : <ChevronDown className="w-4 h-4 text-purple-700" />}
               </button>
               
               {isStoreInfoOpen && (
-                <div className="mt-3 p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-700 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="mt-3 p-4 bg-purple-50/40 border border-purple-100 rounded-2xl text-[13.5px] text-gray-800 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
                   {storeInfo.name && (
-                    <div className="flex gap-2">
-                      <Store className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      <div><span className="font-semibold text-gray-900 mr-2">상호명:</span>{storeInfo.name}</div>
-                  </div>
-                )}
+                    <div className="flex items-start gap-2.5">
+                      <Store className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">상호명:</span><span className="font-semibold text-gray-900">{storeInfo.name}</span></div>
+                    </div>
+                  )}
 
-                {storeInfo.ownerName && (
-                  <div className="flex gap-2">
-                    <User className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                    <div><span className="font-semibold text-gray-900 mr-2">대표자:</span>{storeInfo.ownerName}</div>
-                  </div>
-                )}
+                  {storeInfo.ownerName && (
+                    <div className="flex items-start gap-2.5">
+                      <User className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">대표자:</span><span className="font-semibold text-gray-900">{storeInfo.ownerName}</span></div>
+                    </div>
+                  )}
                   {storeInfo.address && (
-                    <div className="flex gap-2">
-                      <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      <div><span className="font-semibold text-gray-900 mr-2">주소:</span>{storeInfo.address}</div>
+                    <div className="flex items-start gap-2.5">
+                      <MapPin className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">주소:</span><span className="font-semibold text-gray-900">{storeInfo.address}</span></div>
                     </div>
                   )}
                   {storeInfo.phone && (
-                    <div className="flex gap-2">
-                      <Phone className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      <div><span className="font-semibold text-gray-900 mr-2">전화번호:</span>{storeInfo.phone}</div>
+                    <div className="flex items-start gap-2.5">
+                      <Phone className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">전화번호:</span><span className="font-bold text-purple-800">{storeInfo.phone}</span></div>
                     </div>
                   )}
                   {storeInfo.hours && (
-                    <div className="flex gap-2">
-                      <Clock className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      <div><span className="font-semibold text-gray-900 mr-2">영업시간:</span>{storeInfo.hours}</div>
+                    <div className="flex items-start gap-2.5">
+                      <Clock className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">영업시간:</span><span className="font-semibold text-gray-900">{storeInfo.hours}</span></div>
                     </div>
                   )}
                   {storeInfo.closedDays && (
-                    <div className="flex gap-2">
-                      <CalendarX className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      <div><span className="font-semibold text-gray-900 mr-2">휴무일:</span>{storeInfo.closedDays}</div>
+                    <div className="flex items-start gap-2.5">
+                      <CalendarX className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
                     </div>
                   )}
                 </div>
@@ -192,59 +216,59 @@ export default function PreviewPage() {
             </div>
           )}
           {(accounts.length > 0 || (storeInfo && storeInfo.paymentLink)) && (
-            <div className="mb-6 bg-[#F0F4FF] border border-indigo-200 rounded-2xl px-4 py-3.5">
+            <div className="mb-6 bg-[#F8F5FF] border border-purple-200 rounded-2xl px-4 py-3.5">
               <div className="flex items-center gap-2 mb-2">
-                <CreditCard className="w-4 h-4 text-indigo-400" />
-                <h2 className="font-bold text-indigo-900 text-[14px]">결제 및 계좌 안내</h2>
+                <CreditCard className="w-4 h-4 text-purple-500" />
+                <h2 className="font-bold text-purple-950 text-[14px]">결제 및 계좌 안내</h2>
               </div>
               
               <div className="space-y-1.5">
                 {accounts.map((acc, idx) => (
                   <div key={idx} className="flex items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 flex-1">
-                      <span className="text-[13px] font-bold text-indigo-600">{acc.bank}</span>
+                      <span className="text-[13px] font-bold text-purple-700">{acc.bank}</span>
                       <span className="text-[17px] font-bold font-mono text-gray-900 tracking-tight">{acc.accountNumber}</span>
                       <span className="text-[13px] font-medium text-gray-500">{acc.holder}</span>
                     </div>
                     <button 
                       type="button"
                       onClick={() => handleCopyAccount(acc.accountNumber)}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-indigo-50"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white rounded-lg text-[12px] font-bold text-gray-700 hover:bg-gray-50 active:scale-95 transition-all shrink-0 shadow-sm border border-purple-100"
                     >
                       {copiedAccount === acc.accountNumber ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
                       <span>{copiedAccount === acc.accountNumber ? '복사됨' : '복사'}</span>
                     </button>
                   </div>
                 ))}
-            </div>
-            {storeInfo && storeInfo.paymentLink && (
-              <div className="mt-4 pt-4 border-t border-indigo-200/50">
-                <h3 className="text-[12px] font-bold text-indigo-900 mb-2">비대면 카드 결제</h3>
-                <a 
-                  href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
-                >
-                  <CreditCard className="w-4 h-4" />
-                  결제하러 가기
-                </a>
               </div>
-            )}
-          </div>
-        )}
+              {storeInfo && storeInfo.paymentLink && (
+                <div className="mt-4 pt-4 border-t border-purple-200/50">
+                  <h3 className="text-[12px] font-bold text-purple-950 mb-2">비대면 카드 결제</h3>
+                  <a 
+                    href={storeInfo.paymentLink.startsWith('http') ? storeInfo.paymentLink : `https://${storeInfo.paymentLink}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-bold rounded-xl transition-colors text-[14px] shadow-sm active:scale-[0.98]"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    결제하러 가기
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
 
           {data.formDescription && (
-          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-4 sm:px-5 py-4 shadow-sm">
-            <h3 className="font-bold text-amber-900 text-[14px] mb-2 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-              사장님 안내사항
-            </h3>
-            <div className="text-[13.5px] text-amber-900/80 leading-relaxed whitespace-pre-wrap">
-              {data.formDescription}
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-4 sm:px-5 py-4 shadow-sm">
+              <h3 className="font-bold text-amber-900 text-[14px] mb-2 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                사장님 안내사항
+              </h3>
+              <div className="text-[13.5px] text-amber-900/80 leading-relaxed whitespace-pre-wrap">
+                {data.formDescription}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
           <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
             {(() => {
@@ -288,7 +312,7 @@ export default function PreviewPage() {
                         <input name={field.label} type="checkbox" className={`w-4 h-4 mt-0.5 rounded cursor-pointer ${groupType === 'sender' ? 'text-slate-600 border-slate-400 focus:ring-slate-600' : groupType === 'receiver' ? 'text-[#8B7355] border-[#D4C4B1] focus:ring-[#8B7355]' : 'text-gray-600 border-gray-400 focus:ring-gray-600'}`} />
                         <span className={`text-sm leading-relaxed ${groupType === 'sender' ? 'text-slate-800' : groupType === 'receiver' ? 'text-[#5C4D3C]' : 'text-gray-800'}`}>{field.placeholder || '동의합니다.'}</span>
                       </label>
-                    ) : field.type === 'address' ? (
+                    ) : field.type === 'address' || /주소|배송지/.test(field.label || '') ? (
                       <div className="space-y-2">
                         <input 
                           type="text" 
@@ -403,7 +427,7 @@ export default function PreviewPage() {
             {/* 고정 개인정보 수집 동의 */}
             <div className="pt-6">
               <label className="flex items-start gap-2.5 p-3 sm:p-4 rounded-xl border border-gray-300 cursor-pointer transition-colors bg-white hover:bg-gray-50 shadow-sm">
-                <input type="checkbox" required className="w-4 h-4 mt-0.5 sm:mt-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer" />
+                <input type="checkbox" required className="w-4 h-4 mt-0.5 sm:mt-1 rounded border-gray-300 text-purple-700 focus:ring-purple-700 cursor-pointer" />
                 <span className="text-sm sm:text-[15px] font-medium text-gray-800 leading-relaxed">
                   [필수] 개인정보 수집 및 이용에 동의합니다.
                 </span>
@@ -411,7 +435,7 @@ export default function PreviewPage() {
             </div>
             
             <div className="pt-6 sm:pt-8">
-              <button className="w-full py-4 bg-indigo-700 text-white rounded-xl font-semibold text-lg hover:bg-indigo-800 active:transform active:scale-[0.99] transition-all shadow-lg shadow-indigo-700/20">
+              <button className="w-full py-4 bg-gradient-to-r from-[#4C1D95] to-[#6D28D9] text-white rounded-xl font-semibold text-lg hover:from-[#3B0764] hover:to-[#5B21B6] active:transform active:scale-[0.99] transition-all shadow-lg shadow-purple-900/20">
                 제출하기
               </button>
             </div>
@@ -420,7 +444,7 @@ export default function PreviewPage() {
       </div>
       
       <div className="mt-8 text-center text-sm text-stone-400 font-medium">
-        Powered by <span className="text-indigo-600 font-semibold">싹다폼</span>
+        Powered by <span className="text-purple-700 font-semibold">싹다폼</span>
       </div>
 
       {/* 카카오 우편번호 검색 모달 */}

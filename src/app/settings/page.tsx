@@ -1,15 +1,35 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX } from 'lucide-react';
+import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search } from 'lucide-react';
+import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore, setLoggedInStore } from '@/lib/storeSession';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
-  const [storeInfo, setStoreInfo] = useState<any>({ name: '', ownerName: '', address: '', phone: '', hours: '', closedDays: '', paymentLink: '' });
+  const [storeInfo, setStoreInfo] = useState<any>({ name: '', ownerName: '', address: '', addressDetail: '', phone: '', hours: '', closedDays: '', paymentLink: '' });
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleCompletePostcode = (data: any) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+    }
+
+    setStoreInfo((prev: any) => ({ ...prev, address: fullAddress }));
+    setIsPostcodeOpen(false);
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -105,10 +125,15 @@ export default function SettingsPage() {
     setIsSaved(false);
     const activeStoreId = getActiveStoreId();
     const loggedIn = getLoggedInStore();
+    const combinedAddress = [String(storeInfo.address || '').trim(), String(storeInfo.addressDetail || '').trim()]
+      .filter(Boolean)
+      .join(' ');
+    const payloadToSave = { ...storeInfo, address: combinedAddress, addressDetail: '' };
+    setStoreInfo(payloadToSave);
     
     // 로컬 스토리지 저장 (매장별 키 + 기본 키)
-    localStorage.setItem(`ssakdaform_store_details_${activeStoreId}`, JSON.stringify(storeInfo));
-    localStorage.setItem('ssakdaform_store_details', JSON.stringify(storeInfo));
+    localStorage.setItem(`ssakdaform_store_details_${activeStoreId}`, JSON.stringify(payloadToSave));
+    localStorage.setItem('ssakdaform_store_details', JSON.stringify(payloadToSave));
 
     const validAccounts = accounts.filter(acc => acc.bank.trim() !== '' || acc.accountNumber.trim() !== '');
     
@@ -117,10 +142,10 @@ export default function SettingsPage() {
       const { data: updatedStore } = await supabase
         .from('ssakdaform_stores')
         .update({
-          store_name: storeInfo.name,
-          owner_name: storeInfo.ownerName,
-          address: storeInfo.address,
-          phone: storeInfo.phone
+          store_name: payloadToSave.name,
+          owner_name: payloadToSave.ownerName,
+          address: combinedAddress,
+          phone: payloadToSave.phone
         })
         .eq('store_id', activeStoreId)
         .select('*')
@@ -131,10 +156,10 @@ export default function SettingsPage() {
       } else if (loggedIn) {
         setLoggedInStore({
           ...loggedIn,
-          store_name: storeInfo.name,
-          owner_name: storeInfo.ownerName,
-          address: storeInfo.address,
-          phone: storeInfo.phone
+          store_name: payloadToSave.name,
+          owner_name: payloadToSave.ownerName,
+          address: combinedAddress,
+          phone: payloadToSave.phone
         });
       }
 
@@ -215,15 +240,37 @@ export default function SettingsPage() {
 
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">주소</label>
-              <div className="relative">
-                <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input 
-                  type="text" 
-                  value={storeInfo.address}
-                  onChange={(e) => handleStoreChange('address', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
-                  placeholder="예) 서울특별시 강남구 테헤란로 123"
-                />
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <MapPin className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input 
+                      type="text" 
+                      readOnly
+                      onClick={() => setIsPostcodeOpen(true)}
+                      value={storeInfo.address}
+                      className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                      placeholder="클릭하여 매장 주소 검색"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsPostcodeOpen(true)}
+                    className="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    주소 검색
+                  </button>
+                </div>
+                {storeInfo.address && (
+                  <input 
+                    type="text" 
+                    value={storeInfo.addressDetail || ''}
+                    onChange={(e) => handleStoreChange('addressDetail', e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    placeholder="상세 주소를 입력하세요 (예: 1층 102호)"
+                  />
+                )}
               </div>
             </div>
 
@@ -349,6 +396,27 @@ export default function SettingsPage() {
           </button>
         </div>
       </div>
+
+      {/* 다음(카카오) 우편번호 검색 모달 */}
+      {isPostcodeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <h3 className="font-bold text-gray-800">매장 주소 검색</h3>
+              <button
+                type="button"
+                onClick={() => setIsPostcodeOpen(false)}
+                className="text-gray-500 hover:text-gray-900 font-bold p-1"
+              >
+                닫기 ✕
+              </button>
+            </div>
+            <div className="h-[420px] w-full">
+              <DaumPostcode onComplete={handleCompletePostcode} style={{ height: '100%' }} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

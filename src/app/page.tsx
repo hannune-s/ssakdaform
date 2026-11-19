@@ -112,12 +112,12 @@ export default function AdminHub() {
       <div className="text-center mb-10 relative no-print">
         <button 
           onClick={handleInstallApp} 
-          className="absolute top-0 right-0 sm:-top-4 sm:right-4 text-[12px] font-bold bg-white text-indigo-600 px-3 py-1.5 rounded-full border border-indigo-200 shadow-sm flex items-center gap-1.5 hover:bg-indigo-50 transition-colors active:scale-95 z-10"
+          className="absolute top-0 right-0 sm:-top-4 sm:right-4 text-[12px] font-bold bg-white text-[#5B21B6] px-3 py-1.5 rounded-full border border-purple-200 shadow-sm flex items-center gap-1.5 hover:bg-purple-50 transition-colors active:scale-95 z-10"
         >
           <Smartphone className="w-3.5 h-3.5" /> 
           홈 화면에 추가
         </button>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight mb-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#7E22CE] bg-clip-text text-transparent tracking-tight mb-2">
           싹다폼
         </h1>
         <p className="text-gray-500 font-medium">
@@ -148,13 +148,13 @@ export default function AdminHub() {
           </div>
         )}
 
-        <div className="bg-gradient-to-br from-[#EEF2FF] via-[#F5F3FF] to-[#E0E7FF] rounded-[20px] sm:rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-indigo-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-gradient-to-br from-[#F5F3FF] via-[#FAF5FF] to-[#EDE9FE] rounded-[20px] sm:rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-purple-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             {/* 텍스트 영역 */}
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <h2 className="text-[17px] sm:text-[19px] font-extrabold text-indigo-950 tracking-tight">우리 매장 통합 링크</h2>
-                <span className="text-[11px] sm:text-[12px] font-bold bg-indigo-600/10 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                <h2 className="text-[17px] sm:text-[19px] font-extrabold text-purple-950 tracking-tight">우리 매장 통합 링크</h2>
+                <span className="text-[11px] sm:text-[12px] font-bold bg-purple-600/10 text-purple-800 px-2.5 py-0.5 rounded-full border border-purple-200">
                   /store/{storeId}
                 </span>
                 {isLinkSuspended ? (
@@ -167,7 +167,7 @@ export default function AdminHub() {
                   </span>
                 )}
               </div>
-              <p className="text-indigo-900/70 text-[12.5px] sm:text-[14px] font-medium leading-snug tracking-tighter whitespace-nowrap">
+              <p className="text-purple-900/70 text-[12.5px] sm:text-[14px] font-medium leading-snug tracking-tighter whitespace-nowrap">
                 인스타, 카톡 등에 링크를 공유해 고객에게 안내해 보세요.
               </p>
             </div>
@@ -176,7 +176,7 @@ export default function AdminHub() {
             <div className="flex flex-row flex-wrap md:flex-nowrap gap-2 w-full md:w-auto shrink-0">
                 <button 
                   onClick={handleCopy}
-                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px] whitespace-nowrap"
+                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-[#5B21B6] text-white rounded-xl hover:bg-[#4C1D95] font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px] whitespace-nowrap"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? '복사완료' : '링크 복사'}
@@ -192,7 +192,7 @@ export default function AdminHub() {
                   href={`/store/${storeId}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-white border border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-50 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px] whitespace-nowrap"
+                  className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-white border border-purple-200 text-purple-800 rounded-xl hover:bg-purple-50 font-bold transition-all shadow-sm active:scale-95 text-[13.5px] sm:text-[14px] whitespace-nowrap"
                 >
                   <ExternalLink className="w-4 h-4" />
                   고객화면
@@ -213,8 +213,8 @@ export default function AdminHub() {
               onClick={() => setActiveTab('dashboard')}
               className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'dashboard' 
-                  ? 'bg-indigo-600 text-white shadow-md' 
-                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >
               대시보드
@@ -223,8 +223,8 @@ export default function AdminHub() {
               onClick={() => setActiveTab('builder')}
               className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'builder' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >간편폼 만들기</button>
           </div>
@@ -235,32 +235,32 @@ export default function AdminHub() {
               onClick={() => setActiveTab('delivery')}
               className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'delivery' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >택배접수</button>
             <button
               onClick={() => setActiveTab('reservation')}
               className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'reservation' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >예약접수</button>
             <button
               onClick={() => setActiveTab('order')}
               className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'order' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >상품접수</button>
             <button
               onClick={() => setActiveTab('custom')}
               className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
                 activeTab === 'custom' 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : 'bg-indigo-50/60 text-indigo-800 hover:bg-indigo-100/60 border border-indigo-200 shadow-sm'
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >간편폼접수</button>
             <button
@@ -278,13 +278,13 @@ export default function AdminHub() {
         <div className="relative mt-5 sm:mt-6">
           <input
             type="text"
-            className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium text-[13px] sm:text-base outline-none"
+            className="block w-full pl-4 pr-12 py-2.5 bg-gray-50 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:border-[#5B21B6] focus:ring-2 focus:ring-purple-100 transition-all font-medium text-[13px] sm:text-base outline-none"
             placeholder="이름, 연락처, 주문상품, 지원파트 등을 검색해보세요"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <div className="absolute inset-y-0 right-1.5 flex items-center">
-            <button className="p-1.5 sm:p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
+            <button className="p-1.5 sm:p-2 bg-[#5B21B6] hover:bg-[#4C1D95] text-white rounded-lg transition-colors shadow-sm">
               <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>
