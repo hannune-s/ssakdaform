@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 import { getActiveStoreId } from '@/lib/storeSession';
@@ -159,9 +159,28 @@ export default function CustomerFormPage() {
             phone: resolvedInfo?.phone || parsed.phone || parsed.contact || '',
             hours: parsed.hours || resolvedInfo?.hours || '',
             closedDays: parsed.closedDays || resolvedInfo?.closedDays || '',
-            paymentLink: parsed.paymentLink || resolvedInfo?.paymentLink || ''
+            paymentLink: parsed.paymentLink || resolvedInfo?.paymentLink || '',
+            shopLinks: Array.isArray(parsed.shopLinks) ? parsed.shopLinks : []
           };
         } catch (e) {}
+      }
+
+      const { data: metaRows } = await supabase
+        .from('ssakdaform_responses')
+        .select('*')
+        .eq('store_id', '__hq__')
+        .eq('form_id', '__store_meta__');
+
+      const storeMeta = (metaRows || []).find((r: any) => r.data?.storeId === resolvedStoreId);
+      if (storeMeta?.data) {
+        resolvedInfo = {
+          ...(resolvedInfo || {}),
+          hours: storeMeta.data.hours || resolvedInfo?.hours || '',
+          closedDays: storeMeta.data.closedDays || resolvedInfo?.closedDays || '',
+          shopLinks: Array.isArray(storeMeta.data.shopLinks) && storeMeta.data.shopLinks.length > 0
+            ? storeMeta.data.shopLinks
+            : (resolvedInfo?.shopLinks || [])
+        };
       }
 
       if (!resolvedInfo) {
@@ -525,6 +544,46 @@ export default function CustomerFormPage() {
                   </a>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 🛍️ 매장 공식 쇼핑몰 / 외부 링크 바로가기 영역 */}
+          {storeInfo && Array.isArray(storeInfo.shopLinks) && storeInfo.shopLinks.filter((l: any) => l?.url).length > 0 && (
+            <div className="mb-6 space-y-2.5">
+              {storeInfo.shopLinks
+                .filter((l: any) => l?.url)
+                .map((linkItem: any, idx: number) => {
+                  const targetUrl = String(linkItem.url).startsWith('http')
+                    ? linkItem.url
+                    : `https://${linkItem.url}`;
+                  return (
+                    <a
+                      key={idx}
+                      href={targetUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full p-3.5 rounded-2xl bg-white hover:bg-purple-50/60 border-2 border-purple-200 hover:border-purple-400 shadow-xs transition-all flex items-center justify-between gap-3 group active:scale-[0.99]"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-purple-100 text-[#5B21B6] flex items-center justify-center shrink-0">
+                          <ShoppingBag className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[14px] font-extrabold text-purple-950 truncate">
+                            {linkItem.title || '공식 쇼핑몰 바로가기'}
+                          </p>
+                          <p className="text-[11px] font-medium text-gray-400 truncate">
+                            클릭하여 사이트로 바로 이동합니다
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-50 text-purple-800 group-hover:bg-[#5B21B6] group-hover:text-white text-[11.5px] font-extrabold transition-colors shrink-0">
+                        <span>바로가기</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </div>
+                    </a>
+                  );
+                })}
             </div>
           )}
 

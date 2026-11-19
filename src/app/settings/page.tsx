@@ -1,14 +1,24 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search } from 'lucide-react';
+import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search, Globe, ExternalLink } from 'lucide-react';
 import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore, setLoggedInStore } from '@/lib/storeSession';
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
-  const [storeInfo, setStoreInfo] = useState<any>({ name: '', ownerName: '', address: '', addressDetail: '', phone: '', hours: '', closedDays: '', paymentLink: '' });
+  const [shopLinks, setShopLinks] = useState([{ title: '', url: '' }]);
+  const [storeInfo, setStoreInfo] = useState<any>({
+    name: '',
+    ownerName: '',
+    address: '',
+    addressDetail: '',
+    phone: '',
+    hours: '',
+    closedDays: '',
+    paymentLink: ''
+  });
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,8 +55,9 @@ export default function SettingsPage() {
         closedDays: '',
         paymentLink: ''
       };
+      let loadedShopLinks: { title: string; url: string }[] = [];
 
-      // DB에서 최신 매장 정보 로드
+      // 1. DB에서 최신 매장 기본 정보 로드
       const { data: storeRow } = await supabase
         .from('ssakdaform_stores')
         .select('*')
@@ -63,8 +74,10 @@ export default function SettingsPage() {
         };
       }
 
-      // 로컬에 저장된 영업시간/휴무일 등 부가 정보 병합
-      const savedInfo = localStorage.getItem(`ssakdaform_store_details_${activeStoreId}`) || localStorage.getItem('ssakdaform_store_details');
+      // 2. 로컬에 저장된 영업시간/휴무일/쇼핑몰링크 병합
+      const savedInfo =
+        localStorage.getItem(`ssakdaform_store_details_${activeStoreId}`) ||
+        localStorage.getItem('ssakdaform_store_details');
       if (savedInfo) {
         try {
           const parsed = JSON.parse(savedInfo);
@@ -78,12 +91,37 @@ export default function SettingsPage() {
             address: initialStore.address || parsed.address || '',
             phone: initialStore.phone || parsed.phone || parsed.contact || ''
           };
+          if (Array.isArray(parsed.shopLinks) && parsed.shopLinks.length > 0) {
+            loadedShopLinks = parsed.shopLinks;
+          }
         } catch (e) {}
       }
 
-      setStoreInfo(initialStore);
+      // 3. Supabase DB에 저장된 매장 확장 정보(영업시간, 휴무일, 쇼핑몰 링크) 로드
+      const { data: metaRows } = await supabase
+        .from('ssakdaform_responses')
+        .select('*')
+        .eq('store_id', '__hq__')
+        .eq('form_id', '__store_meta__');
 
-      // 현재 로그인된 매장(store_id)의 계좌 목록만 불러오기
+      const myMeta = (metaRows || []).find((r: any) => r.data?.storeId === activeStoreId);
+      if (myMeta?.data) {
+        initialStore = {
+          ...initialStore,
+          hours: myMeta.data.hours ?? initialStore.hours,
+          closedDays: myMeta.data.closedDays ?? initialStore.closedDays
+        };
+        if (Array.isArray(myMeta.data.shopLinks) && myMeta.data.shopLinks.length > 0) {
+          loadedShopLinks = myMeta.data.shopLinks;
+        }
+      }
+
+      setStoreInfo(initialStore);
+      if (loadedShopLinks.length > 0) {
+        setShopLinks(loadedShopLinks);
+      }
+
+      // 4. 현재 로그인된 매장(store_id)의 계좌 목록 불러오기
       const { data } = await supabase
         .from('ssakdaform_store_accounts')
         .select('*')
@@ -117,6 +155,25 @@ export default function SettingsPage() {
     setAccounts(newAccounts);
   };
 
+  const handleAddShopLink = () => {
+    if (shopLinks.length >= 3) {
+      alert('쇼핑몰/외부 링크는 최대 3개까지 등록 가능합니다.');
+      return;
+    }
+    setShopLinks([...shopLinks, { title: '', url: '' }]);
+  };
+
+  const handleRemoveShopLink = (index: number) => {
+    const nextLinks = shopLinks.filter((_, i) => i !== index);
+    setShopLinks(nextLinks.length > 0 ? nextLinks : [{ title: '', url: '' }]);
+  };
+
+  const handleShopLinkChange = (index: number, field: 'title' | 'url', value: string) => {
+    const nextLinks = [...shopLinks];
+    nextLinks[index] = { ...nextLinks[index], [field]: value };
+    setShopLinks(nextLinks);
+  };
+
   const handleStoreChange = (field: string, value: string) => {
     setStoreInfo({ ...storeInfo, [field]: value });
   };
@@ -128,7 +185,16 @@ export default function SettingsPage() {
     const combinedAddress = [String(storeInfo.address || '').trim(), String(storeInfo.addressDetail || '').trim()]
       .filter(Boolean)
       .join(' ');
-    const payloadToSave = { ...storeInfo, address: combinedAddress, addressDetail: '' };
+    const validShopLinks = shopLinks
+      .map(l => ({ title: l.title.trim(), url: l.url.trim() }))
+      .filter(l => l.url !== '');
+
+    const payloadToSave = {
+      ...storeInfo,
+      address: combinedAddress,
+      addressDetail: '',
+      shopLinks: validShopLinks
+    };
     setStoreInfo(payloadToSave);
     
     // 로컬 스토리지 저장 (매장별 키 + 기본 키)
@@ -163,7 +229,38 @@ export default function SettingsPage() {
         });
       }
 
-      // 2. 현재 매장(store_id)의 기존 계좌만 삭제 후 재등록
+      // 2. 매장 확장 메타 정보(영업시간, 휴무일, 쇼핑몰 링크)를 Supabase DB에 저장 (고객 스마트폰에서도 조회되도록)
+      const { data: existingMetaRows } = await supabase
+        .from('ssakdaform_responses')
+        .select('*')
+        .eq('store_id', '__hq__')
+        .eq('form_id', '__store_meta__');
+
+      const existingMeta = (existingMetaRows || []).find((r: any) => r.data?.storeId === activeStoreId);
+      const metaData = {
+        storeId: activeStoreId,
+        hours: payloadToSave.hours || '',
+        closedDays: payloadToSave.closedDays || '',
+        shopLinks: validShopLinks
+      };
+
+      if (existingMeta) {
+        await supabase
+          .from('ssakdaform_responses')
+          .update({ data: metaData })
+          .eq('id', existingMeta.id);
+      } else {
+        await supabase.from('ssakdaform_responses').insert([
+          {
+            store_id: '__hq__',
+            form_id: '__store_meta__',
+            status: '저장됨',
+            data: metaData
+          }
+        ]);
+      }
+
+      // 3. 현재 매장(store_id)의 기존 계좌만 삭제 후 재등록
       const { error: delError } = await supabase
         .from('ssakdaform_store_accounts')
         .delete()
@@ -201,7 +298,7 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-4xl mx-auto pb-10">
-      {/* 가게 정보 설정 */}
+      {/* 1. 가게 정보 설정 */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="mb-6">
@@ -218,7 +315,7 @@ export default function SettingsPage() {
                   type="text" 
                   value={storeInfo.name}
                   onChange={(e) => handleStoreChange('name', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm"
                   placeholder="예) 싹다상점"
                 />
               </div>
@@ -232,7 +329,7 @@ export default function SettingsPage() {
                   type="text" 
                   value={storeInfo.ownerName || ''}
                   onChange={(e) => handleStoreChange('ownerName', e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm transition-all"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm transition-all"
                   placeholder="예) 홍길동"
                 />
               </div>
@@ -249,14 +346,14 @@ export default function SettingsPage() {
                       readOnly
                       onClick={() => setIsPostcodeOpen(true)}
                       value={storeInfo.address}
-                      className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white cursor-pointer focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                      className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white cursor-pointer focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm"
                       placeholder="클릭하여 매장 주소 검색"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsPostcodeOpen(true)}
-                    className="px-3.5 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors"
+                    className="px-3.5 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors"
                   >
                     <Search className="w-3.5 h-3.5" />
                     주소 검색
@@ -267,7 +364,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.addressDetail || ''}
                     onChange={(e) => handleStoreChange('addressDetail', e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm"
                     placeholder="상세 주소를 입력하세요 (예: 1층 102호)"
                   />
                 )}
@@ -283,7 +380,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.phone}
                     onChange={(e) => handleStoreChange('phone', e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm"
                     placeholder="예) 02-1234-5678"
                   />
                 </div>
@@ -297,7 +394,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.hours}
                     onChange={(e) => handleStoreChange('hours', e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm"
                     placeholder="예) 09:00 ~ 18:00"
                   />
                 </div>
@@ -311,7 +408,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={storeInfo.closedDays}
                     onChange={(e) => handleStoreChange('closedDays', e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm"
                     placeholder="예) 매주 일요일"
                   />
                 </div>
@@ -321,7 +418,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* 계좌 설정 */}
+      {/* 2. 계좌 설정 */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div className="p-6 md:p-8">
           <div className="flex items-center justify-between mb-6">
@@ -330,8 +427,9 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-500 mt-1">등록된 계좌는 고객 통합 접속 링크 메인 화면에 자동으로 노출됩니다.</p>
             </div>
             <button 
+              type="button"
               onClick={handleAddAccount}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium shrink-0"
             >
               <Plus className="w-4 h-4" />
               계좌 추가
@@ -347,7 +445,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={account.bank}
                     onChange={(e) => handleChange(index, 'bank', e.target.value)}
-                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
                     placeholder="국민은행"
                   />
                 </div>
@@ -358,7 +456,7 @@ export default function SettingsPage() {
                     type="text" 
                     value={account.accountNumber}
                     onChange={(e) => handleChange(index, 'accountNumber', e.target.value)}
-                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm font-mono"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm font-mono"
                     placeholder="123-456-7890"
                   />
                 </div>
@@ -369,12 +467,13 @@ export default function SettingsPage() {
                     type="text" 
                     value={account.holder}
                     onChange={(e) => handleChange(index, 'holder', e.target.value)}
-                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm"
+                    className="w-full px-2 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
                     placeholder="홍길동"
                   />
                 </div>
 
                 <button 
+                  type="button"
                   onClick={() => handleRemoveAccount(index)}
                   className="p-1.5 mb-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                   title="계좌 삭제"
@@ -385,12 +484,83 @@ export default function SettingsPage() {
             ))}
           </div>
         </div>
-        
+      </div>
+
+      {/* 3. 쇼핑몰 / 외부 링크 설정 */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+        <div className="p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6 gap-3">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">쇼핑몰 / 외부 링크 설정</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                운영 중인 쇼핑몰(스마트스토어, 자사몰)이나 인스타그램 등의 링크 제목과 주소를 입력하면 고객 화면에 바로가기 버튼이 표시됩니다.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddShopLink}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              링크 추가
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {shopLinks.map((linkItem, index) => (
+              <div
+                key={index}
+                className="p-3.5 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-col sm:flex-row sm:items-end gap-2.5 relative group w-full"
+              >
+                <div className="w-full sm:w-[38%] shrink-0">
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                    링크 제목 (고객이 누를 버튼 이름)
+                  </label>
+                  <input
+                    type="text"
+                    value={linkItem.title}
+                    onChange={(e) => handleShopLinkChange(index, 'title', e.target.value)}
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
+                    placeholder="예) 공식 쇼핑몰 바로가기"
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0 flex items-end gap-1.5">
+                  <div className="flex-1 min-w-0">
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      연결할 인터넷 주소 (URL)
+                    </label>
+                    <div className="relative">
+                      <Globe className="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={linkItem.url}
+                        onChange={(e) => handleShopLinkChange(index, 'url', e.target.value)}
+                        className="w-full pl-8 pr-3 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
+                        placeholder="예) https://smartstore.naver.com/내쇼핑몰"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveShopLink(index)}
+                    className="p-2 mb-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                    title="링크 삭제"
+                  >
+                    <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
           <button 
             onClick={handleSave}
             disabled={isLoading}
-            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
+            className="flex items-center gap-2 px-6 py-2.5 bg-[#5B21B6] text-white rounded-lg hover:bg-[#4C1D95] transition-colors font-semibold shadow-sm"
           >
             {isSaved ? <span className="flex items-center gap-2"><div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">✓</div>저장됨</span> : <><Save className="w-4 h-4" />저장하기</>}
           </button>

@@ -370,7 +370,7 @@ export default function AdminHub() {
             <button onClick={() => setActiveTab('my')} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
               <ArrowLeft className="w-6 h-6" />
             </button>
-            <h2 className="text-xl font-bold">설정 (계좌 정보)</h2>
+            <h2 className="text-xl font-bold">설정 (가게 · 계좌 · 쇼핑몰 링크)</h2>
           </div>
           <SettingsPage />
         </div>
@@ -408,8 +408,8 @@ export default function AdminHub() {
                 onClick: () => setActiveTab('subscription')
               },
               {
-                title: '설정 (가게/계좌 정보)',
-                desc: '가게 기본 정보 및 무통장 입금 계좌 관리',
+                title: '설정 (가게/계좌/쇼핑몰 링크)',
+                desc: '가게 기본 정보, 무통장 입금 계좌 및 쇼핑몰 바로가기 링크 관리',
                 color: 'bg-purple-900',
                 onClick: () => setActiveTab('settings')
               }

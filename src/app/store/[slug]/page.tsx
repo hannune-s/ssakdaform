@@ -118,7 +118,7 @@ export default function StoreHubPage() {
         };
       }
 
-      // 2. 같은 브라우저에서 설정한 추가 상세정보(영업시간, 휴무일 등) 병합 (DB의 상호명/기본정보 우선)
+      // 2. 같은 브라우저에서 설정한 추가 상세정보(영업시간, 휴무일, 쇼핑몰링크 등) 병합 (DB의 상호명/기본정보 우선)
       const savedStoreInfo = localStorage.getItem(`ssakdaform_store_details_${slug}`) || (slug === getActiveStoreId() ? localStorage.getItem('ssakdaform_store_details') : null);
       if (savedStoreInfo) {
         try {
@@ -132,9 +132,29 @@ export default function StoreHubPage() {
             phone: resolvedStore?.phone || parsed.phone || parsed.contact || '',
             hours: parsed.hours || resolvedStore?.hours || '',
             closedDays: parsed.closedDays || resolvedStore?.closedDays || '',
-            paymentLink: parsed.paymentLink || resolvedStore?.paymentLink || ''
+            paymentLink: parsed.paymentLink || resolvedStore?.paymentLink || '',
+            shopLinks: Array.isArray(parsed.shopLinks) ? parsed.shopLinks : []
           };
         } catch (e) {}
+      }
+
+      // 2-1. Supabase DB에 저장된 매장 확장 정보(영업시간, 휴무일, 쇼핑몰 링크) 병합
+      const { data: metaRows } = await supabase
+        .from('ssakdaform_responses')
+        .select('*')
+        .eq('store_id', '__hq__')
+        .eq('form_id', '__store_meta__');
+
+      const storeMeta = (metaRows || []).find((r: any) => r.data?.storeId === slug);
+      if (storeMeta?.data) {
+        resolvedStore = {
+          ...(resolvedStore || {}),
+          hours: storeMeta.data.hours || resolvedStore?.hours || '',
+          closedDays: storeMeta.data.closedDays || resolvedStore?.closedDays || '',
+          shopLinks: Array.isArray(storeMeta.data.shopLinks) && storeMeta.data.shopLinks.length > 0
+            ? storeMeta.data.shopLinks
+            : (resolvedStore?.shopLinks || [])
+        };
       }
 
       if (!resolvedStore) {
@@ -427,6 +447,46 @@ export default function StoreHubPage() {
                 </a>
               </div>
             )}
+          </div>
+        )}
+
+        {/* 🛍️ 매장 공식 쇼핑몰 / 외부 링크 바로가기 영역 */}
+        {storeInfo && Array.isArray(storeInfo.shopLinks) && storeInfo.shopLinks.filter((l: any) => l?.url).length > 0 && (
+          <div className="mb-5 space-y-2.5">
+            {storeInfo.shopLinks
+              .filter((l: any) => l?.url)
+              .map((linkItem: any, idx: number) => {
+                const targetUrl = String(linkItem.url).startsWith('http')
+                  ? linkItem.url
+                  : `https://${linkItem.url}`;
+                return (
+                  <a
+                    key={idx}
+                    href={targetUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full p-4 rounded-2xl bg-white hover:bg-purple-50/60 border-2 border-purple-200 hover:border-purple-400 shadow-xs transition-all flex items-center justify-between gap-3 group active:scale-[0.99]"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-[#5B21B6] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <ShoppingBag className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[14.5px] sm:text-[15.5px] font-extrabold text-purple-950 truncate">
+                          {linkItem.title || '공식 쇼핑몰 바로가기'}
+                        </p>
+                        <p className="text-[11.5px] font-medium text-gray-400 truncate">
+                          클릭하여 사이트로 바로 이동합니다
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 text-purple-800 group-hover:bg-[#5B21B6] group-hover:text-white text-[12px] font-extrabold transition-colors shrink-0">
+                      <span>바로가기</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </div>
+                  </a>
+                );
+              })}
           </div>
         )}
 
