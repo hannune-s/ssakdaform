@@ -475,7 +475,7 @@ export default function StoreHubPage() {
                         <p className="text-[14.5px] sm:text-[15.5px] font-extrabold text-purple-950 truncate">
                           {linkItem.title || '공식 쇼핑몰 바로가기'}
                         </p>
-                        <p className="text-[11.5px] font-medium text-gray-400 truncate">
+                        <p className="text-[12px] sm:text-[12.5px] font-semibold text-gray-600 truncate mt-0.5">
                           클릭하여 사이트로 바로 이동합니다
                         </p>
                       </div>
