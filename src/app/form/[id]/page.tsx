@@ -484,7 +484,7 @@ export default function CustomerFormPage() {
     submitData().then(() => {
       alert(id === 'resume-preset'
         ? '이력서 지원이 성공적으로 접수되었습니다!\n확인 후 연락드리겠습니다.'
-        : '신청이 성공적으로 완료되었습니다!\n(어드민의 현황 리스트에서 확인하실 수 있습니다)'
+        : '신청이 완료되었습니다. 감사합니다!'
       );
       window.location.reload();
     }).catch(err => {
