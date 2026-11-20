@@ -116,9 +116,13 @@ export default function CustomerFormPage() {
 
   useEffect(() => {
     const paramsObj = new URLSearchParams(window.location.search);
-    const resolvedStoreId = paramStoreId || paramsObj.get('store') || getActiveStoreId() || 'demo';
+    const pathMatch = window.location.pathname.match(/^\/f\/([^/]+)\/([^/]+)/);
+    const pathStoreId = pathMatch ? decodeURIComponent(pathMatch[1]) : null;
+    const pathCode = pathMatch ? decodeURIComponent(pathMatch[2]) : null;
+    const resolvedStoreId = paramStoreId || pathStoreId || paramsObj.get('store') || getActiveStoreId() || 'demo';
+    const resolvedId = id || pathCode || '';
     setTargetStoreId(resolvedStoreId);
-    setActualFormId(id);
+    setActualFormId(resolvedId);
 
     const findMatchingCustomForm = (forms: any[], codeOrId: string) => {
       if (!Array.isArray(forms) || forms.length === 0) return null;
@@ -167,7 +171,7 @@ export default function CustomerFormPage() {
           paymentLink: ''
         };
         if (Array.isArray(storeRow.custom_forms)) {
-          dbMatchedForm = findMatchingCustomForm(storeRow.custom_forms, id);
+          dbMatchedForm = findMatchingCustomForm(storeRow.custom_forms, resolvedId);
           if (dbMatchedForm) {
             setData(dbMatchedForm);
             if (dbMatchedForm.id) setActualFormId(dbMatchedForm.id);
@@ -200,7 +204,8 @@ export default function CustomerFormPage() {
         .from('ssakdaform_responses')
         .select('*')
         .eq('store_id', '__hq__')
-        .eq('form_id', '__store_meta__');
+        .eq('form_id', '__store_meta__')
+        .order('submitted_at', { ascending: false });
 
       const storeMeta = (metaRows || []).find((r: any) => r.data?.storeId === resolvedStoreId);
       if (storeMeta?.data) {
@@ -246,7 +251,7 @@ export default function CustomerFormPage() {
         if (localRaw) {
           try {
             const localForms = JSON.parse(localRaw);
-            const localFound = findMatchingCustomForm(localForms, id);
+            const localFound = findMatchingCustomForm(localForms, resolvedId);
             if (localFound) {
               setData(localFound);
               if (localFound.id) setActualFormId(localFound.id);
