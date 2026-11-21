@@ -49,25 +49,39 @@ export default function HanookMiniBlogPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<HanookPost | null>(null);
   const [copied, setCopied] = useState(false);
-  const [installGuideType, setInstallGuideType] = useState<'none' | 'samsung' | 'ios' | 'chrome' | 'kakao-ios'>('none');
+  const [installPromptEvent, setInstallPromptEvent] = useState<any>(null);
+  const [installGuideType, setInstallGuideType] = useState<
+    'none' | 'samsung' | 'ios' | 'chrome' | 'kakao-ios' | 'standalone-chrome'
+  >('none');
 
   useEffect(() => {
     loadHanookData();
 
-    // 홈 화면 추가 시 '/hanook' 전용 이름(꽃육점)과 시작 주소가 등록되도록 manifest 교체
     const existingManifest = document.querySelector('link[rel="manifest"]');
     if (existingManifest) {
       existingManifest.setAttribute('href', '/hanook-manifest.json');
     }
     document.title = '꽃육점 - HANOOK';
 
-    // 카톡에서 "?addHome=1" 파라미터를 달고 외부 브라우저로 넘어온 경우 자동으로 안내창 오픈
-    if (typeof window !== 'undefined' && window.location.search.includes('addHome=1')) {
-      setTimeout(() => {
-        triggerHomeScreenFlow(true);
-      }, 400);
+    if (typeof window !== 'undefined') {
+      if ((window as any).deferredPrompt) {
+        setInstallPromptEvent((window as any).deferredPrompt);
+      }
+      const handleBeforeInstall = (e: any) => {
+        e.preventDefault();
+        (window as any).deferredPrompt = e;
+        setInstallPromptEvent(e);
+      };
+      window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+      return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
     }
   }, []);
+
+  const openInAndroidChrome = () => {
+    if (typeof window === 'undefined') return;
+    const hostAndPath = `${window.location.host}${window.location.pathname}?addHome=1`;
+    window.location.href = `intent://${hostAndPath}#Intent;scheme=https;package=com.android.chrome;end`;
+  };
 
   const triggerHomeScreenFlow = async (fromRedirect = false) => {
     if (typeof window === 'undefined') return;
@@ -76,36 +90,40 @@ export default function HanookMiniBlogPage() {
     const isIOS = /iphone|ipad|ipod/.test(ua);
     const isAndroid = ua.includes('android');
     const isSamsung = ua.includes('samsungbrowser');
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true;
 
-    // 1. 카카오톡 인앱 브라우저 안에서 눌렀을 때:
-    if (isKakao && !fromRedirect) {
-      const targetUrl =
-        window.location.origin + window.location.pathname + '?addHome=1';
-      if (isAndroid) {
-        // 안드로이드 카톡은 자동으로 외부 기본 브라우저(크롬/삼성인터넷)를 즉시 엶
-        window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(
-          targetUrl
-        )}`;
-        return;
-      } else {
-        // 아이폰 카톡은 우측 하단 공유 -> Safari로 열기 안내
-        setInstallGuideType('kakao-ios');
-        return;
-      }
-    }
-
-    // 2. 크롬/엣지 등에서 브라우저 기본 홈화면 설치 프롬프트(beforeinstallprompt)가 준비된 경우 즉시 실행
-    const deferredPrompt = (window as any).deferredPrompt;
+    // 1. 크롬 원터치 설치 프롬프트(beforeinstallprompt)가 있으면 즉시 시스템 설치창 실행!
+    const deferredPrompt = installPromptEvent || (window as any).deferredPrompt;
     if (deferredPrompt) {
       try {
         deferredPrompt.prompt();
         await deferredPrompt.userChoice;
         (window as any).deferredPrompt = null;
+        setInstallPromptEvent(null);
         return;
       } catch {}
     }
 
-    // 3. 브라우저별 1초 맞춤 안내 모달 표시
+    // 2. 카카오톡 인앱 브라우저 안에서 눌렀을 때:
+    if (isKakao && !fromRedirect) {
+      if (isAndroid) {
+        openInAndroidChrome();
+        return;
+      } else {
+        setInstallGuideType('kakao-ios');
+        return;
+      }
+    }
+
+    // 3. 이미 싹다폼 앱(전체화면 standalone) 안에서 열려서 상단 점 3개가 없는 경우:
+    if (isStandalone && isAndroid) {
+      setInstallGuideType('standalone-chrome');
+      return;
+    }
+
+    // 4. 브라우저별 안내 모달
     if (isIOS) {
       setInstallGuideType('ios');
     } else if (isSamsung) {
@@ -502,19 +520,55 @@ export default function HanookMiniBlogPage() {
               </div>
             )}
 
-            {installGuideType === 'chrome' && (
+            {installGuideType === 'standalone-chrome' && (
               <div className="space-y-3 text-xs sm:text-[13px] text-[#3D352E] leading-relaxed break-keep">
                 <p className="font-bold text-[#221D18]">
-                  크롬(Chrome)에서 홈 화면에 추가하는 법:
+                  현재 전체화면(설치된 앱) 안에서 열려 있습니다!
                 </p>
                 <div className="p-3.5 rounded-xl bg-[#EFE8DC] border border-[#E2D8C7] space-y-2">
                   <p>
-                    1. 화면 오른쪽 맨 위의 <b>[ ⋮ ] (점 3개)</b> 또는 하단 메뉴를 누르세요.
+                    휴대폰에 이미 <b>싹다폼 앱</b>이 설치되어 있어서 주소창과 메뉴 버튼이 없는 전체화면으로 열렸습니다.
                   </p>
                   <p>
-                    2. <b>[ 홈 화면에 추가 ]</b> (또는 <b>[ 앱 설치 ]</b>)를 누르면 바탕화면에 바로가기가 생깁니다!
+                    아래 버튼을 누르면 <b>크롬 브라우저</b>로 바로 열려서 꽃육점 미니블로그를 별도 홈 화면 아이콘으로 추가하실 수 있습니다!
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInstallGuideType('none');
+                    openInAndroidChrome();
+                  }}
+                  className="w-full py-3 rounded-xl bg-[#5B21B6] text-white text-xs font-extrabold shadow-sm hover:bg-[#3B0764] transition-colors"
+                >
+                  크롬 브라우저로 열어서 홈 화면에 깔기 &rarr;
+                </button>
+              </div>
+            )}
+
+            {installGuideType === 'chrome' && (
+              <div className="space-y-3 text-xs sm:text-[13px] text-[#3D352E] leading-relaxed break-keep">
+                <p className="font-bold text-[#221D18]">
+                  홈 화면에 바로가기 설치하기:
+                </p>
+                <div className="p-3.5 rounded-xl bg-[#EFE8DC] border border-[#E2D8C7] space-y-2">
+                  <p>
+                    • 상단 또는 하단에 메뉴 버튼이 안 보이는 전체화면이라면 아래 <b>[크롬 브라우저로 바로 열기]</b>를 눌러주세요.
+                  </p>
+                  <p>
+                    • 크롬 화면이 열리면 <b>[홈 화면에 추가]</b> 버튼을 눌러 바탕화면에 바로 설치하실 수 있습니다.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInstallGuideType('none');
+                    openInAndroidChrome();
+                  }}
+                  className="w-full py-3 rounded-xl bg-[#5B21B6] text-white text-xs font-extrabold shadow-sm hover:bg-[#3B0764] transition-colors"
+                >
+                  크롬 브라우저로 바로 열기 &rarr;
+                </button>
               </div>
             )}
 
