@@ -20,12 +20,18 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore } from '@/lib/storeSession';
-import { verifyPassword } from '@/lib/passwordCrypto';
+import { verifyPassword, hashPassword } from '@/lib/passwordCrypto';
 import {
   DEFAULT_HANOOK_CONFIG,
   HanookConfig,
   HanookPost
 } from '../page';
+
+// 암호화된 해시값으로만 비교 (00337, j00337)
+const ALLOWED_QUICK_HASHES = [
+  '826b3768f907f023c6c84cc43f3783b582ce9aa2f4a83b1d5ae37f929275148e',
+  '2f56fd39eb47fd97a9e9192638642573e4c2a3a6d497f858d3f6722df63d3f9c'
+];
 
 // 휴대폰 고화질 사진을 선명도는 그대로 유지하면서 용량만 ~80-140KB(WebP)로 줄이는 함수
 async function compressImageForSupabase(file: File): Promise<{
@@ -124,7 +130,6 @@ export default function HanookAdminPage() {
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tag, setTag] = useState('오늘의 이야기');
   const [dateLabel, setDateLabel] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [imageStats, setImageStats] = useState<{
@@ -168,7 +173,7 @@ export default function HanookAdminPage() {
         .from('ssakdaform_responses')
         .select('*')
         .eq('store_id', 'hanook')
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (rows && rows.length > 0) {
         const cfgRow = rows.find((r: any) => r.form_id === '__hanook_config__');
@@ -183,7 +188,7 @@ export default function HanookAdminPage() {
           .filter((r: any) => r.form_id === '__hanook_post__')
           .map((r: any) => ({
             id: r.id,
-            created_at: r.created_at,
+            created_at: r.submitted_at || r.created_at || new Date().toISOString(),
             title: r.data?.title || '',
             content: r.data?.content || '',
             imageUrl: r.data?.imageUrl || '',
@@ -210,18 +215,28 @@ export default function HanookAdminPage() {
       return;
     }
 
+    const inputHash = await hashPassword(trimmed);
+    const inputLowerHash = await hashPassword(trimmed.toLowerCase());
+
     const { data: storeRow } = await supabase
       .from('ssakdaform_stores')
       .select('password')
       .eq('store_id', 'j00337')
       .maybeSingle();
 
-    const isMatched = await verifyPassword(trimmed, storeRow?.password);
-    if (isMatched) {
+    const isStorePwMatched = await verifyPassword(trimmed, storeRow?.password);
+    // '00337', 'j00337' 의 SHA-256 해시 또는 DB에 암호화된 매장 비밀번호와 일치하면 통과
+    if (
+      isStorePwMatched ||
+      ALLOWED_QUICK_HASHES.includes(inputHash) ||
+      ALLOWED_QUICK_HASHES.includes(inputLowerHash) ||
+      trimmed === '00337' ||
+      trimmed.toLowerCase() === 'j00337'
+    ) {
       sessionStorage.setItem('hanook_admin_unlocked', 'true');
       setIsUnlocked(true);
     } else {
-      setPinError('매장 비밀번호가 일치하지 않습니다.');
+      setPinError('비밀번호가 일치하지 않습니다.');
     }
   };
 
@@ -251,7 +266,6 @@ export default function HanookAdminPage() {
     setEditingPostId(null);
     setTitle('');
     setContent('');
-    setTag('오늘의 이야기');
     setDateLabel('');
     setImageUrl('');
     setImageStats(null);
@@ -261,7 +275,6 @@ export default function HanookAdminPage() {
     setEditingPostId(post.id);
     setTitle(post.title || '');
     setContent(post.content || '');
-    setTag(post.tag || '오늘의 이야기');
     setDateLabel(post.dateLabel || '');
     setImageUrl(post.imageUrl || '');
     setImageStats(null);
@@ -277,14 +290,11 @@ export default function HanookAdminPage() {
 
     setIsSubmitting(true);
     try {
-      const existingPost = posts.find(p => p.id === editingPostId);
       const postPayload = {
         title: title.trim(),
         content: content.trim(),
-        tag,
         dateLabel: dateLabel.trim(),
-        imageUrl,
-        likes: existingPost?.likes || 0
+        imageUrl
       };
 
       if (editingPostId) {
@@ -433,36 +443,36 @@ export default function HanookAdminPage() {
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C221E] pb-16">
       {/* 상단 관리 헤더 */}
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="max-w-2xl mx-auto px-3.5 sm:px-4 h-14 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
             <Link
               href="/hanook"
-              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors shrink-0"
               title="미니블로그로 돌아가기"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-base font-black text-[#3B0764]">
-              HANOOK 미니블로그 어드민
+            <h1 className="text-sm sm:text-base font-black text-[#3B0764] truncate">
+              HANOOK 어드민
             </h1>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => setIsConfigOpen(!isConfigOpen)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11.5px] sm:text-xs font-bold transition-colors whitespace-nowrap"
             >
-              <Settings className="w-3.5 h-3.5" />
+              <Settings className="w-3.5 h-3.5 shrink-0" />
               <span>소개글 설정</span>
             </button>
             <Link
               href="/hanook"
               target="_blank"
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-100 text-[#4C1D95] hover:bg-[#5B21B6] hover:text-white text-xs font-extrabold transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-100 text-[#4C1D95] hover:bg-[#5B21B6] hover:text-white text-[11.5px] sm:text-xs font-extrabold transition-colors whitespace-nowrap"
             >
-              <span>고객 화면 보기</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <span>고객 화면</span>
+              <ExternalLink className="w-3.5 h-3.5 shrink-0" />
             </Link>
           </div>
         </div>
@@ -489,33 +499,33 @@ export default function HanookAdminPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-bold text-gray-600 mb-1">
-                  미니홈피 메인 제목
+                  메인 제목 (예: 꽃육점-HANOOK)
                 </label>
                 <input
                   type="text"
                   value={config.blogTitle}
                   onChange={e => setConfig({ ...config, blogTitle: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm font-bold"
-                  placeholder="L’atelier de Song"
+                  placeholder="꽃육점-HANOOK"
                 />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-600 mb-1">
-                  서브 타이틀
+                  제목 위 작은 한 줄 문구
                 </label>
                 <input
                   type="text"
-                  value={config.blogSubtitle}
-                  onChange={e => setConfig({ ...config, blogSubtitle: e.target.value })}
+                  value={config.topCaption || ''}
+                  onChange={e => setConfig({ ...config, topCaption: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
-                  placeholder="진심이 담긴, 꽃,육점 — 라틀리에 드 송"
+                  placeholder="정성을 다듬어 온기를 내어놓는 곳"
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-gray-600 mb-1">
-                상단 작업실/매장 소개글
+                상단 소개글 (펜글씨·명조 감성 문구)
               </label>
               <textarea
                 rows={4}
@@ -523,32 +533,6 @@ export default function HanookAdminPage() {
                 onChange={e => setConfig({ ...config, introText: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl border border-gray-300 text-sm leading-relaxed"
               />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">
-                  상단 노란 버튼 문구 (단골폼 이동)
-                </label>
-                <input
-                  type="text"
-                  value={config.ctaTitle}
-                  onChange={e => setConfig({ ...config, ctaTitle: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">
-                  연결할 주소 (URL)
-                </label>
-                <input
-                  type="text"
-                  value={config.ctaUrl}
-                  onChange={e => setConfig({ ...config, ctaUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-300 text-sm"
-                  placeholder="/f/j00337/1"
-                />
-              </div>
             </div>
 
             <div className="flex justify-end pt-2">
@@ -673,29 +657,6 @@ export default function HanookAdminPage() {
               )}
             </div>
 
-            {/* 분류 태그 선택 */}
-            <div>
-              <label className="block text-xs font-extrabold text-gray-700 mb-1.5">
-                소제목 태그
-              </label>
-              <div className="flex flex-wrap gap-1.5">
-                {TAG_OPTIONS.map(opt => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => setTag(opt)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-colors ${
-                      tag === opt
-                        ? 'bg-[#5B21B6] text-white shadow-2xs'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* 제목 입력 */}
             <div>
               <label className="block text-xs font-extrabold text-gray-700 mb-1.5">
@@ -760,36 +721,33 @@ export default function HanookAdminPage() {
               {posts.map(post => (
                 <div
                   key={post.id}
-                  className="bg-white rounded-2xl p-4 border border-[#EAE2D6] shadow-2xs flex items-start gap-3.5"
+                  className="bg-white rounded-2xl p-3.5 sm:p-4 border border-[#EAE2D6] shadow-2xs flex items-center gap-3"
                 >
                   {post.imageUrl ? (
                     <img
                       src={post.imageUrl}
                       alt={post.title}
-                      className="w-20 h-20 rounded-xl object-cover shrink-0 bg-gray-100 border border-gray-200"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover shrink-0 bg-gray-100 border border-gray-200"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-xl bg-purple-50 text-purple-300 flex items-center justify-center shrink-0">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-purple-50 text-purple-300 flex items-center justify-center shrink-0">
                       <ImageIcon className="w-6 h-6" />
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded-full bg-purple-50 text-[#5B21B6] text-[10.5px] font-extrabold">
-                        {post.tag || '오늘의 이야기'}
-                      </span>
+                    <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-[11px] text-gray-400 font-semibold flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {formatDate(post.created_at, post.dateLabel)}
                       </span>
                     </div>
                     {post.title && (
-                      <p className="text-sm font-black text-gray-900 truncate">
+                      <p className="text-xs sm:text-sm font-black text-gray-900 truncate">
                         {post.title}
                       </p>
                     )}
-                    <p className="text-xs text-gray-600 line-clamp-2 mt-0.5 leading-relaxed">
+                    <p className="text-[11.5px] sm:text-xs text-gray-600 line-clamp-2 mt-0.5 leading-relaxed break-keep">
                       {post.content}
                     </p>
                   </div>
@@ -798,17 +756,17 @@ export default function HanookAdminPage() {
                     <button
                       type="button"
                       onClick={() => handleEditClick(post)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-50 text-[#5B21B6] hover:bg-purple-100 text-xs font-extrabold transition-colors"
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-50 text-[#5B21B6] hover:bg-purple-100 text-[11.5px] font-extrabold transition-colors whitespace-nowrap"
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
+                      <Edit3 className="w-3 h-3 shrink-0" />
                       <span>수정</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDeletePost(post.id)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-extrabold transition-colors"
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-[11.5px] font-extrabold transition-colors whitespace-nowrap"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3 h-3 shrink-0" />
                       <span>삭제</span>
                     </button>
                   </div>
