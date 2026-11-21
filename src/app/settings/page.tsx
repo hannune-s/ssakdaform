@@ -8,7 +8,7 @@ import { getActiveStoreId, getLoggedInStore, setLoggedInStore } from '@/lib/stor
 
 export default function SettingsPage() {
   const [accounts, setAccounts] = useState([{ bank: '', accountNumber: '', holder: '' }]);
-  const [shopLinks, setShopLinks] = useState([{ title: '', url: '' }]);
+  const [shopLinks, setShopLinks] = useState<{ title: string; url: string; subtitle?: string }[]>([{ title: '', url: '', subtitle: '' }]);
   const [storeInfo, setStoreInfo] = useState<any>({
     name: '',
     ownerName: '',
@@ -160,15 +160,15 @@ export default function SettingsPage() {
       alert('쇼핑몰/외부 링크는 최대 3개까지 등록 가능합니다.');
       return;
     }
-    setShopLinks([...shopLinks, { title: '', url: '' }]);
+    setShopLinks([...shopLinks, { title: '', url: '', subtitle: '' }]);
   };
 
   const handleRemoveShopLink = (index: number) => {
     const nextLinks = shopLinks.filter((_, i) => i !== index);
-    setShopLinks(nextLinks.length > 0 ? nextLinks : [{ title: '', url: '' }]);
+    setShopLinks(nextLinks.length > 0 ? nextLinks : [{ title: '', url: '', subtitle: '' }]);
   };
 
-  const handleShopLinkChange = (index: number, field: 'title' | 'url', value: string) => {
+  const handleShopLinkChange = (index: number, field: 'title' | 'url' | 'subtitle', value: string) => {
     const nextLinks = [...shopLinks];
     nextLinks[index] = { ...nextLinks[index], [field]: value };
     setShopLinks(nextLinks);
@@ -186,7 +186,7 @@ export default function SettingsPage() {
       .filter(Boolean)
       .join(' ');
     const validShopLinks = shopLinks
-      .map(l => ({ title: l.title.trim(), url: l.url.trim() }))
+      .map(l => ({ title: l.title.trim(), url: l.url.trim(), subtitle: (l.subtitle || '').trim() }))
       .filter(l => l.url !== '');
 
     const payloadToSave = {
@@ -510,46 +510,61 @@ export default function SettingsPage() {
             {shopLinks.map((linkItem, index) => (
               <div
                 key={index}
-                className="p-3.5 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-col sm:flex-row sm:items-end gap-2.5 relative group w-full"
+                className="p-3.5 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-col gap-2.5 relative group w-full"
               >
-                <div className="w-full sm:w-[38%] shrink-0">
+                <div className="flex flex-col sm:flex-row sm:items-end gap-2.5 w-full">
+                  <div className="w-full sm:w-[38%] shrink-0">
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                      링크 제목 (고객이 누를 버튼 이름)
+                    </label>
+                    <input
+                      type="text"
+                      value={linkItem.title}
+                      onChange={(e) => handleShopLinkChange(index, 'title', e.target.value)}
+                      className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
+                      placeholder="예) 공식 쇼핑몰 바로가기"
+                    />
+                  </div>
+
+                  <div className="flex-1 min-w-0 flex items-end gap-1.5">
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                        연결할 인터넷 주소 (URL)
+                      </label>
+                      <div className="relative">
+                        <Globe className="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          value={linkItem.url}
+                          onChange={(e) => handleShopLinkChange(index, 'url', e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
+                          placeholder="예) https://smartstore.naver.com/내쇼핑몰"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveShopLink(index)}
+                      className="p-2 mb-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                      title="링크 삭제"
+                    >
+                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div>
                   <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                    링크 제목 (고객이 누를 버튼 이름)
+                    소제목 / 안내 문구 (선택 — 비워두면 제목에 맞춰 자동 문구가 표시됩니다)
                   </label>
                   <input
                     type="text"
-                    value={linkItem.title}
-                    onChange={(e) => handleShopLinkChange(index, 'title', e.target.value)}
+                    value={linkItem.subtitle || ''}
+                    onChange={(e) => handleShopLinkChange(index, 'subtitle', e.target.value)}
                     className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
-                    placeholder="예) 공식 쇼핑몰 바로가기"
+                    placeholder="예) 세일·특가 소식을 바로 받는 링크! 득템 기회를 얻으려면 접속 후 홈 화면에 꼭 추가하세요."
                   />
-                </div>
-
-                <div className="flex-1 min-w-0 flex items-end gap-1.5">
-                  <div className="flex-1 min-w-0">
-                    <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                      연결할 인터넷 주소 (URL)
-                    </label>
-                    <div className="relative">
-                      <Globe className="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        value={linkItem.url}
-                        onChange={(e) => handleShopLinkChange(index, 'url', e.target.value)}
-                        className="w-full pl-8 pr-3 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-xs sm:text-sm"
-                        placeholder="예) https://smartstore.naver.com/내쇼핑몰"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveShopLink(index)}
-                    className="p-2 mb-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                    title="링크 삭제"
-                  >
-                    <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
                 </div>
               </div>
             ))}
