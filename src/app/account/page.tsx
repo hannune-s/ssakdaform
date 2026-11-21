@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Save, User, Lock, Mail, Globe } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getLoggedInStore, setLoggedInStore, DEFAULT_DEMO_STORE } from '@/lib/storeSession';
+import { verifyPassword, hashPassword } from '@/lib/passwordCrypto';
 
 export default function AccountPage() {
   const [accountInfo, setAccountInfo] = useState({
@@ -38,9 +39,12 @@ export default function AccountPage() {
     const store = getLoggedInStore() || DEFAULT_DEMO_STORE;
 
     if (passwords.new || passwords.confirm) {
-      if (store.password && passwords.current !== store.password) {
-        alert('현재 비밀번호가 일치하지 않습니다.');
-        return;
+      if (store.password) {
+        const isCurrentMatched = await verifyPassword(passwords.current, store.password);
+        if (!isCurrentMatched) {
+          alert('현재 비밀번호가 일치하지 않습니다.');
+          return;
+        }
       }
       if (passwords.new !== passwords.confirm) {
         alert('새 비밀번호가 일치하지 않습니다.');
@@ -59,7 +63,7 @@ export default function AccountPage() {
         email: accountInfo.email.trim()
       };
       if (passwords.new) {
-        updatePayload.password = passwords.new;
+        updatePayload.password = await hashPassword(passwords.new);
       }
 
       const { data: updated, error } = await supabase

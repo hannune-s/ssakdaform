@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { setLoggedInStore } from '@/lib/storeSession';
+import { hashPassword } from '@/lib/passwordCrypto';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -104,14 +105,15 @@ export default function SignUpPage() {
         return;
       }
 
-      // 3. ssakdaform_stores 테이블에 신규 매장/계정 저장
+      // 3. ssakdaform_stores 테이블에 신규 매장/계정 저장 (비밀번호 단방향 암호화)
       const combinedAddress = [formData.address.trim(), formData.addressDetail.trim()]
         .filter(Boolean)
         .join(' ');
+      const hashedPassword = await hashPassword(formData.password);
       const newStorePayload = {
         username: cleanUsername,
         email: formData.email.trim(),
-        password: formData.password,
+        password: hashedPassword,
         owner_name: formData.ownerName.trim(),
         phone: formData.phone.trim(),
         store_id: cleanStoreId,

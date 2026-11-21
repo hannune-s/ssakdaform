@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { setLoggedInStore } from '@/lib/storeSession';
+import { verifyPassword, hashPassword, isSha256Hash } from '@/lib/passwordCrypto';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,12 +43,28 @@ export default function LoginPage() {
         throw new Error(error.message);
       }
 
-      const matchedStore = (stores || []).find(s => s.password === inputPw);
+      let matchedStore: any = null;
+      for (const s of stores || []) {
+        if (await verifyPassword(inputPw, s.password)) {
+          matchedStore = s;
+          break;
+        }
+      }
 
       if (!matchedStore) {
         alert('아이디 또는 비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
         setIsLoading(false);
         return;
+      }
+
+      // 만약 기존 DB에 평문으로 저장되어 있었다면 즉시 암호화된 해시로 자동 업그레이드
+      if (matchedStore.password && !isSha256Hash(matchedStore.password)) {
+        const hashedPw = await hashPassword(inputPw);
+        await supabase
+          .from('ssakdaform_stores')
+          .update({ password: hashedPw })
+          .eq('id', matchedStore.id);
+        matchedStore = { ...matchedStore, password: hashedPw };
       }
 
       setLoggedInStore(matchedStore);
