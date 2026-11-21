@@ -5,7 +5,9 @@ import {
   Share2,
   X,
   Check,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Smartphone,
+  PlusSquare
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -47,10 +49,71 @@ export default function HanookMiniBlogPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<HanookPost | null>(null);
   const [copied, setCopied] = useState(false);
+  const [installGuideType, setInstallGuideType] = useState<'none' | 'samsung' | 'ios' | 'chrome' | 'kakao-ios'>('none');
 
   useEffect(() => {
     loadHanookData();
+
+    // 홈 화면 추가 시 '/hanook' 전용 이름(꽃육점)과 시작 주소가 등록되도록 manifest 교체
+    const existingManifest = document.querySelector('link[rel="manifest"]');
+    if (existingManifest) {
+      existingManifest.setAttribute('href', '/hanook-manifest.json');
+    }
+    document.title = '꽃육점 - HANOOK';
+
+    // 카톡에서 "?addHome=1" 파라미터를 달고 외부 브라우저로 넘어온 경우 자동으로 안내창 오픈
+    if (typeof window !== 'undefined' && window.location.search.includes('addHome=1')) {
+      setTimeout(() => {
+        triggerHomeScreenFlow(true);
+      }, 400);
+    }
   }, []);
+
+  const triggerHomeScreenFlow = async (fromRedirect = false) => {
+    if (typeof window === 'undefined') return;
+    const ua = navigator.userAgent.toLowerCase();
+    const isKakao = ua.includes('kakaotalk');
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isAndroid = ua.includes('android');
+    const isSamsung = ua.includes('samsungbrowser');
+
+    // 1. 카카오톡 인앱 브라우저 안에서 눌렀을 때:
+    if (isKakao && !fromRedirect) {
+      const targetUrl =
+        window.location.origin + window.location.pathname + '?addHome=1';
+      if (isAndroid) {
+        // 안드로이드 카톡은 자동으로 외부 기본 브라우저(크롬/삼성인터넷)를 즉시 엶
+        window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(
+          targetUrl
+        )}`;
+        return;
+      } else {
+        // 아이폰 카톡은 우측 하단 공유 -> Safari로 열기 안내
+        setInstallGuideType('kakao-ios');
+        return;
+      }
+    }
+
+    // 2. 크롬/엣지 등에서 브라우저 기본 홈화면 설치 프롬프트(beforeinstallprompt)가 준비된 경우 즉시 실행
+    const deferredPrompt = (window as any).deferredPrompt;
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        (window as any).deferredPrompt = null;
+        return;
+      } catch {}
+    }
+
+    // 3. 브라우저별 1초 맞춤 안내 모달 표시
+    if (isIOS) {
+      setInstallGuideType('ios');
+    } else if (isSamsung) {
+      setInstallGuideType('samsung');
+    } else {
+      setInstallGuideType('chrome');
+    }
+  };
 
   async function loadHanookData() {
     setIsLoading(true);
@@ -166,27 +229,39 @@ export default function HanookMiniBlogPage() {
 
       {/* 미니멀 상단 네비게이션 */}
       <header className="sticky top-0 z-30 bg-[#F3ECE1]/90 backdrop-blur-md border-b border-[#E4DACB]">
-        <div className="max-w-5xl mx-auto px-5 h-13 flex items-center justify-between">
-          <span className="text-xs tracking-[0.22em] text-[#6E6358] font-normal">
+        <div className="max-w-5xl mx-auto px-4 sm:px-5 h-13 flex items-center justify-between gap-2">
+          <span className="text-xs tracking-[0.18em] sm:tracking-[0.22em] text-[#6E6358] font-normal truncate">
             {config.blogTitle}
           </span>
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-[#D6CBB9] bg-[#FAF6F0] text-[#5A5046] hover:border-[#8C7D6B] text-[11px] transition-colors"
-            title="주소 공유"
-          >
-            {copied ? (
-              <>
-                <Check className="w-3 h-3 text-emerald-700" />
-                <span>복사됨</span>
-              </>
-            ) : (
-              <>
-                <Share2 className="w-3 h-3" />
-                <span>공유</span>
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => triggerHomeScreenFlow(false)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-[#B8A68E] bg-[#E8DEC9] hover:bg-[#DFD2BA] text-[#2F2720] text-[11px] font-bold transition-colors shadow-2xs"
+              title="홈 화면에 바로가기 추가"
+            >
+              <Smartphone className="w-3 h-3 shrink-0" />
+              <span>홈화면 추가</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleShare}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-[#D6CBB9] bg-[#FAF6F0] text-[#5A5046] hover:border-[#8C7D6B] text-[11px] transition-colors"
+              title="주소 공유"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-700" />
+                  <span>복사됨</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3 h-3" />
+                  <span>공유</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -378,6 +453,110 @@ export default function HanookMiniBlogPage() {
                 닫기
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 홈 화면 바로가기 추가 1초 안내 모달 */}
+      {installGuideType !== 'none' && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setInstallGuideType('none')}
+        >
+          <div
+            className="bg-[#F9F5EE] w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border border-[#DFD5C5] p-6"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6DDD0] mb-4">
+              <div className="flex items-center gap-2">
+                <PlusSquare className="w-4 h-4 text-[#5A4B3C]" />
+                <h3 className="text-sm font-bold text-[#221D18]">
+                  휴대폰 홈 화면에 바로가기 추가
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInstallGuideType('none')}
+                className="p-1 text-[#7A6F63] hover:text-[#221D18]"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {installGuideType === 'samsung' && (
+              <div className="space-y-3 text-xs sm:text-[13px] text-[#3D352E] leading-relaxed break-keep">
+                <p className="font-bold text-[#221D18]">
+                  갤럭시 (삼성 인터넷)에서 2초 만에 추가하는 법:
+                </p>
+                <div className="p-3.5 rounded-xl bg-[#EFE8DC] border border-[#E2D8C7] space-y-2">
+                  <p>
+                    1. 화면 오른쪽 맨 아래의 <b>[ ≡ ] (가로줄 3개)</b> 버튼을 누르세요.
+                  </p>
+                  <p>
+                    2. 메뉴에서 <b>[ + 현재 페이지 추가 ]</b>를 누르세요.
+                  </p>
+                  <p>
+                    3. <b>[ 홈 화면 ]</b>을 선택하면 바탕화면에 바로가기가 생깁니다!
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {installGuideType === 'chrome' && (
+              <div className="space-y-3 text-xs sm:text-[13px] text-[#3D352E] leading-relaxed break-keep">
+                <p className="font-bold text-[#221D18]">
+                  크롬(Chrome)에서 홈 화면에 추가하는 법:
+                </p>
+                <div className="p-3.5 rounded-xl bg-[#EFE8DC] border border-[#E2D8C7] space-y-2">
+                  <p>
+                    1. 화면 오른쪽 맨 위의 <b>[ ⋮ ] (점 3개)</b> 또는 하단 메뉴를 누르세요.
+                  </p>
+                  <p>
+                    2. <b>[ 홈 화면에 추가 ]</b> (또는 <b>[ 앱 설치 ]</b>)를 누르면 바탕화면에 바로가기가 생깁니다!
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {installGuideType === 'ios' && (
+              <div className="space-y-3 text-xs sm:text-[13px] text-[#3D352E] leading-relaxed break-keep">
+                <p className="font-bold text-[#221D18]">
+                  아이폰(Safari)에서 홈 화면에 추가하는 법:
+                </p>
+                <div className="p-3.5 rounded-xl bg-[#EFE8DC] border border-[#E2D8C7] space-y-2">
+                  <p>
+                    1. 화면 맨 아래 가운데에 있는 <b>[ 공유 📤 (네모 위 화살표) ]</b> 버튼을 누르세요.
+                  </p>
+                  <p>
+                    2. 메뉴를 살짝 내려서 <b>[ 홈 화면에 추가 ➕ ]</b>를 누르면 완료됩니다!
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {installGuideType === 'kakao-ios' && (
+              <div className="space-y-3 text-xs sm:text-[13px] text-[#3D352E] leading-relaxed break-keep">
+                <p className="font-bold text-[#221D18]">
+                  카카오톡에서 아이폰 홈 화면에 추가하는 법:
+                </p>
+                <div className="p-3.5 rounded-xl bg-[#EFE8DC] border border-[#E2D8C7] space-y-2">
+                  <p>
+                    1. 화면 오른쪽 맨 아래의 <b>[ 공유 📤 ]</b> 버튼을 누르고 <b>[ Safari로 열기 ]</b>를 선택하세요.
+                  </p>
+                  <p>
+                    2. 사파리가 열리면 하단 가운데 <b>[ 공유 📤 ] &rarr; [ 홈 화면에 추가 ]</b>를 누르면 완료됩니다!
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setInstallGuideType('none')}
+              className="mt-5 w-full py-2.5 rounded-xl bg-[#3A3129] text-[#F9F5EE] text-xs font-bold hover:bg-[#221D18] transition-colors"
+            >
+              확인했어요
+            </button>
           </div>
         </div>
       )}
