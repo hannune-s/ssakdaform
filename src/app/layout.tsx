@@ -30,13 +30,21 @@ export default function RootLayout({
               window.deferredPrompt = e;
             });
             if ('serviceWorker' in navigator) {
-              window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                  console.log('SW registered');
-                }, function(err) {
-                  console.log('SW registration failed: ', err);
+              if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for (let registration of registrations) {
+                    registration.unregister();
+                  }
                 });
-              });
+              } else {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js?v=2').then(function(registration) {
+                    console.log('SW registered');
+                  }, function(err) {
+                    console.log('SW registration failed: ', err);
+                  });
+                });
+              }
             }
           `
         }} />

@@ -9,6 +9,7 @@ import { getSmartPlaceholder } from '@/lib/formUtils';
 import { getActiveStoreId } from '@/lib/storeSession';
 import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 import ShopLinkList from '@/app/components/ShopLinkList';
+import CustomerLookupSection from '@/app/components/CustomerLookupSection';
 
 export default function CustomerFormPage() {
   const params = useParams();
@@ -626,7 +627,16 @@ export default function CustomerFormPage() {
           )}
 
           {/* 🛍️ 매장 공식 쇼핑몰 / 외부 링크 바로가기 영역 */}
-          <ShopLinkList links={storeInfo?.shopLinks} className="mb-6 space-y-2.5" />
+          <ShopLinkList links={storeInfo?.shopLinks} className="mb-5 space-y-2.5" />
+
+          {/* 🔍 내 접수 / 배송 조회 버튼 및 조회 모달 (이력서 폼 제외) */}
+          {!isResumeForm && (
+            <CustomerLookupSection
+              storeId={targetStoreId}
+              storeName={storeInfo?.name || data?.storeName || '우리 매장'}
+              className="mb-6"
+            />
+          )}
 
           {data.formDescription && (
             <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-4 sm:px-5 py-4 shadow-sm">

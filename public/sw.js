@@ -1,7 +1,6 @@
+const CACHE_NAME = 'ssakdaform-v2';
 
-const CACHE_NAME = 'ssakdaform-v1';
-
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
@@ -9,12 +8,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return new Response('네트워크 연결이 끊겼습니다.', {
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-      });
-    })
-  );
+// 네트워크 요청을 가로채서 평문 에러 페이지로 덮어쓰지 않도록 패스스루 유지
+self.addEventListener('fetch', () => {
+  return;
 });

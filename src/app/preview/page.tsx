@@ -6,6 +6,7 @@ import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore } from '@/lib/storeSession';
 import ShopLinkList from '@/app/components/ShopLinkList';
+import CustomerLookupSection from '@/app/components/CustomerLookupSection';
 import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, ShoppingBag, ExternalLink } from 'lucide-react';
 
 type FieldType = 'text' | 'number' | 'phone' | 'date' | 'textarea' | 'checkbox' | 'address';
@@ -260,7 +261,14 @@ export default function PreviewPage() {
           )}
 
           {/* 🛍️ 매장 공식 쇼핑몰 / 외부 링크 바로가기 영역 */}
-          <ShopLinkList links={storeInfo?.shopLinks} className="mb-6 space-y-2.5" />
+          <ShopLinkList links={storeInfo?.shopLinks} className="mb-5 space-y-2.5" />
+
+          {/* 🔍 내 접수 / 배송 조회 버튼 및 조회 모달 */}
+          <CustomerLookupSection
+            storeId={getActiveStoreId()}
+            storeName={storeInfo?.name || data?.storeName || '우리 매장'}
+            className="mb-6"
+          />
 
           {data.formDescription && (
             <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-4 sm:px-5 py-4 shadow-sm">
