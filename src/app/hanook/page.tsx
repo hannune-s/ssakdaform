@@ -284,7 +284,7 @@ export default function HanookMiniBlogPage() {
       </header>
 
       <div className="max-w-5xl mx-auto px-3.5 sm:px-8 pt-5 sm:pt-10">
-        {/* 상단 메인 소개 영역 (제목과 시적 소개 내용만 심플하게) */}
+        {/* 상단 메인 소개 영역 (원래 베이지 톤 그대로 유지) */}
         <section className="relative rounded-2xl overflow-hidden bg-[#F7F2E9] border border-[#E3D9C8] px-5 py-8 sm:px-12 sm:py-12 shadow-[0_10px_30px_rgba(60,46,33,0.05)] mb-9 sm:mb-12">
           {/* 은은한 창살 & 햇살 나뭇잎 그림자 */}
           <div
@@ -328,11 +328,11 @@ export default function HanookMiniBlogPage() {
         </section>
 
         {/* 갤러리 앨범 헤더 */}
-        <div className="flex items-center justify-between mb-6 px-1 border-b border-[#E2D8C7] pb-2.5">
-          <h2 className="text-[14px] sm:text-[15px] text-[#3A3129] tracking-[0.14em] font-normal">
+        <div className="flex items-center justify-between mb-6 px-1 border-b border-[#D5C7B2] pb-2.5">
+          <h2 className="text-[14.5px] sm:text-[15.5px] text-[#2C241D] tracking-[0.14em] font-bold">
             소소한 기록
           </h2>
-          <span className="text-[10.5px] text-[#8C7F70] tracking-[0.16em]">
+          <span className="text-[10.5px] text-[#786B5D] tracking-[0.16em]">
             HANOOK GALLERY
           </span>
         </div>
@@ -362,15 +362,15 @@ export default function HanookMiniBlogPage() {
           </div>
         ) : (
           /* 라틀리에 드 송 스타일 앨범/갤러리 그리드 (모바일 2열, 태블릿 3열, PC 4열) */
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-6">
             {posts.map(post => (
               <article
                 key={post.id}
                 onClick={() => setSelectedPost(post)}
-                className="group cursor-pointer flex flex-col bg-[#F9F5EE] rounded-xl overflow-hidden border border-[#E3D9C8] hover:border-[#BDAE99] shadow-[0_4px_16px_rgba(60,46,33,0.04)] hover:shadow-[0_8px_24px_rgba(60,46,33,0.09)] transition-all"
+                className="group cursor-pointer flex flex-col bg-[#FDFBF7] rounded-xl overflow-hidden border border-[#D4C5B0] hover:border-[#9E8C75] shadow-[0_6px_20px_rgba(55,42,28,0.08)] hover:shadow-[0_12px_28px_rgba(55,42,28,0.14)] transition-all"
               >
-                {/* 정사각형 앨범 썸네일 영역 */}
-                <div className="relative aspect-square w-full overflow-hidden bg-[#EBE4D8]">
+                {/* 정사각형 앨범 썸네일 영역 (테두리 여백 없이 원래처럼 꽉 차게) */}
+                <div className="relative aspect-square w-full overflow-hidden bg-[#EBE4D8] border-b border-[#EAE0D0]">
                   {post.imageUrl ? (
                     <img
                       src={post.imageUrl}
@@ -388,21 +388,21 @@ export default function HanookMiniBlogPage() {
                   )}
                 </div>
 
-                {/* 사진 아래 제목 & 간단한 내용만 심플하게 표시 (모바일에서도 글씨 안 잘리게 정렬) */}
-                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+                {/* 사진 아래 제목 & 간단한 내용 (배경과 확실히 구분되는 밝은 크림 화이트 & 선명한 글씨) */}
+                <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between bg-[#FDFBF7]">
                   <div>
                     {post.title && (
-                      <h3 className="text-[13px] sm:text-[14.5px] text-[#221D18] tracking-[0.01em] leading-snug line-clamp-2 mb-1 font-normal break-keep">
+                      <h3 className="text-[13.5px] sm:text-[15px] text-[#1C1612] tracking-[0.01em] leading-snug line-clamp-2 mb-1.5 font-bold break-keep">
                         {post.title}
                       </h3>
                     )}
 
-                    <p className="text-[11.5px] sm:text-[12.5px] text-[#5C5147] leading-[1.55] line-clamp-2 break-keep font-normal">
+                    <p className="text-[12px] sm:text-[13px] text-[#4A3F35] leading-[1.6] line-clamp-2 break-keep font-normal">
                       {post.content}
                     </p>
                   </div>
 
-                  <p className="mt-2 pt-1.5 border-t border-[#ECE3D5] text-[10px] sm:text-[10.5px] text-[#9A8E7F] tracking-[0.05em]">
+                  <p className="mt-2.5 pt-2 border-t border-[#EAE0D0] text-[10.5px] sm:text-[11px] text-[#857768] tracking-[0.05em]">
                     {formatDate(post.created_at, post.dateLabel)}
                   </p>
                 </div>
