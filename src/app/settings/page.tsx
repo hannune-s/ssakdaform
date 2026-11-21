@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search, Globe, ExternalLink } from 'lucide-react';
+import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search, Globe, ExternalLink, ArrowUp, ArrowDown } from 'lucide-react';
 import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore, setLoggedInStore } from '@/lib/storeSession';
@@ -171,6 +171,16 @@ export default function SettingsPage() {
   const handleShopLinkChange = (index: number, field: 'title' | 'url' | 'subtitle', value: string) => {
     const nextLinks = [...shopLinks];
     nextLinks[index] = { ...nextLinks[index], [field]: value };
+    setShopLinks(nextLinks);
+  };
+
+  const handleMoveShopLink = (index: number, direction: 'up' | 'down') => {
+    const targetIdx = direction === 'up' ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= shopLinks.length) return;
+    const nextLinks = [...shopLinks];
+    const temp = nextLinks[index];
+    nextLinks[index] = nextLinks[targetIdx];
+    nextLinks[targetIdx] = temp;
     setShopLinks(nextLinks);
   };
 
@@ -543,14 +553,34 @@ export default function SettingsPage() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveShopLink(index)}
-                      className="p-2 mb-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                      title="링크 삭제"
-                    >
-                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveShopLink(index, 'up')}
+                        disabled={index === 0}
+                        className="p-2 mb-0.5 text-gray-500 hover:text-purple-700 hover:bg-purple-50 disabled:opacity-30 disabled:hover:bg-transparent rounded-lg transition-colors shrink-0"
+                        title="위로 이동"
+                      >
+                        <ArrowUp className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleMoveShopLink(index, 'down')}
+                        disabled={index === shopLinks.length - 1}
+                        className="p-2 mb-0.5 text-gray-500 hover:text-purple-700 hover:bg-purple-50 disabled:opacity-30 disabled:hover:bg-transparent rounded-lg transition-colors shrink-0"
+                        title="아래로 이동"
+                      >
+                        <ArrowDown className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveShopLink(index)}
+                        className="p-2 mb-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                        title="링크 삭제"
+                      >
+                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button>
                   </div>
                 </div>
 
