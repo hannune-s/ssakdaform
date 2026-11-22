@@ -556,7 +556,7 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="text-left sm:text-right">
-                <div className="text-sm font-bold text-gray-400 line-through">월 19,900원</div>
+                <div className="text-sm font-bold text-gray-400 line-through">정상가 월 29,900원</div>
                 <div className="text-4xl sm:text-5xl font-black text-[#5B21B6] tracking-tight">
                   9,900<span className="text-base sm:text-lg font-bold text-gray-600 ml-1">원 / 1개월</span>
                 </div>

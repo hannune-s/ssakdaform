@@ -57,8 +57,8 @@ export default function SubscriptionPage() {
           <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 md:p-8 border border-gray-100 mb-6">
             <h3 className="text-base sm:text-xl font-black text-gray-900 mb-2 sm:mb-3">싹다폼 이용권 안내</h3>
             <p className="text-[13px] sm:text-[15px] text-gray-600 leading-snug sm:leading-relaxed mb-4 sm:mb-6">
-              월간 이용 요금은 <strong>월 19,900원</strong>.<br />
-              <strong>소상공인 상생 응원가로 월 9,900원</strong>에 제한 없는 폼생성과 자동화된 고객 관리 시스템을 경험해보세요.<br className="hidden sm:block" />
+              월간 정상 이용 요금은 <strong>월 29,900원</strong>.<br />
+              <strong>소상공인 상생 응원가로 월 9,900원</strong>에 제한 없는 폼생성과 실시간 단골 특가푸시, 자동화된 고객 관리 시스템을 경험해보세요.<br className="hidden sm:block" />
               아날로그 수기 장부에 뺏기던 사장님의 금쪽같은 시간을 확실하게 찾아드립니다.
             </p>
             
@@ -75,7 +75,7 @@ export default function SubscriptionPage() {
                   <span className="text-3xl sm:text-4xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors tracking-tight">
                     9,900<span className="text-[14px] sm:text-[16px] font-bold text-gray-500 ml-0.5">원 / 1개월</span>
                   </span>
-                  <span className="text-xs sm:text-sm text-gray-400 line-through mb-1 ml-1 font-medium">19,900원</span>
+                  <span className="text-xs sm:text-sm text-gray-400 line-through mb-1 ml-1 font-medium">29,900원</span>
                 </div>
                 <div className="text-[12px] sm:text-[13.5px] text-indigo-600 font-extrabold mb-1">
                   소상공인 상생 응원 특별 할인가 · 자동결제 약정 없음
