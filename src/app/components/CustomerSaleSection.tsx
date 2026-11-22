@@ -306,8 +306,8 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
                   실시간 특가
                 </span>
               </div>
-              <p className="text-[11.5px] sm:text-[12px] font-bold text-rose-800/90 mt-0.5 break-keep">
-                {saleData!.period || '홈화면에 꼭 추가해주세요! 실시간 세일·득템 소식'}
+              <p className="text-[12.5px] sm:text-[13px] font-extrabold text-rose-700 mt-1 break-keep">
+                ⏰ {saleData!.period || '홈화면에 꼭 추가해주세요! 실시간 세일·득템 소식'}
               </p>
             </div>
             <div className="flex items-center gap-0.5 px-3 py-1.5 rounded-lg bg-rose-600 group-hover:bg-rose-700 text-white text-[11.5px] font-extrabold shadow-xs transition-colors shrink-0">
@@ -370,15 +370,17 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
                 {storeName} · 실시간 특가
               </span>
 
-              <h3 className="text-[18px] font-black text-gray-900 leading-snug break-keep pr-6">
+              <h3 className="text-[19px] font-black text-gray-900 leading-snug break-keep pr-6">
                 {saleData!.title}
               </h3>
 
               {saleData!.period && (
-                <p className="text-xs font-bold text-gray-600 mt-1.5 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                  <span>{saleData!.period}</span>
-                </p>
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-rose-300 shadow-2xs">
+                  <Clock className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span className="text-[14px] sm:text-[14.5px] font-extrabold text-rose-700 tracking-tight break-keep">
+                    {saleData!.period}
+                  </span>
+                </div>
               )}
             </div>
 

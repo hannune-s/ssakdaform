@@ -436,11 +436,6 @@ export default function SalePushManager() {
                 <Calendar className="w-3.5 h-3.5 text-purple-700" />
                 <span>세일 날짜 및 시간 설정</span>
               </span>
-              {formattedPeriod && (
-                <span className="text-xs font-bold text-purple-800 bg-purple-50 px-2.5 py-0.5 rounded-md border border-purple-200">
-                  표시: {formattedPeriod}
-                </span>
-              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -666,14 +661,16 @@ export default function SalePushManager() {
               <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-100/90 text-[#4C1D95] border border-purple-200 text-[11px] font-extrabold mb-1.5">
                 단골 실시간 특가
               </span>
-              <h3 className="text-[18px] font-black text-gray-900 leading-snug break-keep pr-6">
+              <h3 className="text-[19px] font-black text-gray-900 leading-snug break-keep pr-6">
                 {title || '오늘의 단골 특가 안내'}
               </h3>
               {formattedPeriod && (
-                <p className="text-xs font-bold text-gray-600 mt-1.5 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                  <span>{formattedPeriod}</span>
-                </p>
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 border border-rose-300 shadow-2xs">
+                  <Clock className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span className="text-[14px] sm:text-[14.5px] font-extrabold text-rose-700 tracking-tight break-keep">
+                    {formattedPeriod}
+                  </span>
+                </div>
               )}
             </div>
 
