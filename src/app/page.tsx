@@ -229,43 +229,27 @@ export default function AdminHub() {
             >간편폼 만들기</button>
           </div>
           
-          {/* 2번 줄: 현황 5종 (택배 / 예약 / 상품 / 간편폼 / 이력서) */}
-          <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
-            <button
-              onClick={() => setActiveTab('delivery')}
-              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
-                activeTab === 'delivery' 
-                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
-                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
-              }`}
-            >택배접수</button>
-            <button
-              onClick={() => setActiveTab('reservation')}
-              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
-                activeTab === 'reservation' 
-                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
-                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
-              }`}
-            >예약접수</button>
-            <button
-              onClick={() => setActiveTab('order')}
-              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
-                activeTab === 'order' 
-                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
-                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
-              }`}
-            >상품접수</button>
+          {/* 2번 줄: 현황 3종 (간편폼접수 / 택배접수 / 이력서접수) */}
+          <div className="flex flex-row justify-center gap-1.5 sm:gap-2.5 w-full">
             <button
               onClick={() => setActiveTab('custom')}
-              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[140px] px-2 py-2 sm:px-4 sm:py-2 rounded-full text-[12.5px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'custom' 
                   ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
                   : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >간편폼접수</button>
             <button
+              onClick={() => setActiveTab('delivery')}
+              className={`flex-1 max-w-[140px] px-2 py-2 sm:px-4 sm:py-2 rounded-full text-[12.5px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                activeTab === 'delivery' 
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
+              }`}
+            >택배접수</button>
+            <button
               onClick={() => setActiveTab('resume')}
-              className={`flex-1 max-w-[125px] px-0.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-[12px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tighter sm:tracking-tight ${
+              className={`flex-1 max-w-[140px] px-2 py-2 sm:px-4 sm:py-2 rounded-full text-[12.5px] sm:text-[14px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'resume' 
                   ? 'bg-emerald-600 text-white shadow-md' 
                   : 'bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100/70 border border-emerald-200 shadow-sm'

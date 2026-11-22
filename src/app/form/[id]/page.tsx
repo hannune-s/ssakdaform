@@ -11,11 +11,22 @@ import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptio
 import ShopLinkList from '@/app/components/ShopLinkList';
 import CustomerLookupSection from '@/app/components/CustomerLookupSection';
 
-export default function CustomerFormPage() {
+export default function CustomerFormPage({
+  overrideStoreId,
+  overrideFormCode
+}: {
+  overrideStoreId?: string;
+  overrideFormCode?: string;
+} = {}) {
   const params = useParams();
-  // /f/[storeId]/[code] 경로와 기존 /form/[id]?store=[storeId] 경로를 모두 완벽 호환 지원
-  const paramStoreId = params?.storeId ? decodeURIComponent(params.storeId as string) : null;
-  const id = decodeURIComponent(((params?.code || params?.id) as string) || '');
+  // /f/[storeId]/[code] 경로, /store/[slug] 대표 폼, 기존 /form/[id]?store=[storeId] 경로를 모두 완벽 호환 지원
+  const paramStoreId =
+    overrideStoreId ||
+    (params?.storeId ? decodeURIComponent(params.storeId as string) : null) ||
+    (params?.slug ? decodeURIComponent(params.slug as string) : null);
+  const id = decodeURIComponent(
+    overrideFormCode || ((params?.code || params?.id) as string) || '1'
+  );
 
   const [data, setData] = useState<any>(null);
   const [actualFormId, setActualFormId] = useState<string>(id);
@@ -154,6 +165,10 @@ export default function CustomerFormPage() {
 
     const findMatchingCustomForm = (forms: any[], codeOrId: string) => {
       if (!Array.isArray(forms) || forms.length === 0) return null;
+      // 0. '__main__' 요청인 경우 대표 폼(isMain: true) 또는 첫 번째 폼 반환
+      if (codeOrId === '__main__') {
+        return forms.find((f: any) => f && f.isMain) || forms[0];
+      }
       // 1. id 또는 shortCode 직접 일치 확인
       const direct = forms.find(
         (f: any) => String(f.id) === codeOrId || (f.shortCode && String(f.shortCode) === codeOrId)
@@ -166,7 +181,7 @@ export default function CustomerFormPage() {
           return forms[idx];
         }
       }
-      return null;
+      return forms.find((f: any) => f && f.isMain) || forms[0];
     };
 
     const isPresetForm =

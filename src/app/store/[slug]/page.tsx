@@ -31,10 +31,14 @@ import { supabase } from '@/lib/supabase';
 import { getActiveStoreId } from '@/lib/storeSession';
 import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 import ShopLinkList from '@/app/components/ShopLinkList';
+import CustomerFormPage from '@/app/form/[id]/page';
 
 export default function StoreHubPage() {
   const params = useParams();
   const slug = (params?.slug as string) || 'demo';
+
+  // 매장에 직접 꾸민 대표 간편폼(예: '단골할래요?')이 있는 경우, 통합 메뉴판 대신 해당 대표 폼 화면을 바로 렌더링
+  const [hasCustomMainForm, setHasCustomMainForm] = useState<boolean | null>(null);
 
   const standardForms = [
     {
@@ -43,20 +47,6 @@ export default function StoreHubPage() {
       description: '보내실 물품의 택배 발송을 신청합니다.',
       icon: <Package className="w-6 h-6 text-blue-600" />,
       color: 'bg-blue-50 border-blue-100 group-hover:border-blue-300',
-    },
-    {
-      id: 'reservation-preset',
-      title: '매장 예약 신청',
-      description: '방문 일정과 인원을 미리 예약합니다.',
-      icon: <Calendar className="w-6 h-6 text-indigo-600" />,
-      color: 'bg-indigo-50 border-indigo-100 group-hover:border-indigo-300',
-    },
-    {
-      id: 'order-preset',
-      title: '상품 주문서',
-      description: '원하시는 상품을 쉽고 빠르게 주문하세요.',
-      icon: <ShoppingBag className="w-6 h-6 text-orange-600" />,
-      color: 'bg-orange-50 border-orange-100 group-hover:border-orange-300',
     }
   ];
 
@@ -117,6 +107,25 @@ export default function StoreHubPage() {
           closedDays: '',
           paymentLink: ''
         };
+        if (Array.isArray(storeRow.custom_forms) && storeRow.custom_forms.length > 0) {
+          setHasCustomMainForm(true);
+        } else {
+          setHasCustomMainForm(false);
+        }
+      } else {
+        const localFormsRaw =
+          localStorage.getItem(`ssakdaform_custom_forms_${slug}`) ||
+          (slug === getActiveStoreId() ? localStorage.getItem('ssakdaform_custom_forms') : null);
+        if (localFormsRaw) {
+          try {
+            const parsedForms = JSON.parse(localFormsRaw);
+            setHasCustomMainForm(Array.isArray(parsedForms) && parsedForms.length > 0);
+          } catch {
+            setHasCustomMainForm(false);
+          }
+        } else {
+          setHasCustomMainForm(false);
+        }
       }
 
       // 2. 같은 브라우저에서 설정한 추가 상세정보(영업시간, 휴무일, 쇼핑몰링크 등) 병합 (DB의 상호명/기본정보 우선)
@@ -331,6 +340,19 @@ export default function StoreHubPage() {
       defaultPending: '접수대기',
     };
   };
+
+  if (hasCustomMainForm === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F8]">
+        <div className="text-stone-500 font-medium animate-pulse">화면을 불러오는 중입니다...</div>
+      </div>
+    );
+  }
+
+  // 사장님이 직접 꾸민 대표 간편폼(예: '단골할래요?')이 있으면 /store/[slug] 접속 시 바로 그 화면을 보여줌
+  if (hasCustomMainForm) {
+    return <CustomerFormPage overrideStoreId={slug} overrideFormCode="__main__" />;
+  }
 
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col font-sans relative">

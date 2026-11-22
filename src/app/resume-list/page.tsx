@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { UserCheck, X, Printer, Check, User, Download, FileText, Save } from 'lucide-react';
+import { UserCheck, X, Printer, Check, User, Download, FileText, Save, Copy } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
@@ -10,6 +10,17 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
   const [memoInputs, setMemoInputs] = useState<Record<string, string>>({});
   const [savedMemoId, setSavedMemoId] = useState<string | null>(null);
+  const [copiedResumeLink, setCopiedResumeLink] = useState(false);
+
+  const handleCopyResumeFormLink = () => {
+    const storeId = getEffectiveAdminStoreId();
+    const link = `${window.location.origin}/form/resume-preset?store=${encodeURIComponent(storeId)}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedResumeLink(true);
+      setTimeout(() => setCopiedResumeLink(false), 2000);
+      alert(`직원채용 간편이력서 폼 주소가 복사되었습니다!\n채용 공고나 지원자에게 전달해 보세요.\n\n${link}`);
+    });
+  };
 
   const filteredResponses = responses.filter(res => {
     if (!searchQuery) return true;
@@ -113,6 +124,14 @@ export default function ResumeList({ searchQuery = '' }: { searchQuery?: string 
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">이력서접수 (직원채용)</h1>
           <p className="text-[13px] text-gray-500">지원자들이 제출한 간편 이력서 리스트입니다. 비고란에 면접 일정이나 근무 특이사항을 자유롭게 메모해보세요.</p>
         </div>
+        <button
+          type="button"
+          onClick={handleCopyResumeFormLink}
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[13px] font-extrabold rounded-xl shadow-2xs transition-all active:scale-95 shrink-0"
+        >
+          {copiedResumeLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+          <span>{copiedResumeLink ? '이력서폼 주소 복사됨' : '직원채용 이력서폼 링크 복사'}</span>
+        </button>
       </div>
 
       {/* 리스트 테이블 */}

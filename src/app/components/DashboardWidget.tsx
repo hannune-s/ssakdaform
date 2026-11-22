@@ -103,17 +103,15 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
   }, []);
 
   const stats = [
+    { id: 'custom', name: '간편폼접수', count: counts.custom, newCount: 0, icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
     { id: 'delivery', name: '택배접수', count: counts.delivery, newCount: 0, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { id: 'reservation', name: '예약접수', count: counts.reservation, newCount: 0, icon: Calendar, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
-    { id: 'order', name: '상품접수', count: counts.order, newCount: 0, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { id: 'custom', name: '간편폼접수', count: counts.custom, newCount: 0, icon: FileText, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
     { id: 'resume', name: '이력서접수', count: counts.resume, newCount: 0, icon: UserCheck, color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' }
   ];
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 mb-8 mt-2">
       
-      {/* 1 Row 5 Columns Grid Status */}
+      {/* 1 Row 3 Columns Grid Status */}
       <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
         <div className="flex items-center justify-between mb-3 px-1">
           <h3 className="font-bold text-gray-900 flex items-center gap-2 text-[14px] sm:text-[15px]">
@@ -123,7 +121,7 @@ export default function DashboardWidget({ setActiveTab }: { setActiveTab: (tab: 
           <span className="text-[11px] text-gray-500 font-medium">오늘 00:00 기준</span>
         </div>
         
-        <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {stats.map(stat => (
             <button 
               key={stat.id}

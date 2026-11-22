@@ -2,7 +2,7 @@
 import { getSmartPlaceholder } from "@/lib/formUtils";
 
 import { useState, useEffect } from 'react';
-import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle, ExternalLink, GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, Eye, Link as LinkIcon, RotateCcw, Copy, Check, Pencil, Trash2, PlusCircle, ExternalLink, GripVertical, ArrowUp, ArrowDown, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore } from '@/lib/storeSession';
 
@@ -282,6 +282,15 @@ export default function FormBuilder() {
     }
   };
 
+  const handleSetMainForm = async (id: string) => {
+    const updated = savedForms.map(f => ({
+      ...f,
+      isMain: f.id === id
+    }));
+    setSavedForms(updated);
+    await syncCustomFormsToDb(updated);
+  };
+
   const handleSave = async () => {
     const existingForms = [...savedForms];
 
@@ -540,6 +549,8 @@ export default function FormBuilder() {
                 {savedForms.map((form, idx) => {
                   const isEditingThis = editingFormId === form.id;
                   const isCopiedThis = copiedFormId === form.id;
+                  const hasExplicitMain = savedForms.some(f => f.isMain);
+                  const isMainThis = Boolean(form.isMain) || (!hasExplicitMain && idx === 0);
                   const shortCode = getFormShortCode(form, idx);
                   const shortPath = `/f/${encodeURIComponent(getActiveStoreId())}/${encodeURIComponent(shortCode)}`;
                   return (
@@ -548,12 +559,20 @@ export default function FormBuilder() {
                       className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-xl border transition-all ${
                         isEditingThis 
                           ? 'bg-amber-50/60 border-amber-300 shadow-sm' 
-                          : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-purple-200 hover:shadow-sm'
+                          : isMainThis
+                            ? 'bg-purple-50/50 border-purple-300 shadow-sm'
+                            : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-purple-200 hover:shadow-sm'
                       }`}
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h4 className="font-bold text-gray-800 text-[14.5px] sm:text-[15px] truncate">{form.formTitle}</h4>
+                          {isMainThis && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-extrabold bg-[#5B21B6] text-white rounded-md shrink-0">
+                              <Star className="w-3 h-3 fill-amber-300 text-amber-300" />
+                              매장 대표 화면 (/store/{getActiveStoreId()})
+                            </span>
+                          )}
                           <span className="px-2 py-0.5 text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200 rounded-md shrink-0">
                             {shortPath}
                           </span>
@@ -571,6 +590,17 @@ export default function FormBuilder() {
                       </div>
                       
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0 self-end sm:self-center">
+                        {!isMainThis && (
+                          <button
+                            type="button"
+                            onClick={() => handleSetMainForm(form.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[12px] font-bold text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100 rounded-lg transition-colors whitespace-nowrap"
+                            title="우리 매장 통합 링크(/store/...)로 접속했을 때 이 폼이 바로 열리게 합니다"
+                          >
+                            <Star className="w-3.5 h-3.5 text-amber-500" />
+                            대표 화면 지정
+                          </button>
+                        )}
                         <a
                           href={shortPath}
                           target="_blank"

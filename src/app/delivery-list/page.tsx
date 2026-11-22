@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Package, X, Printer, CheckCircle, Download } from 'lucide-react';
+import { Package, X, Printer, CheckCircle, Download, Copy, Check, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
@@ -25,6 +25,17 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
   const [courierInputs, setCourierInputs] = useState<Record<string, string>>({});
   const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [copiedFormLink, setCopiedFormLink] = useState(false);
+
+  const handleCopyDeliveryFormLink = () => {
+    const storeId = getEffectiveAdminStoreId();
+    const link = `${window.location.origin}/form/delivery-preset?store=${encodeURIComponent(storeId)}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedFormLink(true);
+      setTimeout(() => setCopiedFormLink(false), 2000);
+      alert(`간편 택배 접수 폼 주소가 복사되었습니다!\n[매장 설정 > 외부 링크 설정]에 붙여넣거나 고객에게 전달해 보세요.\n\n${link}`);
+    });
+  };
 
   const filteredResponses = responses.filter(res => {
     if (!searchQuery) return true;
@@ -291,18 +302,28 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">택배접수</h1>
           <p className="text-[13px] text-gray-500">고객들이 제출한 택배 배송 신청서 리스트입니다. 원하는 내역을 체크하여 송장용 엑셀로 다운로드하세요.</p>
         </div>
-        <button
-          onClick={handleDownloadWaybillExcel}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[13.5px] font-bold rounded-xl shadow-sm transition-all active:scale-95 shrink-0"
-        >
-          <Download className="w-4 h-4" />
-          택배 송장용 엑셀 다운로드
-          {selectedIds.length > 0 && (
-            <span className="px-2 py-0.5 bg-white/20 rounded-full text-[12px] font-extrabold">
-              {selectedIds.length}건
-            </span>
-          )}
-        </button>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleCopyDeliveryFormLink}
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-purple-50 hover:bg-purple-100 text-[#5B21B6] border border-purple-200 text-[13px] font-extrabold rounded-xl shadow-2xs transition-all active:scale-95"
+          >
+            {copiedFormLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+            <span>{copiedFormLink ? '택배폼 주소 복사됨' : '택배폼 링크 복사'}</span>
+          </button>
+          <button
+            onClick={handleDownloadWaybillExcel}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[13.5px] font-bold rounded-xl shadow-sm transition-all active:scale-95 shrink-0"
+          >
+            <Download className="w-4 h-4" />
+            택배 송장용 엑셀 다운로드
+            {selectedIds.length > 0 && (
+              <span className="px-2 py-0.5 bg-white/20 rounded-full text-[12px] font-extrabold">
+                {selectedIds.length}건
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* 리스트 테이블 */}
