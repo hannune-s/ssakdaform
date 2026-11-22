@@ -38,13 +38,13 @@ export async function GET(
     theme_color: '#3B0764',
     icons: [
       {
-        src: '/icon-192.png?v=6',
+        src: '/icon-192.png?v=7',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'any maskable',
       },
       {
-        src: '/icon-512.png?v=6',
+        src: '/icon-512.png?v=7',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'any maskable',
