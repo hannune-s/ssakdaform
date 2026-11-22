@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 
@@ -13,6 +14,50 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     pathname?.startsWith('/preview') ||
     pathname?.startsWith('/store/') ||
     pathname?.startsWith('/hanook');
+
+  useEffect(() => {
+    if (typeof document === 'undefined' || !pathname) return;
+
+    // 어드민 홈('/') 등 고객 페이지가 아닐 때만 어드민 manifest를 주입하고,
+    // /store/[slug] 나 /hanook 페이지에서는 해당 페이지 고유의 manifest만 유지하도록 정리
+    const allManifests = Array.from(document.querySelectorAll('link[rel="manifest"]'));
+
+    if (pathname.startsWith('/store/')) {
+      const slug = pathname.split('/')[2] || 'demo';
+      const targetHref = `/api/manifest/store/${encodeURIComponent(slug)}`;
+      allManifests.forEach((el) => {
+        const href = el.getAttribute('href') || '';
+        if (!href.includes('/api/manifest/store/')) {
+          el.remove();
+        }
+      });
+      if (!document.querySelector(`link[rel="manifest"][href^="/api/manifest/store/"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = targetHref;
+        document.head.appendChild(link);
+      }
+    } else if (pathname.startsWith('/f/')) {
+      const storeId = pathname.split('/')[2] || 'demo';
+      const targetHref = `/api/manifest/store/${encodeURIComponent(storeId)}`;
+      allManifests.forEach((el) => el.remove());
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = targetHref;
+      document.head.appendChild(link);
+    } else if (!pathname.startsWith('/hanook')) {
+      const hasAdminManifest = allManifests.some((el) =>
+        (el.getAttribute('href') || '').includes('/manifest.json')
+      );
+      if (!hasAdminManifest) {
+        allManifests.forEach((el) => el.remove());
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = '/manifest.json?v=6';
+        document.head.appendChild(link);
+      }
+    }
+  }, [pathname]);
 
   // 고객용 페이지인 경우 사이드바와 마진을 렌더링하지 않음
   if (isCustomerPage) {

@@ -6,7 +6,6 @@ import LayoutWrapper from "@/components/LayoutWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  manifest: "/manifest.json?v=5",
   title: "싹다폼 Admin",
   description: "싹다폼 관리자 대시보드",
 };
