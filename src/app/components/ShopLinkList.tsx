@@ -68,7 +68,7 @@ export default function ShopLinkList({
           customSub ||
           (isFullRow
             ? '간편한 택배 발송 신청은 여기에서'
-            : '간편 택배 발송 접수'),
+            : '간편 택배 발송 신청'),
         actionLabel: '접수하기'
       };
     }
@@ -102,17 +102,17 @@ export default function ShopLinkList({
           href={targetUrl}
           target="_blank"
           rel="noreferrer"
-          className={`w-full px-4 py-2.5 rounded-xl border transition-all flex items-center justify-between gap-2.5 group active:scale-[0.99] ${
+          className={`w-full px-3.5 sm:px-4 py-2.5 rounded-xl border transition-all flex items-center justify-between gap-2 group active:scale-[0.99] ${
             blog
               ? 'bg-gradient-to-r from-[#F3E8FF] via-[#F8F2FF] to-[#EDE9FE] hover:from-[#E9D5FF] hover:to-[#DDD6FE] border-[#C4B5FD] shadow-2xs'
               : 'bg-white hover:bg-purple-50/40 border-purple-200 shadow-2xs'
           }`}
         >
-          <div className="min-w-0 flex items-baseline gap-2 flex-wrap">
-            <p className="text-[14.5px] font-black text-[#3B0764] tracking-tight">
+          <div className="min-w-0 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+            <p className="text-[14px] sm:text-[14.5px] font-black text-[#3B0764] tracking-tight break-keep">
               {displayTitle}
             </p>
-            <p className="text-[12px] font-semibold text-[#6D28D9]/80 truncate">
+            <p className="text-[11.5px] sm:text-[12px] font-semibold text-[#6D28D9]/85 break-keep">
               {subtitle}
             </p>
           </div>
@@ -124,27 +124,24 @@ export default function ShopLinkList({
       );
     }
 
-    // 2. 하단 2열 슬림 버튼 (아이콘 없이 높이 확 줄인 컴팩트 박스)
+    // 2. 하단 2열 슬림 버튼: 오른쪽 알약 버튼을 없애서 가로폭 전체를 쓰고 모바일에서도 글자가 한 글자도 잘리지 않게 표시
     return (
       <a
         key={idx}
         href={targetUrl}
         target="_blank"
         rel="noreferrer"
-        className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-purple-50/50 border border-purple-200/90 hover:border-[#7C3AED] shadow-2xs transition-all flex items-center justify-between gap-2 group active:scale-[0.99]"
+        className="px-3 sm:px-3.5 py-2.5 rounded-xl bg-white hover:bg-purple-50/50 border border-purple-200/90 hover:border-[#7C3AED] shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
       >
         <div className="min-w-0 flex-1">
-          <p className="text-[13.5px] sm:text-[14px] font-black text-[#3B0764] tracking-tight leading-tight truncate">
+          <p className="text-[13px] sm:text-[14px] font-black text-[#3B0764] tracking-tight leading-snug break-keep">
             {displayTitle}
           </p>
-          <p className="text-[11px] font-semibold text-gray-500 leading-tight mt-0.5 truncate">
+          <p className="text-[11px] sm:text-[11.5px] font-semibold text-gray-500 leading-snug mt-0.5 break-keep">
             {subtitle}
           </p>
         </div>
-        <span className="inline-flex items-center gap-0.5 px-2 py-1 rounded-lg bg-purple-50 text-[#5B21B6] group-hover:bg-[#5B21B6] group-hover:text-white text-[10.5px] font-extrabold transition-colors shrink-0">
-          <span>{actionLabel}</span>
-          <ChevronRight className="w-3 h-3" />
-        </span>
+        <ChevronRight className="w-4 h-4 text-[#7C3AED] group-hover:translate-x-0.5 transition-transform shrink-0" />
       </a>
     );
   };
