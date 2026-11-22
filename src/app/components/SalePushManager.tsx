@@ -5,6 +5,7 @@ import {
   Plus,
   Trash2,
   Send,
+  Save,
   PowerOff,
   Clock,
   Calendar,
@@ -240,7 +241,7 @@ export default function SalePushManager() {
     }
   };
 
-  const saveAndBroadcast = async (nextActiveState: boolean) => {
+  const saveAndBroadcast = async (nextActiveState: boolean, shouldSendPush = true) => {
     const storeId = getEffectiveAdminStoreId();
     const validItems = items
       .map(it => ({
@@ -302,7 +303,7 @@ export default function SalePushManager() {
       if (validItems.length > 0) setItems(validItems);
 
       let pushStatsMsg = '';
-      if (nextActiveState) {
+      if (nextActiveState && shouldSendPush) {
         const storeName = getLoggedInStore()?.store_name || '우리 매장';
         const pushMessage = `${validItems.map(i => `${i.name} ${i.salePrice}`).join(' / ')}${payload.period ? ` (${payload.period})` : ''}`;
 
@@ -336,11 +337,19 @@ export default function SalePushManager() {
         }
       }
 
-      alert(
-        nextActiveState
-          ? `특가 오픈 및 푸시 전송이 완료되었습니다.${pushStatsMsg}`
-          : '특가가 종료(숨김) 처리되었습니다.'
-      );
+      if (!shouldSendPush) {
+        alert(
+          nextActiveState
+            ? '내용이 저장되었습니다. (고객에게 푸시 알림은 다시 발송되지 않고 화면 내용만 즉시 반영됩니다)'
+            : '내용이 임시 저장되었습니다. (고객 화면에는 아직 노출되지 않습니다)'
+        );
+      } else {
+        alert(
+          nextActiveState
+            ? `특가 오픈 및 푸시 전송이 완료되었습니다.${pushStatsMsg}`
+            : '특가가 종료(숨김) 처리되었습니다.'
+        );
+      }
     } catch (err: unknown) {
       alert('저장 중 오류가 발생했습니다: ' + ((err as Error)?.message || '오류'));
     } finally {
@@ -584,12 +593,12 @@ export default function SalePushManager() {
           </div>
         </div>
 
-        {/* 3. 하단 미리보기 / 전송 / 종료 버튼 */}
+        {/* 3. 하단 미리보기 / 내용만 저장 / 푸시 전송 / 종료 버튼 */}
         <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-2.5">
           <button
             type="button"
             onClick={() => setIsPreviewOpen(true)}
-            className="flex-1 py-3.5 px-5 rounded-xl bg-white hover:bg-purple-50 text-[#5B21B6] border border-purple-200 font-bold text-sm transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 py-3.5 px-4 rounded-xl bg-white hover:bg-purple-50 text-[#5B21B6] border border-purple-200 font-bold text-sm transition-colors flex items-center justify-center gap-1.5"
           >
             <Eye className="w-4 h-4" />
             <span>푸시화면 미리보기</span>
@@ -598,16 +607,27 @@ export default function SalePushManager() {
           <button
             type="button"
             disabled={isSaving}
-            onClick={() => saveAndBroadcast(true)}
-            className="flex-[2] py-3.5 px-6 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-bold text-[15px] shadow-sm transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-60"
+            onClick={() => saveAndBroadcast(isActive, false)}
+            className="flex-1 py-3.5 px-4 rounded-xl bg-purple-50 hover:bg-purple-100 text-[#4C1D95] border border-purple-200 font-bold text-sm transition-colors flex items-center justify-center gap-1.5 disabled:opacity-60"
+            title="푸시 알림을 다시 발송하지 않고 수정한 내용만 저장합니다"
+          >
+            <Save className="w-4 h-4" />
+            <span>내용만 저장</span>
+          </button>
+
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => saveAndBroadcast(true, true)}
+            className="flex-[1.6] py-3.5 px-5 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white font-bold text-[15px] shadow-sm transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-60"
           >
             <Send className="w-4 h-4" />
             <span>
               {isSaving
-                ? '전송 중...'
+                ? '처리 중...'
                 : isActive
-                  ? '특가 내용 수정 & 푸시 재전송'
-                  : '특가 오픈 & 단골 푸시 전송'}
+                  ? '푸시 알림 재전송'
+                  : '특가 오픈 & 푸시 전송'}
             </span>
           </button>
 
@@ -615,8 +635,8 @@ export default function SalePushManager() {
             <button
               type="button"
               disabled={isSaving}
-              onClick={() => saveAndBroadcast(false)}
-              className="flex-1 py-3.5 px-5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm transition-colors flex items-center justify-center gap-1.5"
+              onClick={() => saveAndBroadcast(false, true)}
+              className="flex-1 py-3.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm transition-colors flex items-center justify-center gap-1.5"
             >
               <PowerOff className="w-4 h-4" />
               <span>특가 종료</span>
