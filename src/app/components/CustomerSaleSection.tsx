@@ -170,7 +170,9 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
         if (permission === 'granted') {
           let registration = await navigator.serviceWorker.getRegistration();
           if (!registration) {
-            registration = await navigator.serviceWorker.register('/sw.js?v=3');
+            registration = await navigator.serviceWorker.register('/sw.js?v=4');
+          } else {
+            try { await registration.update(); } catch {}
           }
           await navigator.serviceWorker.ready;
 
@@ -231,14 +233,15 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
             setIsSubscribed(true);
             playSaleChime();
 
-            // 모바일(안드로이드/아이폰 PWA)에서도 100% 동작하는 서비스워커 showNotification 사용
+            // 모바일(안드로이드/아이폰 PWA)에서도 100% 상단 배너로 뜨도록 고유 tag 사용
             try {
               await registration.showNotification(`🔔 [${storeName}] 단골 특가 알림 켜짐!`, {
                 body: '사장님이 깜짝 특가를 올리면 이 기기로 소리와 함께 알림이 도착합니다.',
                 icon: '/icon-192.png',
                 badge: '/icon-192.png',
-                tag: 'ssakdaform-sub-confirm',
-              });
+                tag: 'ssakdaform-sub-confirm-' + Date.now(),
+                vibrate: [300, 100, 300],
+              } as NotificationOptions);
             } catch {
               try {
                 new Notification(`[${storeName}] 단골 특가 알림이 켜졌습니다`, {
