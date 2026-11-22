@@ -379,7 +379,7 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
                         <span className="text-sm font-bold text-gray-400 line-through">
                           {formatPriceDisplay(item.salePrice)}
                         </span>
-                        <span className="px-3 py-1 rounded-lg bg-gray-800 text-white text-xs font-extrabold tracking-tight shadow-2xs">
+                        <span className="px-3 py-1 rounded-lg bg-red-600 text-white text-xs font-extrabold tracking-tight shadow-2xs">
                           품절
                         </span>
                       </div>
