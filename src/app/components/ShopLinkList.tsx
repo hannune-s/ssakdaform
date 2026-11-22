@@ -23,14 +23,12 @@ export default function ShopLinkList({
     ? links.filter(l => l && l.url && String(l.url).trim() !== '')
     : [];
 
-  // 이미 외부 링크 목록에 택배 접수 링크가 들어 있는지 확인 (중복 방지)
   const hasCustomDeliveryLink = rawLinks.some(l => {
     const t = String(l.title || '');
     const u = String(l.url || '');
     return t.includes('택배') || u.includes('delivery-preset');
   });
 
-  // 사장님이 따로 링크 설정을 못 해도 기본으로 [택배 신청해요~] 버튼이 자동 표시되도록 추가
   const validLinks: ShopLinkItem[] = [...rawLinks];
   if (!hideDefaultDelivery && storeId && !hasCustomDeliveryLink) {
     validLinks.unshift({
@@ -49,7 +47,6 @@ export default function ShopLinkList({
       t.includes('기록') ||
       t.includes('블로그') ||
       t.includes('이야기') ||
-      t.includes('일상') ||
       u.includes('/hanook') ||
       u.includes('blog')
     );
@@ -102,13 +99,6 @@ export default function ShopLinkList({
     };
   };
 
-  let orderedLinks = [...validLinks];
-  const blogIdx = orderedLinks.findIndex(isBlogItem);
-  if (orderedLinks.length === 3 && blogIdx > 0) {
-    const [blogItem] = orderedLinks.splice(blogIdx, 1);
-    orderedLinks = [blogItem, ...orderedLinks];
-  }
-
   const renderCard = (linkItem: ShopLinkItem, idx: number, isFullRow: boolean) => {
     const rawUrl = String(linkItem.url || '').trim();
     const isInternalForm =
@@ -122,7 +112,7 @@ export default function ShopLinkList({
     const blog = isBlogItem(linkItem);
     const { subtitle, actionLabel } = getCompactMeta(linkItem, displayTitle, isFullRow);
 
-    // 1. 상단 1칸 (소소한 기록 등): 아이콘/뱃지 없이 슬림하고 화사한 연보라 톤
+    // 1. 상단 1칸 (소소한 기록 블로그 고정 모양): 언제나 한 줄 전체 폭 + 연보라 톤 + [블로그 보기 >] 버튼
     if (isFullRow) {
       return (
         <a
@@ -152,7 +142,7 @@ export default function ShopLinkList({
       );
     }
 
-    // 2. 하단 2열 슬림 버튼: 오른쪽 알약 버튼을 없애서 가로폭 전체를 쓰고 모바일에서도 글자가 한 글자도 잘리지 않게 표시
+    // 2. 일반 외부 링크 슬림 버튼
     return (
       <a
         key={idx}
@@ -174,32 +164,21 @@ export default function ShopLinkList({
     );
   };
 
-  if (orderedLinks.length === 3) {
-    return (
-      <div className={className}>
-        {renderCard(orderedLinks[0], 0, true)}
-        <div className="grid grid-cols-2 gap-2">
-          {renderCard(orderedLinks[1], 1, false)}
-          {renderCard(orderedLinks[2], 2, false)}
-        </div>
-      </div>
-    );
-  }
-
-  if (orderedLinks.length === 2) {
-    return (
-      <div className={className}>
-        <div className="grid grid-cols-2 gap-2">
-          {renderCard(orderedLinks[0], 0, false)}
-          {renderCard(orderedLinks[1], 1, false)}
-        </div>
-      </div>
-    );
-  }
+  // 블로그(소소한 기록)는 다른 링크를 지우거나 추가해도 무조건 상단 1줄 전체 모양 그대로 100% 고정!
+  const blogLinks = validLinks.filter(isBlogItem);
+  const otherLinks = validLinks.filter(l => !isBlogItem(l));
 
   return (
     <div className={className}>
-      {orderedLinks.map((item, idx) => renderCard(item, idx, true))}
+      {blogLinks.map((item, idx) => renderCard(item, idx, true))}
+
+      {otherLinks.length >= 2 ? (
+        <div className="grid grid-cols-2 gap-2">
+          {otherLinks.map((item, idx) => renderCard(item, 100 + idx, false))}
+        </div>
+      ) : (
+        otherLinks.map((item, idx) => renderCard(item, 100 + idx, false))
+      )}
     </div>
   );
 }
