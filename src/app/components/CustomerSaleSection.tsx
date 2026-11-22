@@ -47,12 +47,15 @@ function formatPriceDisplay(val?: string) {
   if (!val) return '';
   const trimmed = val.trim();
   if (!trimmed) return '';
-  // 숫자(콤마 포함)로만 되어 있으면 천단위 콤마 + '원' 자동 포맷
+  // 숫자만 있거나 콤마가 섞여 있어도 무조건 천단위 콤마 표시 + 단위 없으면 '원' 추가
   const rawNum = trimmed.replace(/,/g, '');
   if (/^\d+$/.test(rawNum)) {
     return `${Number(rawNum).toLocaleString('ko-KR')}원`;
   }
-  return trimmed;
+  return rawNum.replace(/\d+/g, (num) => {
+    const n = Number(num);
+    return isNaN(n) ? num : n.toLocaleString('ko-KR');
+  });
 }
 
 export default function CustomerSaleSection({ storeId, storeName }: CustomerSaleSectionProps) {

@@ -58,6 +58,15 @@ function formatKoreanTime(timeStr: string) {
   return mStr === '00' ? `${ampm} ${h12}시` : `${ampm} ${h12}시 ${mStr}분`;
 }
 
+function formatNumberWithComma(val: string) {
+  if (!val) return '';
+  // 숫자에 천 단위 콤마 자동 삽입 (예: "10000" -> "10,000", "10000원" -> "10,000원")
+  return val.replace(/\d+/g, (num) => {
+    const n = Number(num);
+    return isNaN(n) ? num : n.toLocaleString('ko-KR');
+  });
+}
+
 export function buildFormattedPeriod(
   saleDate: string,
   startTime: string,
@@ -153,7 +162,13 @@ export default function SalePushManager() {
         if (d.untilSoldOut !== undefined) setUntilSoldOut(Boolean(d.untilSoldOut));
         if (d.story !== undefined) setStory(d.story);
         if (Array.isArray(d.items) && d.items.length > 0) {
-          setItems(d.items);
+          setItems(
+            d.items.map(it => ({
+              ...it,
+              salePrice: formatNumberWithComma(String(it.salePrice || '').replace(/,/g, '')),
+              originalPrice: formatNumberWithComma(String(it.originalPrice || '').replace(/,/g, ''))
+            }))
+          );
         }
       }
     } catch (e) {
@@ -186,7 +201,12 @@ export default function SalePushManager() {
   };
 
   const handleItemChange = (id: string, field: keyof SaleItem, value: string | boolean) => {
-    setItems(prev => prev.map(it => (it.id === id ? { ...it, [field]: value } : it)));
+    let nextVal = value;
+    if ((field === 'salePrice' || field === 'originalPrice') && typeof value === 'string') {
+      const stripped = value.replace(/,/g, '');
+      nextVal = formatNumberWithComma(stripped);
+    }
+    setItems(prev => prev.map(it => (it.id === id ? { ...it, [field]: nextVal } : it)));
   };
 
   // 품절 버튼을 누르면 즉시 DB에도 실시간 반영
