@@ -65,9 +65,18 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [showAddHomeGuide, setShowAddHomeGuide] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isInAppBrowser, setIsInAppBrowser] = useState(false);
 
   const lastUpdatedAtRef = useRef<string | null>(null);
   const hasAutoOpenedRef = useRef(false);
+
+  // 안드로이드 네이버앱/카톡/인스타 인앱브라우저에서 크롬(외부 브라우저)으로 즉시 전환
+  const openInExternalChrome = () => {
+    if (typeof window === 'undefined') return;
+    const currentUrl = window.location.href.replace(/^https?:\/\//i, '');
+    const scheme = window.location.protocol === 'https:' ? 'https' : 'http';
+    window.location.href = `intent://${currentUrl}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end`;
+  };
 
   useEffect(() => {
     if (!storeId) return;
@@ -75,6 +84,8 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
     if (typeof window !== 'undefined') {
       const ua = window.navigator.userAgent.toLowerCase();
       setIsIOS(/iphone|ipad|ipod/.test(ua));
+      const inApp = /naver|inapp|kakaotalk|instagram|fbav|fban|line|daumapps/.test(ua);
+      setIsInAppBrowser(inApp);
       const savedSub = localStorage.getItem(`ssakdaform_push_sub_${storeId}`);
       if (savedSub === '1' && 'Notification' in window && Notification.permission === 'granted') {
         setIsSubscribed(true);
@@ -504,7 +515,7 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
               <div className="flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-rose-600" />
                 <h3 className="text-[15px] font-extrabold text-gray-900">
-                  홈화면 추가 안내
+                  홈화면 추가 &amp; 세일 알림 켜기
                 </h3>
               </div>
               <button
@@ -516,26 +527,61 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
               </button>
             </div>
 
-            <p className="text-xs text-gray-600 leading-relaxed">
-              <b>{storeName}</b> 페이지를 휴대폰 홈화면에 추가해 두시면 별도 앱 설치 없이 언제든 바로 접속하고 실시간 세일·득템 소식을 받아보실 수 있습니다.
-            </p>
+            {isInAppBrowser && !isIOS ? (
+              <div className="space-y-3">
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5 leading-relaxed">
+                  <p className="font-extrabold text-amber-800">
+                    ⚠️ 현재 네이버/카톡 앱 내부 화면으로 열려 있습니다!
+                  </p>
+                  <p className="font-medium">
+                    네이버 앱이나 카카오톡 안에서는 휴대폰 푸시 알림과 홈화면 자동 설치가 제한됩니다. 아래 버튼을 눌러 <b>크롬(기본 브라우저)</b>으로 열어주세요!
+                  </p>
+                </div>
 
-            {isIOS ? (
-              <div className="p-3.5 rounded-xl bg-[#FFF5F5] border border-rose-200 space-y-2 text-xs text-rose-950">
-                <p className="font-extrabold text-rose-700">아이폰(Safari) 추가 방법</p>
-                <p className="flex items-center gap-1">
-                  1. 하단 <Share className="w-3.5 h-3.5 text-blue-600 inline" /> <b>[공유]</b> 버튼을 누릅니다.
-                </p>
-                <p>2. <b>[홈 화면에 추가]</b>를 선택합니다.</p>
-                <p>3. 추가된 아이콘으로 접속해 <b>[세일소식 받기]</b>를 눌러주세요.</p>
+                <button
+                  type="button"
+                  onClick={openInExternalChrome}
+                  className="w-full py-3.5 rounded-xl bg-[#5B21B6] hover:bg-[#4C1D95] text-white text-sm font-black shadow-md transition-all active:scale-95"
+                >
+                  🚀 크롬 브라우저로 바로 열기 (클릭)
+                </button>
+
+                <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 text-[11.5px] text-gray-700 space-y-1">
+                  <p className="font-bold text-gray-900">💡 네이버 앱에서 바로 홈화면 추가하려면?</p>
+                  <p>화면 맨 오른쪽 아래 <b>[ = ]</b> 버튼 클릭 → <b>[홈 화면에 추가]</b> 또는 <b>[기본 브라우저로 열기]</b>를 눌러주세요.</p>
+                </div>
               </div>
             ) : (
-              <div className="p-3.5 rounded-xl bg-[#FFF5F5] border border-rose-200 space-y-2 text-xs text-rose-950">
-                <p className="font-extrabold text-rose-700">갤럭시/안드로이드 추가 방법</p>
-                <p>1. 브라우저 우측 메뉴 <b>[⋮]</b> 또는 <b>[≡]</b>를 누릅니다.</p>
-                <p>2. <b>[홈 화면에 추가]</b>를 선택합니다.</p>
-                <p>3. 화면의 <b>[세일소식 받기]</b>를 눌러 알림을 허용해 주세요.</p>
-              </div>
+              <>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  <b>{storeName}</b> 페이지를 휴대폰 홈화면에 추가해 두시면 별도 앱 설치 없이 언제든 바로 접속하고 실시간 세일·득템 소식을 받아보실 수 있습니다.
+                </p>
+
+                {isIOS ? (
+                  <div className="p-3.5 rounded-xl bg-[#FFF5F5] border border-rose-200 space-y-2 text-xs text-rose-950">
+                    <p className="font-extrabold text-rose-700">아이폰(Safari) 추가 방법</p>
+                    <p className="flex items-center gap-1">
+                      1. 하단 <Share className="w-3.5 h-3.5 text-blue-600 inline" /> <b>[공유]</b> 버튼을 누릅니다.
+                    </p>
+                    <p>2. <b>[홈 화면에 추가]</b>를 선택합니다.</p>
+                    <p>3. 추가된 아이콘으로 접속해 <b>[세일소식 받기]</b>를 눌러주세요.</p>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-xl bg-[#FFF5F5] border border-rose-200 space-y-2 text-xs text-rose-950">
+                    <p className="font-extrabold text-rose-700">갤럭시/안드로이드 추가 방법</p>
+                    <p>1. 브라우저 우측 상단 <b>[⋮]</b> 또는 하단 <b>[≡]</b> 메뉴를 누릅니다.</p>
+                    <p>2. <b>[홈 화면에 추가]</b> (또는 <b>현재 페이지 추가 &gt; 홈 화면</b>)를 선택합니다.</p>
+                    <p>3. 화면의 <b>[세일소식 받기]</b>를 눌러 알림을 허용해 주세요.</p>
+                    <button
+                      type="button"
+                      onClick={openInExternalChrome}
+                      className="mt-2 w-full py-2.5 rounded-lg bg-[#5B21B6] text-white text-xs font-extrabold"
+                    >
+                      크롬(Chrome) 브라우저로 열기
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
             <button
@@ -543,7 +589,7 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
               onClick={() => setShowAddHomeGuide(false)}
               className="w-full py-2.5 rounded-xl bg-rose-600 text-white text-xs font-extrabold hover:bg-rose-700"
             >
-              확인
+              닫기
             </button>
           </div>
         </div>
