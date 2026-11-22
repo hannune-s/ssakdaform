@@ -62,33 +62,27 @@ export default function SubscriptionPage() {
               아날로그 수기 장부에 뺏기던 사장님의 금쪽같은 시간을 확실하게 찾아드립니다.
             </p>
             
-            <div className="grid sm:grid-cols-2 gap-3 sm:gap-5">
-              {/* 월간 결제 버튼 */}
-              <button onClick={() => alert('월간 결제 모듈이 실행됩니다.')} className="relative w-full bg-white border-2 border-transparent shadow-sm sm:shadow-md shadow-gray-200/50 rounded-xl p-4 sm:p-5 text-left hover:border-indigo-600 hover:shadow-indigo-100 transition-all group overflow-hidden">
-                <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] sm:text-[11px] font-bold px-2.5 sm:px-3 py-1 rounded-bl-xl">
+            <div className="w-full">
+              {/* 월간 결제 버튼 (단독 노출) */}
+              <button onClick={() => alert('월간 결제 모듈이 실행됩니다.')} className="relative w-full bg-white border-2 border-indigo-200/80 shadow-sm sm:shadow-md shadow-gray-200/50 rounded-2xl p-5 sm:p-6 text-left hover:border-indigo-600 hover:shadow-indigo-100 transition-all group overflow-hidden">
+                <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[11px] sm:text-xs font-bold px-3.5 py-1.5 rounded-bl-xl">
                   소상공인 상생 응원가
                 </div>
-                <div className="font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-indigo-600 transition-colors text-[15px] sm:text-lg">월간 결제 (1개월 단독)</div>
-                <div className="flex items-end gap-1.5 mb-1 sm:mb-2">
-                  <span className="text-2xl sm:text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors tracking-tight">9,900<span className="text-[13px] sm:text-[15px] font-bold text-gray-500 ml-0.5">원</span></span>
-                  <span className="text-xs sm:text-sm text-gray-400 line-through mb-0.5 sm:mb-1 ml-1 font-medium">19,900원</span>
+                <div className="font-extrabold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors text-[16px] sm:text-lg">
+                  월간 이용권 (1개월 단독 결제)
                 </div>
-                <div className="text-[11px] sm:text-[13px] text-indigo-600 font-bold mb-0.5 sm:mb-1">소상공인 상생 응원 특별 할인가</div>
-                <div className="text-[11px] sm:text-[12px] text-gray-500 font-medium">명절·이벤트 등 필요한 달에만 1회 단독 결제 가능합니다.</div>
-              </button>
-
-              {/* 연간 결제 버튼 */}
-              <button onClick={() => alert('연간 결제 모듈이 실행됩니다.')} className="relative w-full bg-white border-2 border-transparent shadow-sm sm:shadow-md shadow-gray-200/50 rounded-xl p-4 sm:p-5 text-left hover:border-indigo-600 hover:shadow-indigo-100 transition-all group overflow-hidden">
-                <div className="absolute top-0 right-0 bg-rose-500 text-white text-[10px] sm:text-[11px] font-bold px-2.5 sm:px-3 py-1 rounded-bl-xl">
-                  추천! 약 38% 할인
+                <div className="flex items-end gap-2 mb-2">
+                  <span className="text-3xl sm:text-4xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors tracking-tight">
+                    9,900<span className="text-[14px] sm:text-[16px] font-bold text-gray-500 ml-0.5">원 / 1개월</span>
+                  </span>
+                  <span className="text-xs sm:text-sm text-gray-400 line-through mb-1 ml-1 font-medium">19,900원</span>
                 </div>
-                <div className="font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-indigo-600 transition-colors text-[15px] sm:text-lg">연간 결제</div>
-                <div className="flex items-end gap-1.5 mb-1 sm:mb-2">
-                  <span className="text-2xl sm:text-3xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors tracking-tight">149,000<span className="text-[13px] sm:text-[15px] font-bold text-gray-500 ml-0.5">원</span></span>
-                  <span className="text-xs sm:text-sm text-gray-400 line-through mb-0.5 sm:mb-1 ml-1 font-medium">238,800원</span>
+                <div className="text-[12px] sm:text-[13.5px] text-indigo-600 font-extrabold mb-1">
+                  소상공인 상생 응원 특별 할인가 · 자동결제 약정 없음
                 </div>
-                <div className="text-[11px] sm:text-[13px] text-rose-500 font-bold mb-0.5 sm:mb-1">월 12,410원 꼴 (약 38% 추가 할인)</div>
-                <div className="text-[11px] sm:text-[12px] text-gray-500 font-medium">1년 치가 한 번에 결제됩니다.</div>
+                <div className="text-[12px] sm:text-[13px] text-gray-500 font-medium">
+                  명절·이벤트 등 필요한 달에만 1개월씩 부담 없이 단독 결제로 이용하실 수 있습니다.
+                </div>
               </button>
             </div>
           </div>

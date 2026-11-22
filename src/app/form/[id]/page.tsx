@@ -392,9 +392,9 @@ export default function CustomerFormPage({
       setData({
         storeName: '내 매장 이름 (기본 설정)',
         formTitle: '직원채용 간편이력서',
-        formDescription: '지원해주셔서 감사합니다. 작성해 제출해주시면 확인 후 연락드리겠습니다.\n• 사진은 꼭 증명사진이 아니어도 되며, 얼굴 확인이 가능한 편한 사진으로 첨부해주세요.\n• 보건증 등 증빙서류 첨부가 어려우신 경우, 추후 방문 시 종이서류로 직접 확인시켜 주셔도 됩니다.',
+        formDescription: '지원해주셔서 감사합니다. 작성해 제출해주시면 확인 후 연락드리겠습니다.\n• 사진 첨부는 선택사항(생략 가능)이며, 첨부하실 경우 얼굴 확인이 가능한 편한 사진으로 올려주셔도 됩니다.\n• 보건증 등 증빙서류 첨부가 어려우신 경우, 추후 방문 시 종이서류로 직접 확인시켜 주셔도 됩니다.',
         fields: [
-          { id: 1, type: 'photo', label: '사진', placeholder: '본인 확인용 사진을 첨부해주세요 (카메라 촬영 또는 앨범 선택)', required: false },
+          { id: 1, type: 'photo', label: '사진 (선택)', placeholder: '사진 첨부는 선택사항입니다 (생략 가능)', required: false },
           { id: 2, type: 'text', label: '이름', placeholder: '지원자 성함을 입력하세요', required: true },
           { id: 3, type: 'phone', label: '연락처', placeholder: '010-0000-0000', required: true },
           { id: 4, type: 'address', label: '주소', placeholder: '클릭하여 거주지 주소 검색', required: true },
