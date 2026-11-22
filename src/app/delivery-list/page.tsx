@@ -202,12 +202,14 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       const receiverName = d['받는 분 - 이름'] || res.receiverName || '';
       const receiverPhone = formatPhoneForExcel(d['받는 분 - 연락처'] || res.receiverPhone || '');
       const receiverAddress = d['받는 분 - 주소'] || res.receiverAddress || '';
-      const itemName = d['보내는 분 - 상품명'] || '매장 발송 상품';
-      const quantity = '1';
+      const itemName = d['주문 상품 - 상품명'] || d['보내는 분 - 상품명'] || '매장 발송 상품';
+      const quantity = d['주문 상품 - 수량'] || '1';
       const deliveryMsg = d['배송 기사님께 남길 말씀'] || '';
       const senderName = d['보내는 분 - 이름'] || res.senderName || '';
       const senderPhone = formatPhoneForExcel(d['보내는 분 - 연락처'] || res.senderPhone || '');
-      const memo = d['기타 전달하고 싶은 내용'] || '';
+      const paymentInfo = d['주문 상품 - 결제확인'] || '';
+      const rawMemo = d['기타 전달하고 싶은 내용'] || '';
+      const memo = [paymentInfo, rawMemo].filter(Boolean).join(' / ');
       const courier = d._courier || '';
       const trackingNumber = d._trackingNumber || '';
       const status = res.status || '접수대기';
@@ -319,6 +321,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                   />
                 </th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">접수일시</th>
+                <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">주문상품 / 결제·입금자</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">보내는 분 (이름/연락처)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900">받는 분 (이름/주소)</th>
                 <th className="px-4 py-3 text-[13px] font-bold text-indigo-900 min-w-[340px]">배송상태 (택배사 / 송장번호)</th>
@@ -358,6 +361,31 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                       <td className="px-4 py-3 align-middle">
                         <p className="font-semibold text-gray-900 text-[13px]">{new Date(res.submitted_at).toLocaleDateString('ko-KR')}</p>
                         <p className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">{new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute:'2-digit' })}</p>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <p className="font-extrabold text-gray-900 text-[13px]">
+                          {data['주문 상품 - 상품명'] || data['보내는 분 - 상품명'] || '-'}
+                          {data['주문 상품 - 수량'] ? (
+                            <span className="ml-1 text-indigo-700 font-black">
+                              ({data['주문 상품 - 수량']})
+                            </span>
+                          ) : null}
+                        </p>
+                        {data['주문 상품 - 결제확인'] ? (
+                          <span
+                            className={`inline-block mt-1 px-2 py-0.5 rounded-md text-[11px] font-extrabold ${
+                              String(data['주문 상품 - 결제확인']).includes('매장 결제 완료')
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-amber-50 text-amber-800 border border-amber-200'
+                            }`}
+                          >
+                            {data['주문 상품 - 결제확인']}
+                          </span>
+                        ) : (
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gray-100 text-gray-500">
+                            결제방식 미선택 (이전 접수건)
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <p className="font-bold text-gray-900 text-[13px]">{senderName}</p>
@@ -464,7 +492,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
+                  <td colSpan={7} className="px-6 py-12 text-center">
                     <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <h3 className="text-gray-900 font-medium text-lg">아직 접수된 택배가 없습니다</h3>
                     <p className="text-gray-500 mt-1 text-sm">고객에게 통합 링크를 전달하여 접수를 받아보세요.</p>
@@ -555,9 +583,10 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
 
               {(() => {
                 const dataEntries = Object.entries(selectedResponse.data || { '안내': '이전 테스트 데이터이거나 내용이 없습니다.' }).filter(([k]) => !k.startsWith('_'));
-                const senderEntries = dataEntries.filter(([k]) => k.includes('보내는 분'));
+                const orderEntries = dataEntries.filter(([k]) => k.includes('주문 상품'));
+                const senderEntries = dataEntries.filter(([k]) => k.includes('보내는 분') && !(orderEntries.length > 0 && k === '보내는 분 - 상품명'));
                 const receiverEntries = dataEntries.filter(([k]) => k.includes('받는 분'));
-                const otherEntries = dataEntries.filter(([k]) => !k.includes('보내는 분') && !k.includes('받는 분'));
+                const otherEntries = dataEntries.filter(([k]) => !k.includes('보내는 분') && !k.includes('받는 분') && !k.includes('주문 상품'));
 
                 const renderSection = (title: string, entries: any[], isReceiver: boolean) => {
                   if (entries.length === 0) return null;
@@ -568,9 +597,9 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
                       </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-3 gap-x-5">
                         {entries.map(([key, value]: any) => {
-                          const cleanKey = key.replace(/보내는 분 - |받는 분 - /g, '');
-                          const isFullWidth = /주소|요청사항|상세|메모|내용/.test(cleanKey) || (value && String(value).length > 22);
-                          const isHighlight = /이름|연락처|전화번호|고객명/.test(cleanKey);
+                          const cleanKey = key.replace(/보내는 분 - |받는 분 - |주문 상품 - /g, '');
+                          const isFullWidth = /주소|요청사항|상세|메모|내용|결제확인/.test(cleanKey) || (value && String(value).length > 22);
+                          const isHighlight = /이름|연락처|전화번호|고객명|상품명|입금자명/.test(cleanKey);
 
                           return (
                             <div key={key} className={isFullWidth ? "col-span-2 sm:col-span-3" : ""}>
@@ -588,6 +617,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
 
                 return (
                   <div className="space-y-3">
+                    {renderSection('주문 상품 및 결제 확인', orderEntries, false)}
                     {renderSection('보내는 분 (발송인)', senderEntries, false)}
                     {renderSection('받는 분 (수령인)', receiverEntries, true)}
                     {renderSection('물품 및 기타 정보', otherEntries, false)}

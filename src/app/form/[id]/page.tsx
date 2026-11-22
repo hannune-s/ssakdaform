@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 import { getActiveStoreId } from '@/lib/storeSession';
@@ -35,6 +35,33 @@ export default function CustomerFormPage() {
   // 사진 및 첨부파일 (Base64 Data URL) 상태
   const [fileValues, setFileValues] = useState<Record<string, string>>({});
   const [fileNames, setFileNames] = useState<Record<string, string>>({});
+
+  // 간편 택배 접수 (delivery-preset) 전용: 주문 상품(상품명+수량) 및 결제 방식(매장결제완료 vs 계좌이체/입금자명) 상태
+  const [deliveryItems, setDeliveryItems] = useState<{ name: string; qty: string }[]>([
+    { name: '', qty: '1' }
+  ]);
+  const [deliveryPaymentType, setDeliveryPaymentType] = useState<'card_done' | 'bank_transfer'>('card_done');
+  const [deliveryDepositor, setDeliveryDepositor] = useState('');
+
+  const handleDeliveryItemChange = (index: number, field: 'name' | 'qty', value: string) => {
+    setDeliveryItems(prev => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
+  const handleAddDeliveryItem = () => {
+    if (deliveryItems.length >= 5) return;
+    setDeliveryItems(prev => [...prev, { name: '', qty: '1' }]);
+  };
+
+  const handleRemoveDeliveryItem = (index: number) => {
+    setDeliveryItems(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      return next.length > 0 ? next : [{ name: '', qty: '1' }];
+    });
+  };
   
   const handleTimeChange = (fieldId: number, part: 'ampm' | 'hour' | 'minute', value: string) => {
     setTimeValues(prev => ({
@@ -305,7 +332,6 @@ export default function CustomerFormPage() {
         fields: [
           { id: 1, type: 'text', label: '보내는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
           { id: 2, type: 'phone', label: '보내는 분 - 연락처', placeholder: '010-0000-0000', required: true },
-          { id: 3, type: 'text', label: '보내는 분 - 상품명', placeholder: '보내실 상품명을 입력하세요', required: true },
           { id: 4, type: 'text', label: '받는 분 - 이름', placeholder: '이름을 입력하세요', required: true },
           { id: 5, type: 'phone', label: '받는 분 - 연락처', placeholder: '010-0000-0000', required: true },
           { id: 6, type: 'address', label: '받는 분 - 주소', placeholder: '주소를 검색해주세요', required: true },
@@ -466,6 +492,47 @@ export default function CustomerFormPage() {
         dataObj[label] = dataUrl;
       }
     });
+
+    // 간편 택배 접수 (delivery-preset)인 경우: 상품명, 수량, 결제확인/입금자명 병합
+    if (id === 'delivery-preset') {
+      const validItems = deliveryItems
+        .map(it => ({ name: it.name.trim(), qty: (it.qty || '1').trim() }))
+        .filter(it => it.name !== '');
+
+      if (validItems.length === 0) {
+        alert('주문(발송)하실 상품명을 입력해 주세요.');
+        return;
+      }
+
+      if (deliveryPaymentType === 'bank_transfer' && !deliveryDepositor.trim()) {
+        alert('계좌이체를 선택하셨습니다. 입금자명을 입력해 주세요.');
+        return;
+      }
+
+      const formattedProductList =
+        validItems.length === 1
+          ? validItems[0].name
+          : validItems.map(it => `${it.name}(${it.qty})`).join(', ');
+      const totalQtySummary =
+        validItems.length === 1
+          ? validItems[0].qty
+          : validItems.map(it => `${it.qty}`).join(', ');
+
+      // 기존 송장 엑셀 및 리스트 완벽 호환 + 상세 정보 저장
+      dataObj['주문 상품 - 상품명'] = formattedProductList;
+      dataObj['주문 상품 - 수량'] = totalQtySummary;
+      dataObj['보내는 분 - 상품명'] =
+        validItems.length === 1
+          ? `${validItems[0].name} (${validItems[0].qty})`
+          : formattedProductList;
+      dataObj['주문 상품 - 결제확인'] =
+        deliveryPaymentType === 'card_done'
+          ? '매장 결제 완료 (카드/현금)'
+          : `계좌이체 (입금자: ${deliveryDepositor.trim()})`;
+      if (deliveryPaymentType === 'bank_transfer') {
+        dataObj['주문 상품 - 입금자명'] = deliveryDepositor.trim();
+      }
+    }
 
     const newResponse = {
       store_id: targetStoreId,
@@ -850,6 +917,160 @@ export default function CustomerFormPage() {
 
               return (
                 <div className="space-y-5">
+                  {/* 간편 택배 접수 전용: 보내는 분 위쪽 [주문 상품 및 결제 확인] 섹션 */}
+                  {id === 'delivery-preset' && (
+                    <div className="bg-purple-50/70 border border-purple-200 rounded-2xl p-3.5 sm:p-5 shadow-sm space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-extrabold text-[#3B0764] text-base flex items-center gap-2">
+                          <span className="w-2 h-6 bg-[#5B21B6] rounded-full inline-block"></span>
+                          주문 상품 및 결제 확인
+                        </h3>
+                        {deliveryItems.length < 5 && (
+                          <button
+                            type="button"
+                            onClick={handleAddDeliveryItem}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-purple-200 hover:bg-purple-100 text-[#5B21B6] text-xs font-extrabold transition-colors shadow-2xs"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>상품 추가</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* 1. 상품명 + 수량 입력 줄 */}
+                      <div className="space-y-2.5">
+                        {deliveryItems.map((item, idx) => (
+                          <div key={idx} className="flex items-end gap-2">
+                            <div className="flex-1 min-w-0">
+                              {idx === 0 && (
+                                <label className="block text-[13px] font-bold text-[#3B0764] mb-1.5">
+                                  상품명 <span className="text-red-500">*</span>
+                                </label>
+                              )}
+                              <input
+                                type="text"
+                                required={idx === 0}
+                                value={item.name}
+                                onChange={e => handleDeliveryItemChange(idx, 'name', e.target.value)}
+                                placeholder="예: 한우 선물세트 1호"
+                                className="w-full px-3.5 py-2.5 text-[14px] rounded-xl border border-purple-200 bg-white focus:outline-none focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-gray-900 placeholder-gray-400 shadow-xs"
+                              />
+                            </div>
+
+                            <div className="w-24 sm:w-28 shrink-0">
+                              {idx === 0 && (
+                                <label className="block text-[13px] font-bold text-[#3B0764] mb-1.5">
+                                  수량 <span className="text-red-500">*</span>
+                                </label>
+                              )}
+                              <input
+                                type="text"
+                                required={idx === 0}
+                                value={item.qty}
+                                onChange={e => handleDeliveryItemChange(idx, 'qty', e.target.value)}
+                                placeholder="예: 1개"
+                                className="w-full px-3 py-2.5 text-[14px] rounded-xl border border-purple-200 bg-white focus:outline-none focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-gray-900 text-center font-bold placeholder-gray-400 shadow-xs"
+                              />
+                            </div>
+
+                            {deliveryItems.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveDeliveryItem(idx)}
+                                className="p-2.5 mb-0.5 rounded-xl bg-white border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors shrink-0"
+                                title="상품 삭제"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* 2. 결제 방식 선택 (매장 결제 완료 vs 계좌이체/입금자명) */}
+                      <div className="pt-2 border-t border-purple-200/70">
+                        <label className="block text-[13px] font-bold text-[#3B0764] mb-2">
+                          결제 확인 <span className="text-red-500">*</span>
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setDeliveryPaymentType('card_done')}
+                            className={`py-3 px-3 rounded-xl border-2 text-left transition-all flex flex-col justify-center ${
+                              deliveryPaymentType === 'card_done'
+                                ? 'bg-[#5B21B6] border-[#5B21B6] text-white shadow-sm'
+                                : 'bg-white border-purple-200 text-gray-700 hover:bg-purple-50/50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-[13px] sm:text-[13.5px] font-black break-keep">
+                                💳 매장 결제 완료
+                              </span>
+                              {deliveryPaymentType === 'card_done' && (
+                                <CheckCircle2 className="w-4 h-4 text-amber-300 shrink-0" />
+                              )}
+                            </div>
+                            <span
+                              className={`text-[11px] mt-0.5 font-semibold break-keep ${
+                                deliveryPaymentType === 'card_done' ? 'text-purple-100' : 'text-gray-400'
+                              }`}
+                            >
+                              카드·현금 결제 완료 고객
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setDeliveryPaymentType('bank_transfer')}
+                            className={`py-3 px-3 rounded-xl border-2 text-left transition-all flex flex-col justify-center ${
+                              deliveryPaymentType === 'bank_transfer'
+                                ? 'bg-[#5B21B6] border-[#5B21B6] text-white shadow-sm'
+                                : 'bg-white border-purple-200 text-gray-700 hover:bg-purple-50/50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-[13px] sm:text-[13.5px] font-black break-keep">
+                                🏦 계좌이체 (입금)
+                              </span>
+                              {deliveryPaymentType === 'bank_transfer' && (
+                                <CheckCircle2 className="w-4 h-4 text-amber-300 shrink-0" />
+                              )}
+                            </div>
+                            <span
+                              className={`text-[11px] mt-0.5 font-semibold break-keep ${
+                                deliveryPaymentType === 'bank_transfer' ? 'text-purple-100' : 'text-gray-400'
+                              }`}
+                            >
+                              입금자명 입력
+                            </span>
+                          </button>
+                        </div>
+
+                        {deliveryPaymentType === 'bank_transfer' ? (
+                          <div className="mt-3 p-3.5 rounded-xl bg-white border border-purple-200 space-y-2.5 animate-in fade-in duration-150">
+                            <div>
+                              <label className="block text-[12.5px] font-extrabold text-[#3B0764] mb-1">
+                                입금자명 <span className="text-red-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                required
+                                value={deliveryDepositor}
+                                onChange={e => setDeliveryDepositor(e.target.value)}
+                                placeholder="통장에 찍힐 입금자 성함을 입력하세요"
+                                className="w-full px-3.5 py-2.5 text-[14px] rounded-xl border border-purple-300 bg-purple-50/20 focus:outline-none focus:border-[#5B21B6] focus:ring-1 focus:ring-[#5B21B6] text-gray-900 placeholder-gray-400"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="mt-2 text-[11.5px] font-bold text-[#5B21B6] pl-1">
+                            ✓ 매장에서 결제를 마치신 경우 아래 보내는 분·받는 분 주소만 적어주시면 됩니다.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {senderFields.length > 0 && (
                     <div className="bg-slate-100 border border-slate-300 rounded-2xl p-3.5 sm:p-5 shadow-sm">
                       <h3 className="font-extrabold text-slate-800 mb-3.5 text-base flex items-center gap-2">
