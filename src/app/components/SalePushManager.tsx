@@ -737,6 +737,11 @@ export default function SalePushManager() {
                     );
                   })}
               </div>
+
+              {/* 선착순 현장 판매 & 전화 예약(킵) 불가 안내 */}
+              <div className="px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200/90 text-[11.5px] text-gray-600 font-semibold leading-relaxed break-keep">
+                ※ 특가 상품은 <strong className="text-gray-900 font-extrabold">현장 방문 선착순 판매</strong>로 진행되어 전화 예약(킵)이 어려울 수 있으며, 준비된 수량 소진 시 조기 마감됩니다.
+              </div>
             </div>
 
             <div className="p-4 bg-gray-50 border-t border-gray-100">
