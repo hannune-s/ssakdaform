@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "싹다폼 Admin",
   description: "싹다폼 관리자 대시보드",
+  icons: {
+    icon: "/icon-192.png?v=6",
+    apple: "/apple-touch-icon.png?v=6",
+  },
 };
 
 export default function RootLayout({
