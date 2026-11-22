@@ -12,7 +12,8 @@ import {
   ShoppingBag,
   Bell,
   Eye,
-  X
+  X,
+  Flower2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getEffectiveAdminStoreId, getLoggedInStore } from '@/lib/storeSession';
@@ -374,7 +375,7 @@ export default function SalePushManager() {
           className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-purple-200 hover:bg-purple-50 text-purple-900 text-xs font-bold shrink-0 transition-colors"
         >
           <Eye className="w-3.5 h-3.5 text-purple-700" />
-          <span>고객 팝업 미리보기</span>
+          <span>푸시화면 미리보기</span>
         </button>
       </div>
 
@@ -542,11 +543,11 @@ export default function SalePushManager() {
                     onClick={() => handleToggleSoldOut(item.id)}
                     className={`px-3 py-2 rounded-lg text-xs font-bold transition-all shrink-0 border ${
                       item.soldOut
-                        ? 'bg-gray-700 text-white border-gray-700 hover:bg-gray-600'
+                        ? 'bg-gray-800 text-white border-gray-800 hover:bg-gray-700'
                         : 'bg-purple-50 text-[#5B21B6] border-purple-200 hover:bg-purple-100'
                     }`}
                   >
-                    {item.soldOut ? '품절 (해제)' : '판매중'}
+                    {item.soldOut ? '품절됨 (해제)' : '품절처리'}
                   </button>
 
                   <button
@@ -563,8 +564,17 @@ export default function SalePushManager() {
           </div>
         </div>
 
-        {/* 3. 하단 전송 / 종료 버튼 */}
+        {/* 3. 하단 미리보기 / 전송 / 종료 버튼 */}
         <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-2.5">
+          <button
+            type="button"
+            onClick={() => setIsPreviewOpen(true)}
+            className="flex-1 py-3.5 px-5 rounded-xl bg-white hover:bg-purple-50 text-[#5B21B6] border border-purple-200 font-bold text-sm transition-colors flex items-center justify-center gap-1.5"
+          >
+            <Eye className="w-4 h-4" />
+            <span>푸시화면 미리보기</span>
+          </button>
+
           <button
             type="button"
             disabled={isSaving}
@@ -595,33 +605,33 @@ export default function SalePushManager() {
         </div>
       </div>
 
-      {/* 어드민 내 고객 팝업 미리보기 모달 (차분한 싹다폼 톤) */}
+      {/* 어드민 내 고객 팝업 미리보기 모달 */}
       {isPreviewOpen && (
         <div
           className="fixed inset-0 z-[120] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
           onClick={() => setIsPreviewOpen(false)}
         >
           <div
-            className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl border border-stone-200"
+            className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl border border-rose-200"
             onClick={e => e.stopPropagation()}
           >
-            <div className="bg-gradient-to-br from-[#3B0764] via-[#5B21B6] to-[#4C1D95] px-5 py-5 text-white relative">
+            <div className="bg-gradient-to-r from-[#FFF1F2] via-[#FFF5F5] to-[#FFE4E6] border-b border-rose-200 px-5 py-5 relative">
               <button
                 type="button"
                 onClick={() => setIsPreviewOpen(false)}
-                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center"
+                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-rose-200/60 hover:bg-rose-200 text-rose-900 flex items-center justify-center"
               >
                 <X className="w-4 h-4" />
               </button>
-              <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/15 text-purple-100 text-[11px] font-semibold mb-1.5">
-                단골 특가 소식
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-100/90 text-[#4C1D95] border border-purple-200 text-[11px] font-extrabold mb-1.5">
+                단골 실시간 특가
               </span>
-              <h3 className="text-lg font-extrabold leading-snug break-keep">
+              <h3 className="text-[18px] font-black text-gray-900 leading-snug break-keep pr-6">
                 {title || '오늘의 단골 특가 안내'}
               </h3>
               {formattedPeriod && (
-                <p className="text-xs font-medium text-purple-100/90 mt-1 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                <p className="text-xs font-bold text-gray-600 mt-1.5 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                   <span>{formattedPeriod}</span>
                 </p>
               )}
@@ -629,56 +639,66 @@ export default function SalePushManager() {
 
             <div className="p-5 space-y-3.5 max-h-[65vh] overflow-y-auto bg-white">
               {story && (
-                <div className="p-3.5 rounded-xl bg-[#F8F5FF] border border-purple-100 text-[13px] text-gray-800 leading-relaxed whitespace-pre-line break-keep">
+                <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[13px] text-amber-950 font-medium leading-relaxed whitespace-pre-line break-keep">
+                  <div className="flex items-center gap-1.5 text-amber-800 font-extrabold text-[12.5px] mb-1.5">
+                    <Flower2 className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>사장님 이야기</span>
+                  </div>
                   {story}
                 </div>
               )}
 
-              <div className="divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden">
+              <div className="divide-y divide-rose-100/80 border border-rose-200 rounded-xl overflow-hidden">
                 {items
                   .filter(it => it.name.trim() !== '')
-                  .map(item => (
-                    <div
-                      key={item.id}
-                      className={`p-3.5 flex items-center justify-between gap-3 ${
-                        item.soldOut ? 'bg-gray-50/80 opacity-60' : 'bg-white'
-                      }`}
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className={`text-[14px] font-bold break-keep ${
-                            item.soldOut ? 'line-through text-gray-400' : 'text-gray-900'
-                          }`}
-                        >
-                          {item.name}
-                        </p>
-                        <div className="flex items-baseline gap-2 mt-0.5">
-                          <span
-                            className={`text-[15px] font-extrabold ${
-                              item.soldOut ? 'text-gray-400' : 'text-[#5B21B6]'
+                  .map(item => {
+                    const fmt = (v?: string) => {
+                      if (!v) return '';
+                      const t = v.trim();
+                      const raw = t.replace(/,/g, '');
+                      return /^\d+$/.test(raw) ? `${Number(raw).toLocaleString('ko-KR')}원` : t;
+                    };
+                    return (
+                      <div
+                        key={item.id}
+                        className={`px-4 py-3.5 flex items-center justify-between gap-3 ${
+                          item.soldOut ? 'bg-gray-100/90' : 'bg-white'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`text-[15px] sm:text-[15.5px] font-extrabold break-keep leading-snug ${
+                              item.soldOut ? 'line-through text-gray-400' : 'text-gray-900'
                             }`}
                           >
-                            {item.salePrice}
-                          </span>
-                          {item.originalPrice && (
-                            <span className="text-xs text-gray-400 line-through">
-                              {item.originalPrice}
-                            </span>
-                          )}
+                            {item.name}
+                          </p>
                         </div>
-                      </div>
 
-                      {item.soldOut ? (
-                        <span className="px-2.5 py-1 rounded-md bg-gray-200 text-gray-600 text-[11px] font-bold shrink-0">
-                          품절
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-1 rounded-md bg-purple-50 text-[#5B21B6] border border-purple-200 text-[11px] font-bold shrink-0">
-                          판매중
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                        {item.soldOut ? (
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-sm font-bold text-gray-400 line-through">
+                              {fmt(item.salePrice)}
+                            </span>
+                            <span className="px-3 py-1 rounded-lg bg-gray-800 text-white text-xs font-extrabold tracking-tight shadow-2xs">
+                              품절
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="text-right shrink-0 flex flex-col items-end">
+                            {item.originalPrice && (
+                              <span className="text-[12.5px] font-bold text-gray-500 line-through leading-tight">
+                                {fmt(item.originalPrice)}
+                              </span>
+                            )}
+                            <span className="text-[18px] sm:text-[19px] font-black text-rose-600 tracking-tight leading-tight mt-0.5">
+                              {fmt(item.salePrice)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             </div>
 

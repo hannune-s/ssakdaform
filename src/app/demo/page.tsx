@@ -421,8 +421,8 @@ export default function DemoAdminHub() {
                   onClick={() => setActiveTab('salepush')}
                   className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
                     activeTab === 'salepush'
-                      ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15'
-                      : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
+                      ? 'bg-rose-600 text-white shadow-md shadow-rose-900/15'
+                      : 'bg-[#FFF1F2] text-rose-900 hover:bg-[#FFE4E6] border border-rose-200 shadow-sm'
                   }`}
                 >
                   특가푸시

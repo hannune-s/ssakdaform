@@ -7,7 +7,8 @@ import {
   X,
   CheckCircle2,
   Share,
-  ChevronRight
+  ChevronRight,
+  Flower2
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from '@/lib/pushConfig';
@@ -40,6 +41,18 @@ function playSaleChime() {
       osc.stop(ctx.currentTime + idx * 0.12 + 0.38);
     });
   } catch {}
+}
+
+function formatPriceDisplay(val?: string) {
+  if (!val) return '';
+  const trimmed = val.trim();
+  if (!trimmed) return '';
+  // 숫자(콤마 포함)로만 되어 있으면 천단위 콤마 + '원' 자동 포맷
+  const rawNum = trimmed.replace(/,/g, '');
+  if (/^\d+$/.test(rawNum)) {
+    return `${Number(rawNum).toLocaleString('ko-KR')}원`;
+  }
+  return trimmed;
 }
 
 export default function CustomerSaleSection({ storeId, storeName }: CustomerSaleSectionProps) {
@@ -312,17 +325,17 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
                 <X className="w-4 h-4" />
               </button>
 
-              <span className="inline-block px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-extrabold mb-1.5">
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-100/90 text-[#4C1D95] border border-purple-200 text-[11px] font-extrabold mb-1.5">
                 {storeName} · 실시간 특가
               </span>
 
-              <h3 className="text-[18px] font-black text-rose-950 leading-snug break-keep pr-6">
+              <h3 className="text-[18px] font-black text-gray-900 leading-snug break-keep pr-6">
                 {saleData!.title}
               </h3>
 
               {saleData!.period && (
-                <p className="text-xs font-bold text-rose-800/90 mt-1.5 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                <p className="text-xs font-bold text-gray-600 mt-1.5 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                   <span>{saleData!.period}</span>
                 </p>
               )}
@@ -331,7 +344,11 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
             {/* 팝업 본문 */}
             <div className="p-5 space-y-3.5 max-h-[65vh] overflow-y-auto bg-white">
               {saleData!.story && (
-                <div className="p-3.5 rounded-xl bg-[#FFF5F5] border border-rose-100 text-[13px] text-rose-950 font-medium leading-relaxed whitespace-pre-line break-keep">
+                <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[13px] text-amber-950 font-medium leading-relaxed whitespace-pre-line break-keep">
+                  <div className="flex items-center gap-1.5 text-amber-800 font-extrabold text-[12.5px] mb-1.5">
+                    <Flower2 className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>사장님 이야기</span>
+                  </div>
                   {saleData!.story}
                 </div>
               )}
@@ -340,42 +357,40 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
                 {saleData!.items.map(item => (
                   <div
                     key={item.id}
-                    className={`p-3.5 flex items-center justify-between gap-3 ${
-                      item.soldOut ? 'bg-gray-50/80 opacity-60' : 'bg-white'
+                    className={`px-4 py-3.5 flex items-center justify-between gap-3 ${
+                      item.soldOut ? 'bg-gray-100/90' : 'bg-white'
                     }`}
                   >
                     <div className="min-w-0 flex-1">
                       <p
-                        className={`text-[14px] font-bold break-keep ${
+                        className={`text-[15px] sm:text-[15.5px] font-extrabold break-keep leading-snug ${
                           item.soldOut ? 'line-through text-gray-400' : 'text-gray-900'
                         }`}
                       >
                         {item.name}
                       </p>
-                      <div className="flex items-baseline gap-2 mt-0.5">
-                        <span
-                          className={`text-[15px] font-extrabold ${
-                            item.soldOut ? 'text-gray-400' : 'text-rose-600'
-                          }`}
-                        >
-                          {item.salePrice}
-                        </span>
-                        {item.originalPrice && (
-                          <span className="text-xs text-gray-400 line-through">
-                            {item.originalPrice}
-                          </span>
-                        )}
-                      </div>
                     </div>
 
                     {item.soldOut ? (
-                      <span className="px-2.5 py-1 rounded-md bg-gray-200 text-gray-600 text-[11px] font-bold shrink-0">
-                        품절
-                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-sm font-bold text-gray-400 line-through">
+                          {formatPriceDisplay(item.salePrice)}
+                        </span>
+                        <span className="px-3 py-1 rounded-lg bg-gray-800 text-white text-xs font-extrabold tracking-tight shadow-2xs">
+                          품절
+                        </span>
+                      </div>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-extrabold shrink-0">
-                        판매중
-                      </span>
+                      <div className="text-right shrink-0 flex flex-col items-end">
+                        {item.originalPrice && (
+                          <span className="text-[12.5px] font-bold text-gray-500 line-through leading-tight">
+                            {formatPriceDisplay(item.originalPrice)}
+                          </span>
+                        )}
+                        <span className="text-[18px] sm:text-[19px] font-black text-rose-600 tracking-tight leading-tight mt-0.5">
+                          {formatPriceDisplay(item.salePrice)}
+                        </span>
+                      </div>
                     )}
                   </div>
                 ))}
