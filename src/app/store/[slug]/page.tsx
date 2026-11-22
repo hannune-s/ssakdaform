@@ -142,6 +142,7 @@ export default function StoreHubPage() {
             phone: resolvedStore?.phone || parsed.phone || parsed.contact || '',
             hours: parsed.hours || resolvedStore?.hours || '',
             closedDays: parsed.closedDays || resolvedStore?.closedDays || '',
+            extraNotice: parsed.extraNotice || resolvedStore?.extraNotice || '',
             paymentLink: parsed.paymentLink || resolvedStore?.paymentLink || '',
             shopLinks: Array.isArray(parsed.shopLinks) ? parsed.shopLinks : []
           };
@@ -161,6 +162,7 @@ export default function StoreHubPage() {
           ...(resolvedStore || {}),
           hours: storeMeta.data.hours || resolvedStore?.hours || '',
           closedDays: storeMeta.data.closedDays || resolvedStore?.closedDays || '',
+          extraNotice: storeMeta.data.extraNotice || resolvedStore?.extraNotice || '',
           shopLinks: Array.isArray(storeMeta.data.shopLinks) && storeMeta.data.shopLinks.length > 0
             ? storeMeta.data.shopLinks
             : (resolvedStore?.shopLinks || [])
@@ -423,6 +425,12 @@ export default function StoreHubPage() {
                   <div className="flex items-start gap-2.5">
                     <CalendarX className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
                     <div><span className="font-extrabold text-purple-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
+                  </div>
+                )}
+                {storeInfo.extraNotice && (
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                    <div><span className="font-extrabold text-purple-950 mr-2">기타 안내:</span><span className="font-semibold text-gray-900 whitespace-pre-line">{storeInfo.extraNotice}</span></div>
                   </div>
                 )}
               </div>

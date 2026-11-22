@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search, Globe, ExternalLink, ArrowUp, ArrowDown } from 'lucide-react';
+import { Save, Plus, Trash2, User, Store, MapPin, Phone, Clock, CalendarX, Search, Globe, ExternalLink, ArrowUp, ArrowDown, Info } from 'lucide-react';
 import DaumPostcode from 'react-daum-postcode';
 import { supabase } from '@/lib/supabase';
 import { getActiveStoreId, getLoggedInStore, setLoggedInStore } from '@/lib/storeSession';
@@ -17,6 +17,7 @@ export default function SettingsPage() {
     phone: '',
     hours: '',
     closedDays: '',
+    extraNotice: '',
     paymentLink: '',
     showDeliveryButton: true,
     showResumeButton: true
@@ -89,6 +90,7 @@ export default function SettingsPage() {
             ...initialStore,
             hours: parsed.hours || '',
             closedDays: parsed.closedDays || '',
+            extraNotice: parsed.extraNotice || '',
             paymentLink: parsed.paymentLink || '',
             name: initialStore.name || parsed.name || parsed.storeName || '',
             ownerName: initialStore.ownerName || parsed.ownerName || '',
@@ -116,6 +118,7 @@ export default function SettingsPage() {
           ...initialStore,
           hours: myMeta.data.hours ?? initialStore.hours,
           closedDays: myMeta.data.closedDays ?? initialStore.closedDays,
+          extraNotice: myMeta.data.extraNotice ?? initialStore.extraNotice,
           showDeliveryButton:
             myMeta.data.showDeliveryButton !== undefined
               ? Boolean(myMeta.data.showDeliveryButton)
@@ -265,6 +268,7 @@ export default function SettingsPage() {
         storeId: activeStoreId,
         hours: payloadToSave.hours || '',
         closedDays: payloadToSave.closedDays || '',
+        extraNotice: payloadToSave.extraNotice || '',
         shopLinks: validShopLinks,
         showDeliveryButton: payloadToSave.showDeliveryButton !== false,
         showResumeButton: payloadToSave.showResumeButton !== false
@@ -438,6 +442,22 @@ export default function SettingsPage() {
                     placeholder="예) 매주 일요일"
                   />
                 </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5">
+                기타 안내 (선택 — 고객 화면 &lsquo;가게 정보 보기&rsquo;에 함께 표시됩니다)
+              </label>
+              <div className="relative">
+                <Info className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
+                <textarea
+                  rows={2}
+                  value={storeInfo.extraNotice || ''}
+                  onChange={(e) => handleStoreChange('extraNotice', e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 text-sm resize-y"
+                  placeholder="예) 곰탕 나오는 시간: 오전 11시 / 매장 앞 주차 가능 / 선물세트 사전예약 환영"
+                />
               </div>
             </div>
           </div>

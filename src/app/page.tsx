@@ -15,6 +15,7 @@ import GuidePage from './guide/page';
 import NoticesPage from './notices/page';
 import InquiryPage from './inquiry/page';
 import DashboardWidget from './components/DashboardWidget';
+import SalePushManager from './components/SalePushManager';
 import { getActiveStoreId, getLoggedInStore, clearLoggedInStore } from '@/lib/storeSession';
 import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 
@@ -404,11 +405,11 @@ export default function AdminHub() {
         
         {/* 메뉴(카테고리) 탭 버튼 */}
         <div className="flex flex-col items-center gap-2 sm:gap-3 w-full px-1">
-          {/* 1번 줄: 대시보드 / 간편폼 만들기 */}
-          <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
+          {/* 1번 줄: 대시보드 / 간편폼 만들기 / 🔥 특가푸시 */}
+          <div className="flex flex-row justify-center gap-1.5 sm:gap-2.5 w-full">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
+              className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'dashboard' 
                   ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
                   : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
@@ -418,12 +419,20 @@ export default function AdminHub() {
             </button>
             <button
               onClick={() => setActiveTab('builder')}
-              className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
+              className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
                 activeTab === 'builder' 
                   ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
                   : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
               }`}
             >간편폼 만들기</button>
+            <button
+              onClick={() => setActiveTab('salepush')}
+              className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                activeTab === 'salepush' 
+                  ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15' 
+                  : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
+              }`}
+            >특가푸시</button>
           </div>
           
           {/* 2번 줄: 현황 3종 (간편폼접수 / 택배접수 / 이력서접수) */}
@@ -476,6 +485,7 @@ export default function AdminHub() {
       <div className="w-full max-w-6xl mx-auto flex-1">
         {activeTab === 'dashboard' && <DashboardWidget setActiveTab={setActiveTab} />}
         {activeTab === 'builder' && <FormBuilder />}
+        {activeTab === 'salepush' && <SalePushManager />}
         {activeTab === 'delivery' && <DeliveryList searchQuery={searchQuery} />}
         {activeTab === 'reservation' && <ReservationList searchQuery={searchQuery} />}
         {activeTab === 'order' && <OrderList searchQuery={searchQuery} />}

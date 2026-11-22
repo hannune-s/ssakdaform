@@ -30,21 +30,13 @@ export default function RootLayout({
               window.deferredPrompt = e;
             });
             if ('serviceWorker' in navigator) {
-              if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                  for (let registration of registrations) {
-                    registration.unregister();
-                  }
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js?v=3').then(function(registration) {
+                  console.log('SW v3 registered');
+                }, function(err) {
+                  console.log('SW registration failed: ', err);
                 });
-              } else {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js?v=2').then(function(registration) {
-                    console.log('SW registered');
-                  }, function(err) {
-                    console.log('SW registration failed: ', err);
-                  });
-                });
-              }
+              });
             }
           `
         }} />

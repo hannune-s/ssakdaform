@@ -27,6 +27,7 @@ import GuidePage from '../guide/page';
 import NoticesPage from '../notices/page';
 import InquiryPage from '../inquiry/page';
 import DashboardWidget from '../components/DashboardWidget';
+import SalePushManager from '../components/SalePushManager';
 
 export default function DemoAdminHub() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -395,10 +396,10 @@ export default function DemoAdminHub() {
           {/* 탭 및 검색 카드 영역 (최신 3종 구조: 간편폼접수 / 택배접수 / 이력서접수) */}
           <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8 no-print">
             <div className="flex flex-col items-center gap-2 sm:gap-3 w-full px-1">
-              <div className="flex flex-row justify-center gap-1 sm:gap-2 w-full">
+              <div className="flex flex-row justify-center gap-1.5 sm:gap-2.5 w-full">
                 <button
                   onClick={() => setActiveTab('dashboard')}
-                  className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                  className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
                     activeTab === 'dashboard'
                       ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15'
                       : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
@@ -408,13 +409,23 @@ export default function DemoAdminHub() {
                 </button>
                 <button
                   onClick={() => setActiveTab('builder')}
-                  className={`flex-1 max-w-[150px] px-2 py-2 rounded-full text-[13.5px] sm:text-[15px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                  className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
                     activeTab === 'builder'
                       ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15'
                       : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
                   }`}
                 >
                   간편폼 만들기
+                </button>
+                <button
+                  onClick={() => setActiveTab('salepush')}
+                  className={`flex-1 max-w-[140px] px-2 py-2 rounded-full text-[13px] sm:text-[14.5px] font-bold transition-all whitespace-nowrap tracking-tight ${
+                    activeTab === 'salepush'
+                      ? 'bg-[#5B21B6] text-white shadow-md shadow-purple-900/15'
+                      : 'bg-purple-50/70 text-[#4C1D95] hover:bg-purple-100/70 border border-purple-200 shadow-sm'
+                  }`}
+                >
+                  특가푸시
                 </button>
               </div>
 
@@ -471,6 +482,7 @@ export default function DemoAdminHub() {
           <div className="w-full max-w-6xl mx-auto flex-1">
             {activeTab === 'dashboard' && <DashboardWidget setActiveTab={setActiveTab} />}
             {activeTab === 'builder' && <FormBuilder />}
+            {activeTab === 'salepush' && <SalePushManager />}
             {activeTab === 'delivery' && <DeliveryList searchQuery={searchQuery} />}
             {activeTab === 'custom' && <CustomList searchQuery={searchQuery} />}
             {activeTab === 'resume' && <ResumeList searchQuery={searchQuery} />}

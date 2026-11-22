@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink, Plus, Trash2, UserCheck, ChevronRight } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink, Plus, Trash2, UserCheck, ChevronRight, Info } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 import { getActiveStoreId } from '@/lib/storeSession';
 import { fetchStoreSubscription, isSubscriptionExpired } from '@/lib/subscriptionUtils';
 import ShopLinkList from '@/app/components/ShopLinkList';
 import CustomerLookupSection from '@/app/components/CustomerLookupSection';
+import CustomerSaleSection from '@/app/components/CustomerSaleSection';
 
 export default function CustomerFormPage({
   overrideStoreId,
@@ -237,6 +238,7 @@ export default function CustomerFormPage({
             phone: resolvedInfo?.phone || parsed.phone || parsed.contact || '',
             hours: parsed.hours || resolvedInfo?.hours || '',
             closedDays: parsed.closedDays || resolvedInfo?.closedDays || '',
+            extraNotice: parsed.extraNotice || resolvedInfo?.extraNotice || '',
             paymentLink: parsed.paymentLink || resolvedInfo?.paymentLink || '',
             shopLinks: Array.isArray(parsed.shopLinks) ? parsed.shopLinks : [],
             showDeliveryButton: parsed.showDeliveryButton !== false,
@@ -258,6 +260,7 @@ export default function CustomerFormPage({
           ...(resolvedInfo || {}),
           hours: storeMeta.data.hours || resolvedInfo?.hours || '',
           closedDays: storeMeta.data.closedDays || resolvedInfo?.closedDays || '',
+          extraNotice: storeMeta.data.extraNotice || resolvedInfo?.extraNotice || '',
           shopLinks: Array.isArray(storeMeta.data.shopLinks) && storeMeta.data.shopLinks.length > 0
             ? storeMeta.data.shopLinks
             : (resolvedInfo?.shopLinks || []),
@@ -618,7 +621,7 @@ export default function CustomerFormPage({
         </div>
         
         <div className="px-3 sm:px-6 py-4 sm:py-7">
-          {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays) && (
+          {storeInfo && (storeInfo.name || storeInfo.ownerName || storeInfo.address || storeInfo.phone || storeInfo.hours || storeInfo.closedDays || storeInfo.extraNotice) && (
             <div className="mb-6">
               <button 
                 type="button"
@@ -669,6 +672,12 @@ export default function CustomerFormPage({
                       <div><span className="font-extrabold text-purple-950 mr-2">휴무일:</span><span className="font-semibold text-gray-900">{storeInfo.closedDays}</span></div>
                     </div>
                   )}
+                  {storeInfo.extraNotice && (
+                    <div className="flex items-start gap-2.5">
+                      <Info className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div><span className="font-extrabold text-purple-950 mr-2">기타 안내:</span><span className="font-semibold text-gray-900 whitespace-pre-line">{storeInfo.extraNotice}</span></div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -716,6 +725,14 @@ export default function CustomerFormPage({
                 </div>
               )}
             </div>
+          )}
+
+          {/* 🔥 실시간 단골 깜짝 특가 팝업 & 홈화면 푸시 알림 구독 영역 */}
+          {!isResumeForm && id !== 'delivery-preset' && (
+            <CustomerSaleSection
+              storeId={targetStoreId}
+              storeName={storeInfo?.name || data?.storeName || '우리 매장'}
+            />
           )}
 
           {/* 🛍️ 매장 공식 쇼핑몰 / 외부 링크 바로가기 영역 */}
