@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import DaumPostcode from 'react-daum-postcode';
-import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink, Plus, Trash2 } from 'lucide-react';
+import { CreditCard, Copy, CheckCircle2, Store, MapPin, Phone, Clock, CalendarX, ChevronDown, ChevronUp, User, Camera, Paperclip, X, FileCheck, ShoppingBag, ExternalLink, Plus, Trash2, UserCheck, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { getSmartPlaceholder } from '@/lib/formUtils';
 import { getActiveStoreId } from '@/lib/storeSession';
@@ -213,7 +213,7 @@ export default function CustomerFormPage({
           closedDays: '',
           paymentLink: ''
         };
-        if (Array.isArray(storeRow.custom_forms)) {
+        if (!isPresetForm && Array.isArray(storeRow.custom_forms)) {
           dbMatchedForm = findMatchingCustomForm(storeRow.custom_forms, resolvedId);
           if (dbMatchedForm) {
             setData(dbMatchedForm);
@@ -709,7 +709,49 @@ export default function CustomerFormPage({
           )}
 
           {/* 🛍️ 매장 공식 쇼핑몰 / 외부 링크 바로가기 영역 */}
-          <ShopLinkList links={storeInfo?.shopLinks} className="mb-5 space-y-2.5" />
+          {!isResumeForm && (
+            <ShopLinkList
+              links={storeInfo?.shopLinks}
+              storeId={targetStoreId}
+              hideDefaultDelivery={true}
+              className="mb-3 space-y-2"
+            />
+          )}
+
+          {/* 📦 기본 제공 [간편 택배 접수] & [직원채용 이력서] 바로가기 버튼 (내 접수/배송 조회 바로 위 상단 고정) */}
+          {!isResumeForm && id !== 'delivery-preset' && (
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <a
+                href={`/form/delivery-preset?store=${encodeURIComponent(targetStoreId)}`}
+                className="px-3.5 py-2.5 rounded-xl bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200 hover:border-indigo-400 shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] sm:text-[13.5px] font-black text-indigo-950 tracking-tight leading-snug break-keep">
+                    간편 택배 접수
+                  </p>
+                  <p className="text-[11px] font-semibold text-indigo-700/80 leading-snug mt-0.5 break-keep">
+                    택배 발송 신청서 작성
+                  </p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-indigo-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              </a>
+
+              <a
+                href={`/form/resume-preset?store=${encodeURIComponent(targetStoreId)}`}
+                className="px-3.5 py-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 hover:border-emerald-400 shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] sm:text-[13.5px] font-black text-emerald-950 tracking-tight leading-snug break-keep">
+                    직원채용 이력서
+                  </p>
+                  <p className="text-[11px] font-semibold text-emerald-700/80 leading-snug mt-0.5 break-keep">
+                    매장 근무 간편 지원
+                  </p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              </a>
+            </div>
+          )}
 
           {/* 🔍 내 접수 / 배송 조회 버튼 및 조회 모달 (이력서 폼 제외) */}
           {!isResumeForm && (

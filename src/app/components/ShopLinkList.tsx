@@ -10,13 +10,36 @@ interface ShopLinkItem {
 
 export default function ShopLinkList({
   links,
+  storeId,
+  hideDefaultDelivery = false,
   className = "mb-4 space-y-2"
 }: {
   links?: ShopLinkItem[];
+  storeId?: string;
+  hideDefaultDelivery?: boolean;
   className?: string;
 }) {
-  if (!Array.isArray(links)) return null;
-  const validLinks = links.filter(l => l && l.url && String(l.url).trim() !== '');
+  const rawLinks = Array.isArray(links)
+    ? links.filter(l => l && l.url && String(l.url).trim() !== '')
+    : [];
+
+  // 이미 외부 링크 목록에 택배 접수 링크가 들어 있는지 확인 (중복 방지)
+  const hasCustomDeliveryLink = rawLinks.some(l => {
+    const t = String(l.title || '');
+    const u = String(l.url || '');
+    return t.includes('택배') || u.includes('delivery-preset');
+  });
+
+  // 사장님이 따로 링크 설정을 못 해도 기본으로 [택배 신청해요~] 버튼이 자동 표시되도록 추가
+  const validLinks: ShopLinkItem[] = [...rawLinks];
+  if (!hideDefaultDelivery && storeId && !hasCustomDeliveryLink) {
+    validLinks.unshift({
+      title: '택배 신청해요~',
+      subtitle: '간편 택배 발송 신청',
+      url: `/form/delivery-preset?store=${encodeURIComponent(storeId)}`
+    });
+  }
+
   if (validLinks.length === 0) return null;
 
   const isBlogItem = (item: ShopLinkItem) => {
@@ -88,6 +111,11 @@ export default function ShopLinkList({
 
   const renderCard = (linkItem: ShopLinkItem, idx: number, isFullRow: boolean) => {
     const rawUrl = String(linkItem.url || '').trim();
+    const isInternalForm =
+      rawUrl.startsWith('/form/') ||
+      rawUrl.startsWith('/f/') ||
+      rawUrl.includes('delivery-preset') ||
+      rawUrl.includes('resume-preset');
     const targetUrl =
       rawUrl.startsWith('http') || rawUrl.startsWith('/') ? rawUrl : `https://${rawUrl}`;
     const displayTitle = linkItem.title || '바로가기';
@@ -100,7 +128,7 @@ export default function ShopLinkList({
         <a
           key={idx}
           href={targetUrl}
-          target="_blank"
+          target={isInternalForm ? "_self" : "_blank"}
           rel="noreferrer"
           className={`w-full px-3.5 sm:px-4 py-2.5 rounded-xl border transition-all flex items-center justify-between gap-2 group active:scale-[0.99] ${
             blog
@@ -129,7 +157,7 @@ export default function ShopLinkList({
       <a
         key={idx}
         href={targetUrl}
-        target="_blank"
+        target={isInternalForm ? "_self" : "_blank"}
         rel="noreferrer"
         className="px-3 sm:px-3.5 py-2.5 rounded-xl bg-white hover:bg-purple-50/50 border border-purple-200/90 hover:border-[#7C3AED] shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
       >
