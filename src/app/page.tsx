@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft, LogOut, QrCode, Smartphone } from 'lucide-react';
+import { Search, Package, Copy, ExternalLink, Check, Home, User, ChevronRight, ArrowLeft, LogOut, QrCode, Smartphone, Printer, Download, X } from 'lucide-react';
 import DeliveryList from './delivery-list/page';
 import ReservationList from './reservation-list/page';
 import OrderList from './order-list/page';
@@ -23,6 +23,9 @@ export default function AdminHub() {
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [qrSize, setQrSize] = useState<'a5' | 'a4'>('a5');
+  const [qrTitle, setQrTitle] = useState('QR코드를 스캔해 주세요');
+  const [qrSubtitle, setQrSubtitle] = useState('스마트폰 카메라로 비추면\n매장 소식과 간편 신청 화면으로 바로 연결됩니다.');
   const [storeId, setStoreId] = useState('demo');
   const [storeName, setStoreName] = useState('');
   const [isLinkSuspended, setIsLinkSuspended] = useState(false);
@@ -66,21 +69,215 @@ export default function AdminHub() {
     try {
       const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
       const storeLink = `${currentOrigin}/store/${storeId}`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(storeLink)}`;
-      
-      const response = await fetch(qrUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `ssakdaform_${storeId}_qr.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data=${encodeURIComponent(storeLink)}`;
+
+      const qrImg = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = qrUrl;
+      });
+
+      // 고해상도 인쇄용 캔버스 (A4 비율: 1240 x 1754)
+      const W = 1240;
+      const H = 1754;
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // 1. 배경 (깨끗한 화이트)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, W, H);
+
+      // 2. 심플한 이중 외곽 테두리
+      ctx.strokeStyle = '#3B0764';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(70, 70, W - 140, H - 140);
+
+      ctx.strokeStyle = '#E9D5FF';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(92, 92, W - 184, H - 184);
+
+      // 3. 상단 매장 이름
+      const displayStore = storeName || `${storeId} 매장`;
+      ctx.fillStyle = '#5B21B6';
+      ctx.font = 'bold 38px "Pretendard", "Malgun Gothic", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(displayStore, W / 2, 260);
+
+      // 매장 이름 아래 짧은 구분선
+      ctx.fillStyle = '#DDD6FE';
+      ctx.fillRect(W / 2 - 50, 295, 100, 4);
+
+      // 4. 메인 안내 제목
+      ctx.fillStyle = '#111827';
+      ctx.font = '900 64px "Pretendard", "Malgun Gothic", sans-serif';
+      ctx.fillText(qrTitle || 'QR코드를 스캔해 주세요', W / 2, 410);
+
+      // 5. 서브 안내 문구 (줄바꿈 지원)
+      ctx.fillStyle = '#4B5563';
+      ctx.font = '600 34px "Pretendard", "Malgun Gothic", sans-serif';
+      const subLines = (qrSubtitle || '').split('\n');
+      subLines.forEach((line, idx) => {
+        ctx.fillText(line.trim(), W / 2, 495 + idx * 54);
+      });
+
+      // 6. 중앙 QR 코드 박스
+      const qrBoxSize = 640;
+      const qrBoxX = (W - qrBoxSize) / 2;
+      const qrBoxY = 650;
+
+      ctx.fillStyle = '#FAF5FF';
+      ctx.strokeStyle = '#C4B5FD';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(qrBoxX, qrBoxY, qrBoxSize, qrBoxSize, 36);
+      ctx.fill();
+      ctx.stroke();
+
+      // 흰색 내부 매트
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.roundRect(qrBoxX + 36, qrBoxY + 36, qrBoxSize - 72, qrBoxSize - 72, 24);
+      ctx.fill();
+
+      ctx.drawImage(qrImg, qrBoxX + 68, qrBoxY + 68, qrBoxSize - 136, qrBoxSize - 136);
+
+      // 7. 하단 스캔 방법 한 줄 가이드
+      ctx.fillStyle = '#3B0764';
+      ctx.font = 'bold 34px "Pretendard", "Malgun Gothic", sans-serif';
+      ctx.fillText('📱 휴대폰 기본 카메라를 켜고 QR코드를 비춰주세요', W / 2, 1430);
+
+      ctx.fillStyle = '#9CA3AF';
+      ctx.font = '500 24px "Pretendard", "Malgun Gothic", sans-serif';
+      ctx.fillText(storeLink, W / 2, 1560);
+
+      canvas.toBlob(blob => {
+        if (!blob) return;
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${displayStore}_QR안내문_${qrSize.toUpperCase()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 'image/png');
     } catch (err) {
       alert('다운로드 중 오류가 발생했습니다.');
     }
+  };
+
+  const handlePrintQrPoster = () => {
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app';
+    const storeLink = `${currentOrigin}/store/${storeId}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=10&data=${encodeURIComponent(storeLink)}`;
+    const displayStore = storeName || `${storeId} 매장`;
+    const isA5 = qrSize === 'a5';
+
+    const printWin = window.open('', '_blank', 'width=820,height=980');
+    if (!printWin) {
+      alert('팝업 차단을 해제해 주세요.');
+      return;
+    }
+
+    const escapedSub = (qrSubtitle || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br/>');
+
+    printWin.document.write(`<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>${displayStore} QR 안내문 출력</title>
+  <style>
+    @page { size: A4 portrait; margin: 10mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-family: "Pretendard", "Malgun Gothic", sans-serif; background: #fff; color: #111827; display: flex; flex-direction: column; align-items: center; }
+    .sheet {
+      width: ${isA5 ? '148mm' : '185mm'};
+      height: ${isA5 ? '205mm' : '272mm'};
+      border: 2.5px solid #3B0764;
+      border-radius: 16px;
+      padding: ${isA5 ? '12mm 10mm' : '18mm 14mm'};
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      position: relative;
+      margin-top: ${isA5 ? '6mm' : '0'};
+    }
+    .inner-border {
+      position: absolute;
+      inset: 6px;
+      border: 1px solid #DDD6FE;
+      border-radius: 12px;
+      pointer-events: none;
+    }
+    .store-name { font-size: ${isA5 ? '16pt' : '21pt'}; font-weight: 800; color: #5B21B6; letter-spacing: -0.02em; }
+    .divider { width: 40px; height: 3px; background: #C4B5FD; margin: 10px auto 0; border-radius: 2px; }
+    .main-title { font-size: ${isA5 ? '23pt' : '31pt'}; font-weight: 900; color: #111827; letter-spacing: -0.03em; margin-top: 10px; line-height: 1.25; word-break: keep-all; }
+    .sub-title { font-size: ${isA5 ? '11.5pt' : '14.5pt'}; font-weight: 600; color: #4B5563; line-height: 1.6; margin-top: 10px; word-break: keep-all; }
+    .qr-frame {
+      background: #FAF5FF;
+      border: 2px solid #C4B5FD;
+      border-radius: 22px;
+      padding: ${isA5 ? '14px' : '22px'};
+      margin: ${isA5 ? '12px 0' : '18px 0'};
+    }
+    .qr-inner {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: ${isA5 ? '12px' : '18px'};
+    }
+    .qr-inner img {
+      width: ${isA5 ? '58mm' : '82mm'};
+      height: ${isA5 ? '58mm' : '82mm'};
+      display: block;
+    }
+    .guide-pill {
+      background: #F5F3FF;
+      color: #3B0764;
+      border: 1px solid #DDD6FE;
+      padding: ${isA5 ? '8px 16px' : '11px 22px'};
+      border-radius: 999px;
+      font-size: ${isA5 ? '10.5pt' : '13pt'};
+      font-weight: 800;
+    }
+    .url-text { font-size: 9pt; color: #9CA3AF; margin-top: 6px; }
+    .cut-hint { font-size: 9pt; color: #9CA3AF; margin-bottom: 4px; }
+    @media print { .no-print { display: none !important; } }
+  </style>
+</head>
+<body>
+  ${isA5 ? '<p class="cut-hint no-print">✂️ A4 반절(A5) 사이즈 — 인쇄 후 테두리를 따라 잘라 매장에 비치하세요</p>' : ''}
+  <div class="sheet">
+    <div class="inner-border"></div>
+    <div style="width:100%">
+      <div class="store-name">${displayStore}</div>
+      <div class="divider"></div>
+      <h1 class="main-title">${qrTitle || 'QR코드를 스캔해 주세요'}</h1>
+      <p class="sub-title">${escapedSub}</p>
+    </div>
+    <div class="qr-frame">
+      <div class="qr-inner">
+        <img src="${qrUrl}" alt="QR Code" onload="setTimeout(function(){ window.print(); }, 250);" />
+      </div>
+    </div>
+    <div>
+      <div class="guide-pill">📱 휴대폰 카메라를 켜고 QR코드를 비춰주세요</div>
+      <div class="url-text">${storeLink}</div>
+    </div>
+  </div>
+</body>
+</html>`);
+    printWin.document.close();
   };
 
   const handleCopy = async () => {
@@ -468,33 +665,139 @@ export default function AdminHub() {
       )}
 
       {isQrModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-6 text-center">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">우리 매장 QR 코드</h3>
-              <p className="text-sm text-gray-500 mb-6">고객이 스캔하면 매장 통합 링크(/store/{storeId})로 연결됩니다.</p>
-              
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 flex justify-center">
-                <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(typeof window !== 'undefined' ? window.location.origin : 'https://ssakdaform-9cqv.vercel.app')}/store/${storeId}`} 
-                  alt="Store QR Code" 
-                  className="w-48 h-48 rounded-lg"
-                />
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+          onClick={() => setIsQrModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 my-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* 상단 헤더 */}
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/70">
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-gray-900">
+                  매장 비치용 QR 안내문
+                </h3>
+                <p className="text-[11.5px] text-gray-500">
+                  A4 또는 A4 반절(A5) 크기로 깔끔하게 출력하거나 이미지로 저장하세요.
+                </p>
               </div>
-              
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setIsQrModalOpen(false)}
-                  className="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(false)}
+                className="p-1.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-200/60 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
+              {/* 1. 출력 사이즈 선택 (A4 반절 vs A4 전체) */}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setQrSize('a5')}
+                  className={`py-2 px-3 rounded-lg text-xs font-extrabold transition-all ${
+                    qrSize === 'a5'
+                      ? 'bg-white text-[#5B21B6] shadow-xs'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
                 >
-                  닫기
+                  A4 반절 사이즈 (A5 · 추천)
                 </button>
-                <button 
-                  onClick={downloadQrCode}
-                  className="flex-[2] py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+                <button
+                  type="button"
+                  onClick={() => setQrSize('a4')}
+                  className={`py-2 px-3 rounded-lg text-xs font-extrabold transition-all ${
+                    qrSize === 'a4'
+                      ? 'bg-white text-[#5B21B6] shadow-xs'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
                 >
-                  <QrCode className="w-4 h-4" />
-                  다운로드
+                  A4 전체 사이즈
+                </button>
+              </div>
+
+              {/* 2. 심플 포스터 실시간 미리보기 카드 */}
+              <div className="mx-auto w-full max-w-[290px] bg-white border-2 border-[#3B0764] rounded-2xl p-5 text-center shadow-md relative">
+                <div className="absolute inset-1.5 border border-purple-200 rounded-xl pointer-events-none" />
+                <p className="text-xs font-extrabold text-[#5B21B6] tracking-tight">
+                  {storeName || `${storeId} 매장`}
+                </p>
+                <div className="w-7 h-0.5 bg-purple-300 mx-auto my-2 rounded-full" />
+                <h4 className="text-[17px] font-black text-gray-900 leading-snug break-keep">
+                  {qrTitle || 'QR코드를 스캔해 주세요'}
+                </h4>
+                <p className="text-[11px] font-semibold text-gray-500 leading-relaxed mt-1.5 whitespace-pre-line break-keep">
+                  {qrSubtitle}
+                </p>
+
+                <div className="my-4 inline-block p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200">
+                  <div className="bg-white p-2 rounded-xl">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=6&data=${encodeURIComponent(
+                        (typeof window !== 'undefined'
+                          ? window.location.origin
+                          : 'https://ssakdaform-9cqv.vercel.app') +
+                          '/store/' +
+                          storeId
+                      )}`}
+                      alt="Store QR Code"
+                      className="w-36 h-36 mx-auto"
+                    />
+                  </div>
+                </div>
+
+                <div className="px-3 py-1.5 rounded-full bg-purple-50 border border-purple-100 text-[10.5px] font-extrabold text-[#3B0764]">
+                  📱 휴대폰 카메라를 켜고 QR코드를 비춰주세요
+                </div>
+              </div>
+
+              {/* 3. 안내 문구 직접 수정 (원할 때만 간편 변경) */}
+              <div className="space-y-2 bg-gray-50 p-3.5 rounded-2xl border border-gray-200/80">
+                <div>
+                  <label className="block text-[11px] font-extrabold text-gray-600 mb-1">
+                    안내 제목 (자유롭게 수정 가능)
+                  </label>
+                  <input
+                    type="text"
+                    value={qrTitle}
+                    onChange={e => setQrTitle(e.target.value)}
+                    placeholder="예: 단골 등록 & 간편 택배 신청"
+                    className="w-full px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-xs font-bold text-gray-900 focus:outline-none focus:border-[#5B21B6]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-extrabold text-gray-600 mb-1">
+                    설명 문구
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={qrSubtitle}
+                    onChange={e => setQrSubtitle(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-xs text-gray-700 focus:outline-none focus:border-[#5B21B6] resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* 4. 하단 출력 & 이미지 다운로드 버튼 */}
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handlePrintQrPoster}
+                  className="flex-1 py-3 bg-[#3B0764] hover:bg-[#4C1D95] text-white font-extrabold text-xs sm:text-[13px] rounded-xl transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>{qrSize === 'a5' ? 'A4 반절(A5) 바로 인쇄' : 'A4 전체 바로 인쇄'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadQrCode}
+                  className="flex-1 py-3 bg-purple-100 hover:bg-purple-200 text-[#3B0764] font-extrabold text-xs sm:text-[13px] rounded-xl transition-colors flex items-center justify-center gap-1.5"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>포스터 이미지 저장</span>
                 </button>
               </div>
             </div>

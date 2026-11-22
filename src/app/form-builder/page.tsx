@@ -21,6 +21,7 @@ export default function FormBuilder() {
   const [storeName, setStoreName] = useState('내 매장 이름');
   const [formTitle, setFormTitle] = useState('새로운 맞춤형 신청서');
   const [formDescription, setFormDescription] = useState('');
+  const [submitButtonText, setSubmitButtonText] = useState('');
   const [savedForms, setSavedForms] = useState<any[]>([]);
   const [editingFormId, setEditingFormId] = useState<string | null>(null);
   const [copiedFormId, setCopiedFormId] = useState<string | null>(null);
@@ -60,6 +61,7 @@ export default function FormBuilder() {
         if (parsed.storeName) setStoreName(parsed.storeName);
         if (parsed.formTitle) setFormTitle(parsed.formTitle);
         if (parsed.formDescription !== undefined) setFormDescription(parsed.formDescription);
+        if (parsed.submitButtonText !== undefined) setSubmitButtonText(parsed.submitButtonText);
         if (parsed.fields && parsed.fields.length > 0) setFields(parsed.fields);
       } catch (e) {
         console.error("Draft parsing error", e);
@@ -102,6 +104,7 @@ export default function FormBuilder() {
         storeName,
         formTitle,
         formDescription,
+        submitButtonText: submitButtonText.trim(),
         fields
       });
       localStorage.setItem(`ssakdaform_draft_${activeStoreId}`, draftStr);
@@ -262,6 +265,7 @@ export default function FormBuilder() {
     setStoreName(form.storeName || '내 매장 이름');
     setFormTitle(form.formTitle || '');
     setFormDescription(form.formDescription || '');
+    setSubmitButtonText(form.submitButtonText || '');
     setFields(
       form.fields && form.fields.length > 0
         ? form.fields.map((f: any, idx: number) => ({ ...f, id: f.id || Date.now() + idx }))
@@ -304,6 +308,7 @@ export default function FormBuilder() {
             storeName,
             formTitle,
             formDescription,
+            submitButtonText: submitButtonText.trim(),
             fields
           };
         }
@@ -326,6 +331,7 @@ export default function FormBuilder() {
         storeName,
         formTitle,
         formDescription,
+        submitButtonText: submitButtonText.trim(),
         fields
       };
       const normalizedExisting = existingForms.map((f, idx) => ({
@@ -392,6 +398,16 @@ export default function FormBuilder() {
                   placeholder="예: 주문 전 필독사항, 제작 기간 안내 등을 적어주세요."
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] resize-y bg-white" 
                   rows={4}
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-gray-700 mb-1">하단 제출 버튼 이름 (선택)</label>
+                <input 
+                  type="text" 
+                  defaultValue={submitButtonText}
+                  onChange={(e) => setSubmitButtonText(e.target.value)}
+                  placeholder="예: 단골되기, 신청하기, 주문하기 (비워두면 자동 설정)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-[13px] bg-white" 
                 />
               </div>
             </div>

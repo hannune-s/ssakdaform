@@ -1180,9 +1180,15 @@ export default function CustomerFormPage({
             <div className="pt-6 sm:pt-8">
               <button 
                 type="submit"
-                className={`w-full py-4 ${isResumeForm ? 'bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20' : 'bg-gradient-to-r from-[#4C1D95] to-[#6D28D9] hover:from-[#3B0764] hover:to-[#5B21B6] shadow-purple-900/20'} text-white rounded-xl font-semibold text-lg active:transform active:scale-[0.99] transition-all shadow-lg`}
+                className={`w-full py-4 ${isResumeForm ? 'bg-emerald-700 hover:bg-emerald-800 shadow-emerald-700/20' : 'bg-gradient-to-r from-[#4C1D95] to-[#6D28D9] hover:from-[#3B0764] hover:to-[#5B21B6] shadow-purple-900/20'} text-white rounded-xl font-extrabold text-lg active:transform active:scale-[0.99] transition-all shadow-lg`}
               >
-                {isResumeForm ? '이력서 제출하기' : '제출하기'}
+                {data?.submitButtonText
+                  ? data.submitButtonText
+                  : isResumeForm
+                    ? '이력서 제출하기'
+                    : String(data?.formTitle || '').includes('단골')
+                      ? '단골되기'
+                      : '제출하기'}
               </button>
             </div>
           </form>
