@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Share2,
   X,
   Check,
   Image as ImageIcon,
   Smartphone,
-  PlusSquare
+  PlusSquare,
+  ArrowLeft
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -53,6 +54,36 @@ export default function HanookMiniBlogPage() {
   const [installGuideType, setInstallGuideType] = useState<
     'none' | 'samsung' | 'ios' | 'chrome' | 'kakao-ios' | 'standalone-chrome'
   >('none');
+  const detailSectionRef = useRef<HTMLDivElement>(null);
+
+  const handleOpenPost = (post: HanookPost) => {
+    setSelectedPost(post);
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ hanookPostId: post.id }, '', `#post-${post.id}`);
+      setTimeout(() => {
+        if (detailSectionRef.current) {
+          detailSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    }
+  };
+
+  const handleClosePost = () => {
+    setSelectedPost(null);
+    if (typeof window !== 'undefined' && window.location.hash.startsWith('#post-')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      if (!window.location.hash.startsWith('#post-')) {
+        setSelectedPost(null);
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   useEffect(() => {
     loadHanookData();
@@ -328,14 +359,81 @@ export default function HanookMiniBlogPage() {
         </section>
 
         {/* 갤러리 앨범 헤더 */}
-        <div className="flex items-center justify-between mb-6 px-1 border-b border-[#D5C7B2] pb-2.5">
-          <h2 className="text-[14.5px] sm:text-[15.5px] text-[#2C241D] tracking-[0.14em] font-bold">
-            소소한 기록
-          </h2>
+        <div
+          ref={detailSectionRef}
+          className="scroll-mt-16 flex items-center justify-between mb-6 px-1 border-b border-[#D5C7B2] pb-2.5"
+        >
+          <div className="flex items-center gap-3">
+            {selectedPost && (
+              <button
+                type="button"
+                onClick={handleClosePost}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#E8DEC9] hover:bg-[#DFD2BA] border border-[#C5B59C] text-[#2C241D] text-xs font-bold transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>전체 목록</span>
+              </button>
+            )}
+            <h2 className="text-[14.5px] sm:text-[15.5px] text-[#2C241D] tracking-[0.14em] font-bold">
+              소소한 기록
+            </h2>
+          </div>
           <span className="text-[10.5px] text-[#786B5D] tracking-[0.16em]">
             HANOOK GALLERY
           </span>
         </div>
+
+        {/* 본화면에서 자연스럽게 펼쳐지는 선택된 게시물 상세 영역 */}
+        {selectedPost && (
+          <article className="mb-10 bg-[#FDFBF7] rounded-2xl overflow-hidden border border-[#D4C5B0] shadow-[0_10px_30px_rgba(55,42,28,0.09)] transition-all">
+            <div className="px-5 sm:px-8 py-4 border-b border-[#EAE0D0] bg-[#F7F2E9] flex items-center justify-between">
+              <span className="text-xs text-[#7A6F63] tracking-[0.08em]">
+                {formatDate(selectedPost.created_at, selectedPost.dateLabel)}
+              </span>
+              <button
+                type="button"
+                onClick={handleClosePost}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[#C8BBA7] bg-[#FDFBF7] hover:bg-[#EFE7DA] text-[#3A3129] text-xs font-bold transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>목록으로 접기</span>
+              </button>
+            </div>
+
+            {selectedPost.imageUrl && (
+              <div className="w-full bg-[#EFE9DE] border-b border-[#EAE0D0]">
+                <img
+                  src={selectedPost.imageUrl}
+                  alt={selectedPost.title || '꽃육점 사진'}
+                  className="w-full max-h-[600px] object-contain mx-auto"
+                />
+              </div>
+            )}
+
+            <div className="p-6 sm:p-9">
+              {selectedPost.title && (
+                <h3 className="text-xl sm:text-2xl text-[#1C1612] leading-snug tracking-[0.02em] font-bold mb-4 break-keep">
+                  {selectedPost.title}
+                </h3>
+              )}
+
+              <p className="text-[15px] sm:text-[16px] text-[#352E28] leading-[2.05] tracking-[0.02em] whitespace-pre-line font-normal break-keep">
+                {selectedPost.content}
+              </p>
+
+              <div className="mt-8 pt-4 border-t border-[#EAE0D0] flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleClosePost}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#C5B7A3] bg-[#EFE7DA] hover:bg-[#E4D8C5] text-[#2C241D] text-xs font-bold transition-colors"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>목록으로 돌아가기</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        )}
 
         {/* 로딩 상태 */}
         {isLoading ? (
@@ -363,51 +461,58 @@ export default function HanookMiniBlogPage() {
         ) : (
           /* 라틀리에 드 송 스타일 앨범/갤러리 그리드 (모바일 2열, 태블릿 3열, PC 4열) */
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-6">
-            {posts.map(post => (
-              <article
-                key={post.id}
-                onClick={() => setSelectedPost(post)}
-                className="group cursor-pointer flex flex-col bg-[#FDFBF7] rounded-xl overflow-hidden border border-[#D4C5B0] hover:border-[#9E8C75] shadow-[0_6px_20px_rgba(55,42,28,0.08)] hover:shadow-[0_12px_28px_rgba(55,42,28,0.14)] transition-all"
-              >
-                {/* 정사각형 앨범 썸네일 영역 (테두리 여백 없이 원래처럼 꽉 차게) */}
-                <div className="relative aspect-square w-full overflow-hidden bg-[#EBE4D8] border-b border-[#EAE0D0]">
-                  {post.imageUrl ? (
-                    <img
-                      src={post.imageUrl}
-                      alt={post.title || '꽃육점 이야기'}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center text-[#8C7F70]">
-                      <ImageIcon className="w-6 h-6 mb-1.5 opacity-50" />
-                      <span className="text-[11px] tracking-[0.06em] line-clamp-2 break-keep">
-                        {post.title || '꽃육점의 기록'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* 사진 아래 제목 & 간단한 내용 (배경과 확실히 구분되는 밝은 크림 화이트 & 선명한 글씨) */}
-                <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between bg-[#FDFBF7]">
-                  <div>
-                    {post.title && (
-                      <h3 className="text-[13.5px] sm:text-[15px] text-[#1C1612] tracking-[0.01em] leading-snug line-clamp-2 mb-1.5 font-bold break-keep">
-                        {post.title}
-                      </h3>
+            {posts.map(post => {
+              const isSelected = selectedPost?.id === post.id;
+              return (
+                <article
+                  key={post.id}
+                  onClick={() => (isSelected ? handleClosePost() : handleOpenPost(post))}
+                  className={`group cursor-pointer flex flex-col bg-[#FDFBF7] rounded-xl overflow-hidden border transition-all ${
+                    isSelected
+                      ? 'border-[#7A6651] ring-2 ring-[#C5B59C] shadow-[0_8px_24px_rgba(55,42,28,0.14)]'
+                      : 'border-[#D4C5B0] hover:border-[#9E8C75] shadow-[0_6px_20px_rgba(55,42,28,0.08)] hover:shadow-[0_12px_28px_rgba(55,42,28,0.14)]'
+                  }`}
+                >
+                  {/* 정사각형 앨범 썸네일 영역 (테두리 여백 없이 원래처럼 꽉 차게) */}
+                  <div className="relative aspect-square w-full overflow-hidden bg-[#EBE4D8] border-b border-[#EAE0D0]">
+                    {post.imageUrl ? (
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title || '꽃육점 이야기'}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center text-[#8C7F70]">
+                        <ImageIcon className="w-6 h-6 mb-1.5 opacity-50" />
+                        <span className="text-[11px] tracking-[0.06em] line-clamp-2 break-keep">
+                          {post.title || '꽃육점의 기록'}
+                        </span>
+                      </div>
                     )}
-
-                    <p className="text-[12px] sm:text-[13px] text-[#4A3F35] leading-[1.6] line-clamp-2 break-keep font-normal">
-                      {post.content}
-                    </p>
                   </div>
 
-                  <p className="mt-2.5 pt-2 border-t border-[#EAE0D0] text-[10.5px] sm:text-[11px] text-[#857768] tracking-[0.05em]">
-                    {formatDate(post.created_at, post.dateLabel)}
-                  </p>
-                </div>
-              </article>
-            ))}
+                  {/* 사진 아래 제목 & 간단한 내용 (배경과 확실히 구분되는 밝은 크림 화이트 & 선명한 글씨) */}
+                  <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between bg-[#FDFBF7]">
+                    <div>
+                      {post.title && (
+                        <h3 className="text-[13.5px] sm:text-[15px] text-[#1C1612] tracking-[0.01em] leading-snug line-clamp-2 mb-1.5 font-bold break-keep">
+                          {post.title}
+                        </h3>
+                      )}
+
+                      <p className="text-[12px] sm:text-[13px] text-[#4A3F35] leading-[1.6] line-clamp-2 break-keep font-normal">
+                        {post.content}
+                      </p>
+                    </div>
+
+                    <p className="mt-2.5 pt-2 border-t border-[#EAE0D0] text-[10.5px] sm:text-[11px] text-[#857768] tracking-[0.05em]">
+                      {formatDate(post.created_at, post.dateLabel)}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
 
@@ -416,64 +521,6 @@ export default function HanookMiniBlogPage() {
           <p className="text-[#5A5046]">{config.storeName}</p>
         </footer>
       </div>
-
-      {/* 앨범 클릭 시 글 상세 보기 모달 (공감/태그 없이 깔끔하게 사진+글만) */}
-      {selectedPost && (
-        <div
-          className="fixed inset-0 z-50 bg-black/55 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
-          onClick={() => setSelectedPost(null)}
-        >
-          <div
-            className="bg-[#F9F5EE] w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-[#DFD5C5] my-auto max-h-[90vh] flex flex-col"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="px-6 py-4 border-b border-[#E6DDD0] flex items-center justify-between bg-[#F3ECE1]">
-              <span className="text-xs text-[#7A6F63] tracking-[0.08em]">
-                {formatDate(selectedPost.created_at, selectedPost.dateLabel)}
-              </span>
-              <button
-                type="button"
-                onClick={() => setSelectedPost(null)}
-                className="p-1 rounded-full text-[#7A6F63] hover:text-[#2B2520] transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 overflow-y-auto space-y-5">
-              {selectedPost.imageUrl && (
-                <div className="rounded-xl overflow-hidden bg-[#EFE9DE] border border-[#E6DDD0]">
-                  <img
-                    src={selectedPost.imageUrl}
-                    alt={selectedPost.title || '꽃육점 사진'}
-                    className="w-full max-h-[520px] object-contain mx-auto"
-                  />
-                </div>
-              )}
-
-              {selectedPost.title && (
-                <h3 className="text-xl text-[#221D18] leading-snug tracking-[0.04em] font-normal break-keep">
-                  {selectedPost.title}
-                </h3>
-              )}
-
-              <p className="text-[15px] text-[#3D352E] leading-[2.0] tracking-[0.02em] whitespace-pre-line font-normal break-keep">
-                {selectedPost.content}
-              </p>
-            </div>
-
-            <div className="px-6 py-3.5 border-t border-[#E6DDD0] bg-[#F3ECE1] flex justify-end">
-              <button
-                type="button"
-                onClick={() => setSelectedPost(null)}
-                className="px-4 py-1.5 rounded-full border border-[#C5B7A3] bg-[#EAE0D0] text-[#3A3129] text-xs hover:bg-[#DFD3C0]"
-              >
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 홈 화면 바로가기 추가 1초 안내 모달 */}
       {installGuideType !== 'none' && (
