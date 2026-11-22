@@ -17,7 +17,9 @@ export default function SettingsPage() {
     phone: '',
     hours: '',
     closedDays: '',
-    paymentLink: ''
+    paymentLink: '',
+    showDeliveryButton: true,
+    showResumeButton: true
   });
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -53,7 +55,9 @@ export default function SettingsPage() {
         phone: loggedIn?.phone || '',
         hours: '',
         closedDays: '',
-        paymentLink: ''
+        paymentLink: '',
+        showDeliveryButton: true,
+        showResumeButton: true
       };
       let loadedShopLinks: { title: string; url: string }[] = [];
 
@@ -89,7 +93,9 @@ export default function SettingsPage() {
             name: initialStore.name || parsed.name || parsed.storeName || '',
             ownerName: initialStore.ownerName || parsed.ownerName || '',
             address: initialStore.address || parsed.address || '',
-            phone: initialStore.phone || parsed.phone || parsed.contact || ''
+            phone: initialStore.phone || parsed.phone || parsed.contact || '',
+            showDeliveryButton: parsed.showDeliveryButton !== false,
+            showResumeButton: parsed.showResumeButton !== false
           };
           if (Array.isArray(parsed.shopLinks) && parsed.shopLinks.length > 0) {
             loadedShopLinks = parsed.shopLinks;
@@ -109,7 +115,15 @@ export default function SettingsPage() {
         initialStore = {
           ...initialStore,
           hours: myMeta.data.hours ?? initialStore.hours,
-          closedDays: myMeta.data.closedDays ?? initialStore.closedDays
+          closedDays: myMeta.data.closedDays ?? initialStore.closedDays,
+          showDeliveryButton:
+            myMeta.data.showDeliveryButton !== undefined
+              ? Boolean(myMeta.data.showDeliveryButton)
+              : initialStore.showDeliveryButton,
+          showResumeButton:
+            myMeta.data.showResumeButton !== undefined
+              ? Boolean(myMeta.data.showResumeButton)
+              : initialStore.showResumeButton
         };
         if (Array.isArray(myMeta.data.shopLinks) && myMeta.data.shopLinks.length > 0) {
           loadedShopLinks = myMeta.data.shopLinks;
@@ -251,7 +265,9 @@ export default function SettingsPage() {
         storeId: activeStoreId,
         hours: payloadToSave.hours || '',
         closedDays: payloadToSave.closedDays || '',
-        shopLinks: validShopLinks
+        shopLinks: validShopLinks,
+        showDeliveryButton: payloadToSave.showDeliveryButton !== false,
+        showResumeButton: payloadToSave.showResumeButton !== false
       };
 
       if (existingMeta) {
@@ -514,6 +530,58 @@ export default function SettingsPage() {
               <Plus className="w-4 h-4" />
               링크 추가
             </button>
+          </div>
+
+          {/* 기본 제공 버튼(간편 택배 접수 / 직원채용 이력서) 고객 화면 표시/숨김 설정 */}
+          <div className="mb-6 p-4 rounded-2xl bg-purple-50/60 border border-purple-200/80 space-y-3">
+            <div>
+              <h3 className="text-sm font-extrabold text-purple-950">
+                기본 제공 버튼 고객 화면 노출 설정
+              </h3>
+              <p className="text-xs text-purple-800/80 mt-0.5">
+                고객 화면 상단(배송조회 바로 위)에 기본으로 표시되는 [간편 택배 접수]와 [직원채용 이력서] 버튼을 표시하거나 숨길 수 있습니다.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <label className="flex items-center justify-between p-3 rounded-xl bg-white border border-purple-200 cursor-pointer hover:bg-purple-50/40 transition-colors">
+                <div>
+                  <span className="block text-xs sm:text-[13px] font-extrabold text-gray-900">
+                    📦 간편 택배 접수 버튼
+                  </span>
+                  <span className="block text-[11px] text-gray-500 mt-0.5">
+                    {storeInfo.showDeliveryButton !== false ? '현재 고객 화면에 표시됨' : '현재 숨김 상태'}
+                  </span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={storeInfo.showDeliveryButton !== false}
+                  onChange={e =>
+                    setStoreInfo({ ...storeInfo, showDeliveryButton: e.target.checked })
+                  }
+                  className="w-5 h-5 rounded text-[#5B21B6] focus:ring-[#5B21B6] accent-[#5B21B6] cursor-pointer"
+                />
+              </label>
+
+              <label className="flex items-center justify-between p-3 rounded-xl bg-white border border-purple-200 cursor-pointer hover:bg-purple-50/40 transition-colors">
+                <div>
+                  <span className="block text-xs sm:text-[13px] font-extrabold text-gray-900">
+                    📋 직원채용 이력서 버튼
+                  </span>
+                  <span className="block text-[11px] text-gray-500 mt-0.5">
+                    {storeInfo.showResumeButton !== false ? '현재 고객 화면에 표시됨' : '현재 숨김 상태'}
+                  </span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={storeInfo.showResumeButton !== false}
+                  onChange={e =>
+                    setStoreInfo({ ...storeInfo, showResumeButton: e.target.checked })
+                  }
+                  className="w-5 h-5 rounded text-[#5B21B6] focus:ring-[#5B21B6] accent-[#5B21B6] cursor-pointer"
+                />
+              </label>
+            </div>
           </div>
 
           <div className="space-y-3">

@@ -1,56 +1,84 @@
 import Link from 'next/link';
-import { QrCode, Sparkles, Users, Smartphone, PlusSquare, CreditCard, BarChart3, ArrowRight, CheckCircle2, Printer, Download, UserCheck, Camera, FileCheck, ShieldCheck, Search, Truck, MessageSquare, ExternalLink } from 'lucide-react';
+import {
+  QrCode,
+  Sparkles,
+  Users,
+  Smartphone,
+  PlusSquare,
+  CreditCard,
+  BarChart3,
+  ArrowRight,
+  CheckCircle2,
+  Printer,
+  Download,
+  UserCheck,
+  Camera,
+  FileCheck,
+  ShieldCheck,
+  Search,
+  Truck,
+  MessageSquare,
+  ExternalLink,
+  Star,
+  Package
+} from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen break-keep bg-white selection:bg-indigo-100 selection:text-indigo-900 font-sans">
+    <div className="min-h-screen break-keep bg-white selection:bg-purple-100 selection:text-purple-900 font-sans">
       {/* Navbar */}
-      <nav className="fixed top-0 inset-x-0 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
+      <nav className="fixed top-0 inset-x-0 bg-white/85 backdrop-blur-md border-b border-gray-100 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#5B21B6] rounded-lg flex items-center justify-center shadow-xs">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-black tracking-tight text-gray-900">싹다폼</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link 
+            <Link
               href="/login"
               className="text-sm font-bold text-gray-600 hover:text-gray-900 px-2 py-2 transition-colors"
             >
               로그인
             </Link>
-            <Link 
+            <Link
               href="/signup"
-              className="text-[13px] sm:text-sm font-bold text-white hover:text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-colors shadow-sm"
+              className="text-[13px] sm:text-sm font-extrabold text-white bg-[#5B21B6] hover:bg-[#3B0764] px-4 py-2 rounded-full transition-colors shadow-sm"
             >
-              회원가입
+              무료로 시작하기
             </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 sm:pt-40 sm:pb-24 px-4 sm:px-6 bg-gradient-to-b from-indigo-50/50 to-white overflow-hidden">
+      <section className="pt-32 pb-20 sm:pt-40 sm:pb-24 px-4 sm:px-6 bg-gradient-to-b from-purple-50/70 via-indigo-50/30 to-white overflow-hidden">
         <div className="max-w-6xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100/50 text-indigo-700 font-semibold text-sm mb-6 border border-indigo-200/50">
-            <Sparkles className="w-4 h-4" />
-            소상공인을 위한 완벽한 접수 솔루션
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100/80 text-[#4C1D95] font-extrabold text-xs sm:text-sm mb-6 border border-purple-200">
+            <Sparkles className="w-4 h-4 text-[#5B21B6]" />
+            인스타·블로그 연동 · 단골 모집 · 간편 택배 · 송장 엑셀 · 채용 이력서까지 올인원!
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 tracking-tight leading-[1.15] mb-6">
-            모든 현장 접수,<br className="hidden sm:block" />
-            이제 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">스마트폰 하나로</span> 끝내세요
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-gray-900 tracking-tight leading-[1.18] mb-6">
+            인스타·블로그·단골을 하나로 잇는<br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#7E22CE]">우리 매장 모바일 홈 &amp; 스마트 접수</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-500 font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
-            고무장갑 벗고 메모할 필요 없습니다. 싹다폼은 알아보기 힘든 종이 조각 대신, 
-            가장 쉽고 빠르며 고급스러운 고객 맞춤형 폼 접수 경험을 제공합니다.
+          <p className="text-base sm:text-xl text-gray-600 font-medium mb-10 max-w-3xl mx-auto leading-relaxed">
+            고무장갑 벗고 종이 조각에 주소 적던 시대는 끝났습니다.<br className="hidden sm:block" />
+            내가 직접 꾸민 <strong>우리 매장 대표 링크</strong> 하나에 <strong>블로그·인스타·실시간 세일 특가·간편 택배 접수·비회원 배송조회·직원채용 이력서</strong>까지 싹 다 담아드렸습니다.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              href="/demo"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+            <Link
+              href="/signup"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#5B21B6] hover:bg-[#3B0764] text-white px-8 py-4 rounded-2xl font-black text-lg transition-all shadow-lg shadow-purple-900/15 hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
             >
-              어드민 체험하기 <ArrowRight className="w-5 h-5" />
+              지금 우리 매장 링크 만들기 <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/demo"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200 px-8 py-4 rounded-2xl font-bold text-lg transition-all active:scale-95"
+            >
+              어드민 화면 먼저 체험하기
             </Link>
           </div>
         </div>
@@ -60,567 +88,220 @@ export default function LandingPage() {
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-20">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">왜 싹다폼을 선택해야 할까요?</h2>
-            <p className="text-gray-500 text-lg font-medium">실제 현장에서 가장 필요했던 기능들만 꽉꽉 담았습니다.</p>
+            <span className="text-xs sm:text-sm font-extrabold text-[#5B21B6] tracking-widest uppercase">
+              WHY SSAKDAFORM
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2 mb-4">
+              실제 매장 사장님이 직접 쓰면서 완성한 6가지 핵심 무기
+            </h2>
+            <p className="text-gray-500 text-base sm:text-lg font-medium">
+              컴퓨터를 잘 모르는 사장님도 가입 즉시 바로 쓸 수 있도록 가장 직관적으로 설계했습니다.
+            </p>
           </div>
 
           <div className="space-y-24 sm:space-y-32">
-            
-            {/* Feature 1 */}
+
+            {/* Feature 1: 내가 꾸민 대표 화면 + 외부 링크 + 기본 택배/이력서 올인원 허브 */}
             <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
               <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-2">
-                  <QrCode className="w-6 h-6 text-blue-600" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-200 text-[#5B21B6] text-xs font-extrabold">
+                  핵심 무기 01 · 인스타 · 블로그 · 매장 QR 올인원 링크
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  고무장갑 벗고 전화할 필요 없는,<br className="hidden sm:block" />1초 만에 끝나는 스마트 접수
+                  내가 꾸민 맞춤폼이 곧 &lsquo;우리 매장 대표 화면&rsquo;!<br className="hidden sm:block" />
+                  블로그 · 인스타 · 세일 특가 · 택배 · 이력서가 한 화면에
                 </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  "김치 담그다 말고 장갑 벗고, 알아보기 힘든 종이 조각에 주소를 적고 계신가요?"<br/><br/>
-                  이제 고객이 직접 큐알(QR)이나 링크 하나로 간편하게 주소와 요청사항을 입력합니다. 사장님은 손에 묻은 양념을 닦을 필요도, 주소를 잘못 적어 고객에게 다시 전화하는 아날로그적 번거로움도 싹 사라집니다.
+                <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed">
+                  천편일률적인 딱딱한 접수 화면이 아닙니다. 사장님이 <strong>&ldquo;단골할래요?&rdquo;</strong>, <strong>&ldquo;명절 선물세트 사전예약&rdquo;</strong>처럼 매장에 딱 맞는 제목과 따뜻한 인사말을 적고 <strong>[⭐ 대표 화면 지정]</strong>만 누르면, 우리 매장 QR코드와 대표 주소(<code>/store/내매장ID</code>)가 즉시 그 화면으로 연결됩니다.<br /><br />
+                  게다가 상단에는 <strong>우리 매장 블로그(소소한 기록)</strong>와 눈에 확 띄는 <strong>실시간 세일·특가 링크</strong>를 연결할 수 있고, 아무 설정을 안 해도 <strong>[간편 택배 접수]</strong>와 <strong>[직원채용 이력서]</strong> 버튼이 기본 탑재되어 컴맹 사장님도 1분 만에 완벽한 매장 홈페이지를 갖게 됩니다.
                 </p>
               </div>
-              <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center mt-10 lg:mt-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-indigo-50 rounded-[2.5rem] transform rotate-3 scale-105" />
-                
-                {/* 3 Mobile Mockups Container */}
-                <div className="relative w-full max-w-md h-[360px]">
-                  
-                  {/* Delivery Mockup (Left) */}
-                  <div className="absolute top-4 -left-4 sm:left-0 w-48 bg-white rounded-3xl shadow-[0_15px_30px_rgb(0,0,0,0.1)] border border-gray-100 transform -rotate-6 p-4 overflow-hidden z-10 hover:-rotate-2 hover:z-40 transition-all duration-300">
-                    <div className="bg-blue-600 text-white text-center py-3 -mx-4 -mt-4 mb-3 text-[13px] font-bold shadow-sm">📦 간편 택배 접수</div>
-                    <div className="space-y-3">
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">받는 분 성함</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium">홍길동</span></div></div>
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">연락처</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium">010-1234-5678</span></div></div>
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">주소</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium truncate">서울 강남구 테헤란로</span></div></div>
-                      <div className="h-8 bg-blue-600 rounded-xl mt-3 flex items-center justify-center text-white text-[12px] font-bold shadow-md">접수하기</div>
+
+              <div className="flex-1 w-full relative min-h-[430px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-100 via-fuchsia-50 to-indigo-50 rounded-[2.5rem] transform rotate-2 scale-105" />
+
+                {/* 가상의 샘플 고객 대표 화면 목업 */}
+                <div className="relative w-full max-w-[350px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(91,33,182,0.18)] border border-purple-100 overflow-hidden z-10">
+                  <div className="bg-gradient-to-br from-[#3B0764] via-[#5B21B6] to-[#4C1D95] px-5 py-6 text-center text-white">
+                    <div className="text-lg font-black tracking-tight">싹다상점 강남본점</div>
+                    <div className="mt-2 inline-block px-3.5 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-extrabold">
+                      단골할래요?
                     </div>
                   </div>
 
-                  {/* Order Mockup (Right) */}
-                  <div className="absolute top-12 -right-4 sm:right-0 w-48 bg-white rounded-3xl shadow-[0_15px_30px_rgb(0,0,0,0.1)] border border-gray-100 transform rotate-6 p-4 overflow-hidden z-20 hover:rotate-2 hover:z-40 transition-all duration-300">
-                    <div className="bg-purple-600 text-white text-center py-3 -mx-4 -mt-4 mb-3 text-[13px] font-bold shadow-sm">🛍️ 상품 주문서</div>
-                    <div className="space-y-3">
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">주문 상품</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium truncate">프리미엄 세트 A</span></div></div>
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">수량</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium">2개</span></div></div>
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">요청사항</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium truncate">선물용 포장 부탁드려요</span></div></div>
-                      <div className="h-8 bg-purple-600 rounded-xl mt-3 flex items-center justify-center text-white text-[12px] font-bold shadow-md">주문하기</div>
-                    </div>
-                  </div>
-
-                  {/* Reservation Mockup (Center/Front) */}
-                  <div className="absolute top-24 left-1/2 -translate-x-1/2 w-52 bg-white rounded-3xl shadow-[0_20px_40px_rgb(0,0,0,0.15)] border border-gray-100 p-4 overflow-hidden z-30 hover:scale-105 transition-all duration-300">
-                    <div className="bg-green-600 text-white text-center py-3 -mx-4 -mt-4 mb-3 text-[13px] font-bold shadow-sm">🗓️ 매장 예약 접수</div>
-                    <div className="space-y-3">
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">예약자명</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium">이영희</span></div></div>
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">방문 일시</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium">10월 25일 (금) 19:00</span></div></div>
-                      <div><div className="text-[10px] text-gray-500 mb-1 font-medium">방문 인원</div><div className="h-7 bg-gray-50 border border-gray-200 rounded-lg px-2 flex items-center"><span className="text-[10px] text-gray-600 font-medium">4명 (성인2, 아동2)</span></div></div>
-                      <div className="h-9 bg-green-600 rounded-xl mt-3 flex items-center justify-center text-white text-[12px] font-bold shadow-md">예약하기</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
-              <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center mb-2">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  우리 매장의 품격을 높이는<br className="hidden sm:block" />고급스러운 브랜드 경험
-                </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  싸구려 간이 폼이나 지저분한 메모장이 아닙니다.<br/><br/>
-                  사장님의 멋진 매장 상호명과 브랜드 로고가 딱 박힌 고급스러운 인터페이스로 고객에게 주문을 받습니다. 스마트한 방식 덕분에 고객이 느끼는 브랜드의 신뢰도와 가치가 단번에 올라갑니다.
-                </p>
-              </div>
-              <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center mt-10 lg:mt-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-100 to-fuchsia-50 rounded-[2.5rem] transform -rotate-3 scale-105" />
-                
-                {/* Premium Brand Mockup */}
-                <div className="relative w-64 bg-[#FAFAFA] rounded-[2rem] shadow-[0_20px_50px_rgba(147,51,234,0.15)] border-4 border-white overflow-hidden z-10 hover:scale-105 transition-transform duration-500">
-                  
-                  {/* Mockup Header (Brand) */}
-                  <div className="bg-white px-6 pt-8 pb-6 text-center border-b border-gray-100 shadow-sm relative z-10">
-                    <div className="w-16 h-16 mx-auto bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-3 shadow-inner border border-purple-100">
-                      <Sparkles className="w-8 h-8" />
-                    </div>
-                    <h4 className="text-lg font-black text-gray-900 tracking-tight">우아한 베이커리</h4>
-                    <p className="text-[11px] text-gray-400 mt-1 font-medium">프리미엄 수제 디저트 전문점</p>
-                  </div>
-                  
-                  {/* Mockup Body (Form) */}
-                  <div className="p-5 space-y-4 bg-gray-50/50">
-                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                      <div className="text-[11.5px] font-bold text-gray-800 mb-2.5">예약자 정보</div>
-                      <div className="space-y-2">
-                        <div className="h-8 bg-gray-50 border border-gray-200 rounded-lg px-3 flex items-center"><span className="text-[11px] text-gray-400">성함을 입력해주세요</span></div>
-                        <div className="h-8 bg-gray-50 border border-gray-200 rounded-lg px-3 flex items-center"><span className="text-[11px] text-gray-400">연락처를 입력해주세요</span></div>
+                  <div className="p-4 space-y-2.5 bg-white">
+                    {/* 블로그 고정 줄 */}
+                    <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#F3E8FF] to-[#EDE9FE] border border-[#C4B5FD] flex items-center justify-between">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-xs font-black text-[#3B0764]">우리 가게 이야기</span>
+                        <span className="text-[10.5px] font-semibold text-[#6D28D9]">매일 정성껏 준비하는 일상</span>
                       </div>
-                    </div>
-                    
-                    <div className="h-11 bg-purple-600 rounded-xl flex items-center justify-center text-white text-[13px] font-bold shadow-md shadow-purple-200 hover:bg-purple-700 transition-colors cursor-pointer">
-                      예약 완료하기
-                    </div>
-                  </div>
-                  
-                </div>
-                
-                {/* Small floating badge */}
-                <div className="absolute top-[20%] -right-2 sm:-right-6 bg-white px-4 py-2.5 rounded-2xl shadow-xl border border-gray-100 z-20 flex items-center gap-2 animate-bounce">
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                  <span className="text-[12px] font-bold text-gray-700">고급스러운 브랜드 인지도 상승!</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-              <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center mb-2">
-                  <Users className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  버려지던 종이 조각이 '단골 자산'으로!<br className="hidden sm:block" />자동 고객 관리 시스템
-                </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  그동안 택배 주문을 받고 대충 버려졌던 종이 조각들과 흩어진 수기 노트는 그만.<br/><br/>
-                  싹다폼에 단 한 번이라도 주문서를 작성한 고객의 정보는 차곡차곡 안전하게 보관됩니다. 나중에 재주문이 들어왔을 때, 이름이나 전화번호만 살짝 조회하면 이전 주소를 금방 찾아낼 수 있어 단골 관리와 재주문 처리가 압도적으로 빨라집니다.
-                </p>
-              </div>
-              <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center mt-10 lg:mt-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-green-100 to-emerald-50 rounded-[2.5rem] transform rotate-2 scale-105" />
-                
-                {/* Admin CRM List Mockup */}
-                <div className="relative w-full max-w-[480px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(22,163,74,0.15)] border border-gray-100 overflow-hidden z-10 hover:scale-[1.02] transition-transform duration-500">
-                  
-                  {/* Mockup Header (Search/Tabs) */}
-                  <div className="p-4 sm:p-5 border-b border-gray-100 bg-white">
-                    <div className="flex gap-2 mb-4">
-                      <div className="px-3 py-1.5 bg-green-50 text-green-700 text-[11px] font-bold rounded-full border border-green-200">택배접수 (12)</div>
-                      <div className="px-3 py-1.5 bg-gray-50 text-gray-500 text-[11px] font-semibold rounded-full border border-gray-200">예약접수 (5)</div>
-                    </div>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 border-[1.5px] border-gray-400 rounded-full" />
-                      <div className="absolute left-[14px] top-1/2 mt-[3px] ml-[3px] w-1.5 h-1.5 border-l-[1.5px] border-gray-400 transform -rotate-45" />
-                      <div className="w-full bg-gray-50 border border-gray-200 rounded-xl h-10 pl-9 pr-3 flex items-center">
-                        <span className="text-[12px] text-gray-800 font-medium">김철</span>
-                        <div className="w-[1.5px] h-4 bg-blue-500 animate-pulse ml-0.5" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Mockup Table */}
-                  <div className="bg-white overflow-hidden pb-2">
-                    <table className="w-full text-left">
-                      <thead className="bg-green-50/50 border-y border-green-100/50">
-                        <tr>
-                          <th className="px-4 py-2.5 text-[10px] font-extrabold text-gray-500 tracking-wider">이름</th>
-                          <th className="px-4 py-2.5 text-[10px] font-extrabold text-gray-500 tracking-wider hidden sm:table-cell">연락처</th>
-                          <th className="px-4 py-2.5 text-center text-[10px] font-extrabold text-gray-500 tracking-wider">상태</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        <tr className="hover:bg-gray-50 transition-colors bg-green-50/20">
-                          <td className="px-4 py-3">
-                            <div className="font-bold text-gray-900 text-[12px]">김철수</div>
-                            <div className="text-[10px] text-gray-400 mt-0.5 sm:hidden">010-1234-****</div>
-                            <div className="text-[10px] text-gray-400 mt-0.5">오늘 14:30</div>
-                          </td>
-                          <td className="px-4 py-3 hidden sm:table-cell">
-                            <div className="text-[11px] font-bold text-gray-600">010-1234-5678</div>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="inline-block px-2.5 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-[10px] font-bold">결제완료</span>
-                          </td>
-                        </tr>
-                        <tr className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-3">
-                            <div className="font-bold text-gray-900 text-[12px]">이영희</div>
-                            <div className="text-[10px] text-gray-400 mt-0.5 sm:hidden">010-9876-****</div>
-                            <div className="text-[10px] text-gray-400 mt-0.5">오늘 11:20</div>
-                          </td>
-                          <td className="px-4 py-3 hidden sm:table-cell">
-                            <div className="text-[11px] font-semibold text-gray-600">010-9876-5432</div>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="inline-block px-2.5 py-1 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-full text-[10px] font-bold">접수대기</span>
-                          </td>
-                        </tr>
-                        <tr className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-3">
-                            <div className="font-bold text-gray-900 text-[12px]">박민수</div>
-                            <div className="text-[10px] text-gray-400 mt-0.5 sm:hidden">010-5555-****</div>
-                            <div className="text-[10px] text-gray-400 mt-0.5">어제 16:45</div>
-                          </td>
-                          <td className="px-4 py-3 hidden sm:table-cell">
-                            <div className="text-[11px] font-semibold text-gray-600">010-5555-6666</div>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="inline-block px-2.5 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-[10px] font-bold">결제완료</span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                
-                {/* Small floating badge */}
-                <div className="absolute bottom-6 -left-2 sm:-left-6 bg-white px-4 py-3 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] border border-gray-100 z-20 flex items-center gap-3 hover:-translate-y-1 transition-transform cursor-pointer">
-                  <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center border border-blue-100">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-black text-gray-900">단골고객 발견!</div>
-                    <div className="text-[11px] font-medium text-gray-500 mt-0.5">이전 주문 이력: 3회</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
-              <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-2">
-                  <PlusSquare className="w-6 h-6 text-orange-600" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  어떤 현장이든 내 입맛대로 뚝딱!<br className="hidden sm:block" />무한 확장 '간편폼 만들기'
-                </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  기본적으로 현장에서 가장 많이 쓰는 택배, 주문, 예약 폼은 완벽하게 세팅 완료!<br/><br/>
-                  하지만 여기서 끝이 아닙니다. '간편폼 만들기' 기능으로 VIP 시크릿 특가, 명절 사전예약, 단체 주문서 등 필요한 맞춤형 신청서를 여러 개 만들고 언제든 자유롭게 수정할 수 있습니다. 일반 고객 화면에는 숨겨두고, 사장님이 원하는 고객에게만 개별 링크를 복사해 카톡이나 문자로 쏙 보내기만 하면 끝!
-                </p>
-              </div>
-              <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center mt-10 lg:mt-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-orange-100 to-amber-50 rounded-[2.5rem] transform -rotate-2 scale-105" />
-                
-                {/* Form Builder Mockup */}
-                <div className="relative w-full max-w-[480px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(234,88,12,0.15)] border border-gray-100 overflow-hidden z-10 hover:scale-[1.02] transition-transform duration-500 flex flex-col h-[340px]">
-                  
-                  {/* Mockup Header */}
-                  <div className="p-4 border-b border-gray-100 bg-orange-50/30 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center border border-orange-200">
-                        <PlusSquare className="w-4 h-4" />
-                      </div>
-                      <span className="text-[14px] font-bold text-gray-900">저장된 맞춤형 폼 관리</span>
-                    </div>
-                    <div className="px-3.5 py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100 text-[11.5px] font-bold rounded-xl shadow-xs">개별 링크 복사 · 수정</div>
-                  </div>
-
-                  {/* Mockup Body */}
-                  <div className="flex-1 p-4 bg-gray-50/50 flex gap-4 overflow-hidden relative">
-                    
-                    {/* Left/Main Column - Fields List */}
-                    <div className="flex-1 space-y-3">
-                      {/* Form Title */}
-                      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm relative">
-                        <div className="text-[13px] font-bold text-gray-800 mb-1">VIP 단골 전용 명절 선물세트 신청서</div>
-                        <div className="text-[11px] text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 mt-1.5 font-semibold">사장님 안내글이 계좌 안내 바로 아래 눈에 띄게 표시됩니다!</div>
-                      </div>
-
-                      {/* Draggable Field 1 */}
-                      <div className="bg-white p-3.5 rounded-2xl border-l-[6px] border-l-orange-500 border border-gray-200 shadow-sm flex items-start gap-3 relative">
-                        <div className="w-4 h-4 text-gray-300 flex flex-col gap-[3px] justify-center mt-1 cursor-move">
-                          <div className="w-3 h-0.5 bg-gray-300 rounded" />
-                          <div className="w-3 h-0.5 bg-gray-300 rounded" />
-                          <div className="w-3 h-0.5 bg-gray-300 rounded" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-[12px] font-bold text-gray-700 mb-2 flex justify-between">
-                            <span>고객 성함 (단답형)</span>
-                            <span className="text-[10px] text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full font-bold">필수</span>
-                          </div>
-                          <div className="h-7 bg-gray-50 border border-gray-100 rounded-lg" />
-                        </div>
-                      </div>
-
-                      {/* Draggable Field 2 */}
-                      <div className="bg-white p-3.5 rounded-2xl border-l-[6px] border-l-gray-300 border border-gray-200 shadow-sm flex items-start gap-3 relative opacity-70">
-                        <div className="w-4 h-4 text-gray-300 flex flex-col gap-[3px] justify-center mt-1 cursor-move">
-                          <div className="w-3 h-0.5 bg-gray-300 rounded" />
-                          <div className="w-3 h-0.5 bg-gray-300 rounded" />
-                          <div className="w-3 h-0.5 bg-gray-300 rounded" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-[12px] font-bold text-gray-700 mb-2">희망 수령일 (날짜 자동 감지)</div>
-                          <div className="flex gap-3">
-                            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full border border-gray-300 bg-white" /><div className="h-2 w-10 bg-gray-200 rounded" /></div>
-                            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full border border-gray-300 bg-white" /><div className="h-2 w-10 bg-gray-200 rounded" /></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Add Field Button Overlay */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                      <div className="px-5 py-3 bg-gray-900 text-white text-[13px] font-bold rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.2)] flex items-center gap-2 cursor-pointer hover:bg-gray-800 transition-colors">
-                        <PlusSquare className="w-4 h-4 text-orange-400" />
-                        새 항목 추가 & 언제든 수정
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Small floating badge */}
-                <div className="absolute top-10 -left-2 sm:-left-6 bg-white px-4 py-3 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.1)] border border-gray-100 z-20 flex flex-col items-center gap-1 animate-[bounce_3s_infinite]">
-                  <div className="text-[13px] font-black text-orange-600">원하는 고객에게만 프라이빗 링크!</div>
-                  <div className="text-[11px] font-medium text-gray-500">폼별 개별 링크 복사 & 즉시 수정</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-              <div className="flex-1 space-y-6">
-                <div className="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center mb-2">
-                  <Smartphone className="w-6 h-6 text-rose-600" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  스마트폰 홈 화면에 톡!<br className="hidden sm:block" />언제 어디서나 확인하고 척척 출력
-                </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  복잡한 앱 설치 없이, 스마트폰 홈 화면에 아이콘만 바로 추가해두고 언제 어디서나 모바일로 확인합니다.<br/><br/>
-                  들어온 택배 주문서나 예약 주문서를 보기 쉽게 모아보고, 부득이한 예약/주문 변경 시 버튼 하나로 깔끔하게 취소 처리까지! 컴퓨터 앞에서는 필요할 때 직관적인 양식으로 다운로드 및 출력까지 완벽하게 지원합니다.
-                </p>
-              </div>
-              <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center mt-10 lg:mt-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-rose-100 to-pink-50 rounded-[2.5rem] transform rotate-3 scale-105" />
-                
-                {/* Mobile Admin Mockup */}
-                <div className="relative w-64 bg-gray-50 rounded-[2.5rem] shadow-[0_20px_50px_rgba(225,29,72,0.15)] border-[8px] border-white overflow-hidden z-10 hover:-translate-y-2 transition-transform duration-500 h-[420px] flex flex-col">
-                  
-                  {/* Top Bar with Export/Print */}
-                  <div className="bg-white p-4 border-b border-gray-100 flex flex-col gap-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[15px] font-black text-gray-900 tracking-tight">상세 현황 관리</span>
-                      <div className="w-7 h-7 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100"><Sparkles className="w-3.5 h-3.5" /></div>
-                    </div>
-                    
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
-                      <div className="flex-1 py-2 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-xl border border-emerald-200 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer hover:bg-emerald-100 transition-colors">
-                        <Download className="w-3.5 h-3.5" /> PDF 저장
-                      </div>
-                      <div className="flex-1 py-2 bg-gray-800 text-white text-[11px] font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-sm cursor-pointer hover:bg-gray-900 transition-colors">
-                        <Printer className="w-3.5 h-3.5 text-gray-300" /> 인쇄하기
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* List Content */}
-                  <div className="flex-1 p-3 space-y-3 overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-50 z-10 pointer-events-none" />
-                    
-                    <div className="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 relative z-0">
-                      <div className="flex justify-between items-center mb-2.5">
-                        <span className="text-[12px] font-bold text-gray-900">김철수 고객님</span>
-                        <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-full border border-indigo-200">발송완료</span>
-                      </div>
-                      <div className="flex justify-end gap-1.5 mt-2">
-                        <span className="px-2 py-1 bg-red-50 text-red-600 text-[10px] font-bold rounded-md">주문 취소</span>
-                        <span className="px-2 py-1 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold rounded-md">상세 내용</span>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 relative z-0">
-                      <div className="flex justify-between items-center mb-2.5">
-                        <span className="text-[12px] font-bold text-gray-900">이영희 고객님</span>
-                        <span className="px-2 py-0.5 bg-yellow-50 text-yellow-600 text-[10px] font-bold rounded-full border border-yellow-100">접수대기</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        <div className="h-2 w-full bg-gray-100 rounded" />
-                        <div className="h-2 w-2/3 bg-gray-100 rounded" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Navigation Mockup */}
-                  <div className="bg-white border-t border-gray-100 p-3 flex justify-around items-center px-4 pb-5 relative z-20">
-                    <div className="flex flex-col items-center gap-1 cursor-pointer">
-                      <div className="w-6 h-6 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center"><Smartphone className="w-3.5 h-3.5" /></div>
-                      <div className="text-[9px] font-bold text-rose-600">홈</div>
-                    </div>
-                    <div className="flex flex-col items-center gap-1 opacity-40 cursor-pointer">
-                      <div className="w-6 h-6 bg-gray-50 rounded-lg flex items-center justify-center"><BarChart3 className="w-3.5 h-3.5 text-gray-500" /></div>
-                      <div className="text-[9px] font-bold text-gray-500">현황</div>
-                    </div>
-                    <div className="flex flex-col items-center gap-1 opacity-40 cursor-pointer">
-                      <div className="w-6 h-6 bg-gray-50 rounded-lg flex items-center justify-center"><CreditCard className="w-3.5 h-3.5 text-gray-500" /></div>
-                      <div className="text-[9px] font-bold text-gray-500">마이</div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Small floating badge */}
-                <div className="absolute top-1/4 -right-4 sm:-right-8 bg-white px-4 py-3 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.15)] border border-rose-100 z-20 flex items-center gap-3 animate-bounce">
-                  <div className="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center border border-emerald-100">
-                    <Download className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-black text-gray-900">버튼 클릭 한 번으로!</div>
-                    <div className="text-[11px] font-medium text-gray-500 mt-0.5">출력 & 주문 취소까지 완벽 지원</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 6: Employee Recruitment Simple Resume Form */}
-            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
-              <div className="flex-1 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-extrabold">
-                  NEW 사장님 필수 기능
-                </div>
-                <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mb-2">
-                  <UserCheck className="w-6 h-6 text-emerald-600" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  "종이 이력서 들고 오지 마세요!"<br className="hidden sm:block" />사진·보건증까지 한 번에 받는 '직원채용 간편이력서'
-                </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  알바나 직원을 구할 때마다 문자로 나이, 경력, 가능 시간대를 일일이 물어보고 면접 날 종이 이력서와 보건증을 챙기느라 번거로우셨죠?<br/><br/>
-                  싹다폼에는 매장 채용에 꼭 필요한 항목(<strong>본인 사진, 인적사항, 주소, 지원파트, 근무가능 요일·시간, 관련업종 경력유무, 각오, 보건증 등 증빙서류 첨부</strong>)이 완벽하게 세팅된 <strong>'직원채용 간편이력서'</strong>가 기본 탑재되어 있습니다. 지원자가 스마트폰으로 찍어 제출하면 사장님은 어드민에서 깔끔한 이력서 양식으로 바로 검토하고 인쇄까지 할 수 있습니다.
-                </p>
-              </div>
-              <div className="flex-1 w-full relative min-h-[400px] sm:min-h-[440px] flex items-center justify-center mt-10 lg:mt-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-teal-50 rounded-[2.5rem] transform -rotate-2 scale-105" />
-                
-                {/* Resume Card Mockup */}
-                <div className="relative w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(16,185,129,0.18)] border border-emerald-100 overflow-hidden z-10 hover:scale-[1.02] transition-transform duration-500">
-                  {/* Header */}
-                  <div className="bg-gradient-to-r from-emerald-700 to-teal-900 px-6 py-4 text-white flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <UserCheck className="w-5 h-5 text-emerald-200" />
-                      <span className="font-extrabold text-[15px]">직원채용 이력서 상세 정보</span>
-                    </div>
-                    <span className="px-2.5 py-1 bg-white/15 text-emerald-100 text-[11px] font-bold rounded-full">검토완료</span>
-                  </div>
-
-                  {/* Body */}
-                  <div className="p-5 space-y-4 bg-gray-50/60">
-                    {/* Profile Row */}
-                    <div className="bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs flex items-center gap-4">
-                      <div className="w-16 h-20 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center shrink-0 text-emerald-700">
-                        <Camera className="w-6 h-6 mb-1" />
-                        <span className="text-[10px] font-bold">사진 첨부됨</span>
-                      </div>
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[16px] font-black text-gray-900">김민지 지원자</span>
-                          <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">010-2345-6789</span>
-                        </div>
-                        <p className="text-[12px] text-gray-500 truncate">서울시 마포구 월드컵북로 (거주지 주소)</p>
-                        <div className="pt-1 flex flex-wrap gap-1.5">
-                          <span className="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md text-[11px] font-bold">지원파트: 홀서빙 · 카운터</span>
-                          <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-md text-[11px] font-bold">평일 오전 09~15시</span>
-                        </div>
-                      </div>
+                      <span className="px-2 py-0.5 rounded-md bg-[#5B21B6] text-white text-[10px] font-extrabold">블로그 보기 &gt;</span>
                     </div>
 
-                    {/* Experience & Intro */}
-                    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs space-y-2.5">
+                    {/* 특가 강조 줄 */}
+                    <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#FFF1F2] to-[#FFE4E6] border-2 border-rose-300 flex items-center justify-between">
                       <div>
-                        <div className="text-[11px] font-bold text-gray-400 mb-0.5">관련업종 경력유무</div>
-                        <div className="text-[12.5px] font-bold text-gray-800">유 (브런치 카페 홀서빙 및 음료 제조 1년 2개월)</div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-black text-rose-950">오늘의 깜짝 특가!</span>
+                          <span className="px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[9px] font-extrabold">실시간 특가</span>
+                        </div>
+                        <p className="text-[10px] font-bold text-rose-800 mt-0.5">홈화면에 추가하고 세일소식 먼저 받기</p>
                       </div>
-                      <div className="pt-2 border-t border-gray-100">
-                        <div className="text-[11px] font-bold text-gray-400 mb-0.5">간단한 소개 또는 각오</div>
-                        <div className="text-[12px] font-medium text-gray-600">밝은 미소로 손님을 응대하며, 시간 약속은 철저히 지킵니다!</div>
+                      <span className="px-2 py-1 rounded-md bg-rose-600 text-white text-[10px] font-extrabold shrink-0">세일소식 받기 &gt;</span>
+                    </div>
+
+                    {/* 기본 장착 2열 (간편 택배 접수 | 직원채용 이력서) */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="p-2.5 rounded-xl bg-indigo-50/80 border border-indigo-200 flex items-center justify-between">
+                        <div>
+                          <div className="text-[11.5px] font-black text-indigo-950">간편 택배 접수</div>
+                          <div className="text-[9.5px] font-semibold text-indigo-700">택배 발송 신청서</div>
+                        </div>
+                        <span className="text-indigo-600 text-xs font-bold">&gt;</span>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-center justify-between">
+                        <div>
+                          <div className="text-[11.5px] font-black text-emerald-950">직원채용 이력서</div>
+                          <div className="text-[9.5px] font-semibold text-emerald-700">매장 근무 간편 지원</div>
+                        </div>
+                        <span className="text-emerald-600 text-xs font-bold">&gt;</span>
                       </div>
                     </div>
 
-                    {/* Health Certificate Attachment */}
-                    <div className="bg-emerald-50/70 px-4 py-3 rounded-xl border border-emerald-200/80 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <FileCheck className="w-4 h-4 text-emerald-600" />
-                        <span className="text-[12px] font-bold text-emerald-900">증빙서류 (보건증 사진) 첨부 완료</span>
+                    {/* 내 접수/배송 조회 */}
+                    <div className="p-3 rounded-xl bg-gradient-to-r from-[#4C1D95] to-[#7E22CE] text-white flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-white text-[#5B21B6] flex items-center justify-center font-bold text-xs">🔍</div>
+                        <div>
+                          <div className="text-xs font-extrabold">내 접수 / 배송 조회 <span className="px-1.5 py-0.5 bg-amber-300 text-purple-950 rounded-full text-[9px] font-black ml-1">실시간 확인</span></div>
+                          <div className="text-[10px] text-purple-100">이름과 연락처로 송장번호 즉시 확인</div>
+                        </div>
                       </div>
-                      <span className="text-[11px] font-bold text-emerald-700 bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs">미리보기 · 출력</span>
+                      <span className="text-[10px] font-bold bg-white/20 px-2 py-1 rounded-lg">조회 &gt;</span>
                     </div>
-                  </div>
-                </div>
 
-                {/* Small floating badge */}
-                <div className="absolute -bottom-3 -right-2 sm:right-2 bg-white px-4 py-3 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.1)] border border-emerald-100 z-20 flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-black text-sm">✓</div>
-                  <div>
-                    <div className="text-[13px] font-black text-gray-900">면접 전 사전 검증 끝!</div>
-                    <div className="text-[11px] font-medium text-gray-500">사진·경력·보건증까지 스마트폰 접수</div>
+                    {/* 단골되기 버튼 */}
+                    <div className="pt-1">
+                      <div className="w-full py-3 rounded-xl bg-gradient-to-r from-[#4C1D95] to-[#6D28D9] text-white text-center text-sm font-extrabold shadow-md">
+                        단골되기
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Feature 7: Non-member Application & Delivery Tracking Lookup */}
+            {/* Feature 2: 간편 택배 접수 (상품명+수량+매장결제완료 vs 계좌이체 입금자명 + 송장 엑셀) */}
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
+              <div className="flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold">
+                  핵심 무기 02 · 현장 맞춤형 택배 접수 &amp; 송장 엑셀
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+                  &ldquo;매장에서 카드 결제하셨나요, 계좌이체 하시나요?&rdquo;<br className="hidden sm:block" />
+                  상품·수량·입금자 확인부터 택배 송장 엑셀까지 1초 컷!
+                </h3>
+                <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed">
+                  매장에서 카드로 결제하고 택배 주소만 적고 가는 손님은 <strong>[💳 매장 결제 완료]</strong> 버튼 하나로 입금자명 입력 없이 10초 만에 접수를 끝내고, 전화나 카톡으로 주문하고 입금하는 손님은 <strong>[🏦 계좌이체]</strong>를 눌러 <strong>입금자명</strong>을 정확히 남깁니다.<br /><br />
+                  어드민 <strong>[택배접수]</strong> 리스트에서는 <strong>주문상품(수량)</strong>과 함께 <strong className="text-emerald-700">매장 결제 완료(초록색 뱃지)</strong>와 <strong className="text-amber-700">계좌이체 입금자(노란색 뱃지)</strong>가 한눈에 구분되며, 체크박스로 골라 <strong>[택배 송장용 엑셀 다운로드]</strong>만 누르면 우체국·CJ·롯데·한진 등 택배 프로그램에 바로 대량 등록할 수 있습니다!
+                </p>
+              </div>
+
+              <div className="flex-1 w-full relative min-h-[380px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-indigo-50 rounded-[2.5rem] transform -rotate-2 scale-105" />
+
+                <div className="relative w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(37,99,235,0.14)] border border-gray-100 overflow-hidden z-10 p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Package className="w-5 h-5 text-[#5B21B6]" />
+                      <span className="font-extrabold text-gray-900 text-sm">어드민 택배접수 실시간 리스트</span>
+                    </div>
+                    <span className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center gap-1">
+                      <Download className="w-3.5 h-3.5" /> 택배 송장용 엑셀 다운로드
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/80 flex items-center justify-between gap-2">
+                      <div>
+                        <div className="text-xs font-extrabold text-gray-900">
+                          한우 선물세트 1호 <span className="text-indigo-600">(2개)</span>
+                        </div>
+                        <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10.5px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          💳 매장 결제 완료 (카드/현금)
+                        </span>
+                      </div>
+                      <div className="text-right text-xs">
+                        <div className="font-bold text-gray-800">보내는 분: 김민수</div>
+                        <div className="text-[11px] text-gray-500">받는 분: 이정훈 (서울 강남구...)</div>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200/80 flex items-center justify-between gap-2">
+                      <div>
+                        <div className="text-xs font-extrabold text-gray-900">
+                          진한 한우 사골곰탕 <span className="text-indigo-600">(5개)</span>
+                        </div>
+                        <span className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10.5px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">
+                          🏦 계좌이체 (입금자: 박영희)
+                        </span>
+                      </div>
+                      <div className="text-right text-xs">
+                        <div className="font-bold text-gray-800">보내는 분: 박영희</div>
+                        <div className="text-[11px] text-gray-500">받는 분: 최수진 (경기 김포시...)</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-purple-50/70 border border-purple-100 text-xs text-purple-900 font-bold text-center">
+                    ✓ 통장 입금 확인할 고객과 바로 포장해 발송할 고객이 1초 만에 구분됩니다!
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 3: 비회원 내 접수 / 실시간 배송조회 */}
             <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
               <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold">
-                  NEW 고객 만족도 200% 핵심 기능
-                </div>
-                <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center mb-2">
-                  <Search className="w-6 h-6 text-indigo-600" />
+                  핵심 무기 03 · 고객 문의 전화 90% 감소
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
-                  "사장님, 제 택배 언제 와요?" 문의 전화 끝!<br className="hidden sm:block" />
+                  &ldquo;사장님, 제 택배 송장번호 뭐예요?&rdquo; 문의 전화 끝!<br className="hidden sm:block" />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600">회원가입 없이 1초 만에</span> 내 접수 · 실시간 배송조회
                 </h3>
-                <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                  고객에게 번거로운 회원가입이나 앱 설치를 요구하지 마세요. 비회원이어도 고객이 접수했던 매장 링크에서 <strong>[내 접수 / 배송 조회]</strong> 버튼을 눌러 <strong>본인의 이름과 전화번호</strong>만 입력하면 모든 진행상황이 한눈에 조회됩니다.<br/><br/>
-                  사장님이 어드민 리스트에서 <strong>택배사와 송장번호</strong>를 선택하거나 <strong>고객 전달 안내메모</strong>(예: <em>"예약 확정 및 주차 안내"</em>, <em>"입금 확인 완료"</em>)를 적어 <strong>[완료]</strong>만 누르면 끝! 고객은 <strong>송장번호를 따로 물어보거나 복사할 필요 없이 이름·전화번호만으로 접수 진행상태와 실시간 택배 배송위치를 바로 확인</strong>할 수 있어 매장의 문의 전화가 획기적으로 줄어듭니다.
+                <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed">
+                  고객에게 번거로운 회원가입이나 앱 설치를 요구하지 마세요. 고객 화면 상단에 항상 떠 있는 <strong>[내 접수 / 배송 조회]</strong> 버튼을 눌러 <strong>본인의 이름과 전화번호</strong>만 입력하면 끝!<br /><br />
+                  사장님이 어드민에서 <strong>택배사와 송장번호</strong>를 입력하거나 <strong>고객 전달 안내메모</strong>를 적어 <strong>[완료]</strong>만 누르면, 고객이 직접 송장번호와 <strong>실시간 택배 배송위치</strong>를 바로 확인할 수 있어 바쁜 시간대 문의 전화가 사라집니다.
                 </p>
               </div>
-              <div className="flex-1 w-full relative min-h-[420px] sm:min-h-[460px] flex items-center justify-center mt-10 lg:mt-0">
+              <div className="flex-1 w-full relative min-h-[400px] flex items-center justify-center">
                 <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100 via-violet-100/70 to-blue-50 rounded-[2.5rem] transform rotate-2 scale-105" />
 
-                {/* Customer Lookup & Delivery Tracking Mockup */}
-                <div className="relative w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(79,70,229,0.18)] border border-indigo-100 overflow-hidden z-10 hover:scale-[1.02] transition-transform duration-500">
-                  {/* Top Banner Mockup */}
-                  <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-blue-600 px-5 py-4 text-white flex items-center justify-between">
+                <div className="relative w-full max-w-[460px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(79,70,229,0.18)] border border-indigo-100 overflow-hidden z-10">
+                  <div className="bg-gradient-to-r from-[#4C1D95] via-[#6D28D9] to-[#7E22CE] px-5 py-4 text-white flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/25">
-                        <Search className="w-4 h-4 text-white" />
+                      <div className="w-9 h-9 rounded-xl bg-white text-[#5B21B6] flex items-center justify-center">
+                        <Search className="w-4 h-4" />
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
                           <span className="font-extrabold text-[14.5px]">내 접수 / 배송 조회</span>
-                          <span className="px-2 py-0.5 bg-white/20 text-white text-[10px] font-bold rounded-full">비회원 1초 조회</span>
+                          <span className="px-2 py-0.5 bg-amber-300 text-purple-950 text-[10px] font-black rounded-full">실시간 확인</span>
                         </div>
-                        <p className="text-[11px] text-indigo-100 mt-0.5">이름과 전화번호만으로 진행상황 · 배송상태 즉시 확인</p>
+                        <p className="text-[11px] text-purple-100 mt-0.5">이름과 전화번호만으로 송장번호 · 배송위치 즉시 확인</p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Mockup Body */}
                   <div className="p-5 space-y-3.5 bg-gray-50/70">
-                    {/* Search Input Bar Mockup */}
-                    <div className="bg-white p-3 rounded-2xl border border-gray-200 shadow-2xs flex items-center gap-2">
-                      <div className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center justify-between">
-                        <span className="text-[11px] text-gray-400 font-semibold">성함</span>
-                        <span className="text-[12px] font-extrabold text-gray-900">홍길동</span>
-                      </div>
-                      <div className="flex-[1.3] bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 flex items-center justify-between">
-                        <span className="text-[11px] text-gray-400 font-semibold">연락처</span>
-                        <span className="text-[12px] font-extrabold text-indigo-600">010-1234-5678</span>
-                      </div>
-                      <div className="px-3.5 py-2 bg-indigo-600 text-white text-[12px] font-bold rounded-xl shadow-xs shrink-0">
-                        조회
-                      </div>
-                    </div>
-
-                    {/* Result Card 1: Delivery / Order with Tracking */}
                     <div className="bg-white p-4 rounded-2xl border border-indigo-100 shadow-xs space-y-3">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[11px] font-extrabold rounded-lg border border-indigo-100">🛍️ 상품 주문 · 택배</span>
-                          <span className="text-[12.5px] font-black text-gray-900">프리미엄 선물세트 A</span>
-                        </div>
+                        <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[11px] font-extrabold rounded-lg border border-indigo-100">📦 택배접수 · 한우 선물세트</span>
                         <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-extrabold">발송완료</span>
                       </div>
 
-                      {/* Courier & Tracking Box */}
                       <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                         <div>
                           <div className="text-[10.5px] font-extrabold text-emerald-700 flex items-center gap-1">
@@ -634,28 +315,118 @@ export default function LandingPage() {
                           실시간 배송위치 조회 <ExternalLink className="w-3 h-3" />
                         </div>
                       </div>
-
-                      {/* Store Customer Notice Box */}
-                      <div className="bg-indigo-50/70 border border-indigo-200/80 rounded-xl p-3">
-                        <div className="text-[10.5px] font-extrabold text-indigo-700 flex items-center gap-1 mb-1">
-                          <MessageSquare className="w-3 h-3" /> 매장 전달 안내사항
-                        </div>
-                        <p className="text-[12px] font-bold text-gray-800 leading-snug">
-                          "입금 확인 완료되어 오늘 오후 우체국택배로 안전하게 포장해 발송해드렸습니다 :)"
-                        </p>
-                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Small floating badge */}
-                <div className="absolute -bottom-4 -left-2 sm:left-2 bg-white px-4 py-3 rounded-2xl shadow-[0_15px_30px_rgba(79,70,229,0.15)] border border-indigo-100 z-20 flex items-center gap-3 animate-bounce">
-                  <div className="w-9 h-9 bg-indigo-600 text-white rounded-full flex items-center justify-center font-black text-sm shadow-sm">
-                    <Truck className="w-4 h-4" />
+            {/* Feature 4: 여러 개의 맞춤폼 동시 운영 + 매장용 QR 안내문 POP 즉시 출력 */}
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
+              <div className="flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-extrabold">
+                  핵심 무기 04 · 무제한 맞춤폼 &amp; 매장용 QR 안내문 출력
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+                  대표 화면 외에 여러 맞춤폼도 동시에!<br className="hidden sm:block" />
+                  계산대 비치용 QR 안내문(A4 · A4 반절)도 즉시 인쇄
+                </h3>
+                <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed">
+                  1번 폼(예: <em>단골할래요?</em>)은 매장 대표 화면으로 띄워두고, 2번·3번 폼(예: <em>꽃배달 퀵배송 신청서</em>, <em>VIP 명절 선물세트 예약</em>)은 짧은 개별 주소(<code>/f/매장ID/2</code>)를 복사해 원하는 손님에게만 카톡이나 문자로 보내 동시에 여러 용도로 활용할 수 있습니다.<br /><br />
+                  또한 어드민 상단 <strong>[QR 다운로드]</strong> 버튼만 누르면 QR코드만 덩그러니 나오는 것이 아니라, <strong>우리 매장 상호명과 원하는 안내 문구가 들어간 심플하고 고급스러운 POP 안내문</strong>을 <strong>A4 반절(A5)</strong> 또는 <strong>A4 전체 크기</strong>로 바로 인쇄하거나 이미지로 저장할 수 있습니다!
+                </p>
+              </div>
+
+              <div className="flex-1 w-full relative min-h-[380px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-100 to-purple-50 rounded-[2.5rem] transform -rotate-2 scale-105" />
+
+                <div className="relative w-full max-w-[440px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(91,33,182,0.14)] border border-gray-100 p-6 z-10 space-y-4">
+                  {/* QR 안내문 미리보기 축소 카드 */}
+                  <div className="mx-auto w-56 bg-white border-2 border-[#3B0764] rounded-2xl p-4 text-center shadow-sm relative">
+                    <p className="text-[10.5px] font-extrabold text-[#5B21B6]">싹다상점 강남본점</p>
+                    <div className="w-6 h-0.5 bg-purple-300 mx-auto my-1.5" />
+                    <div className="text-sm font-black text-gray-900">QR코드를 스캔해 주세요</div>
+                    <p className="text-[9.5px] text-gray-500 mt-1">스마트폰 카메라로 비추면 매장 소식과 간편 신청 화면으로 바로 연결됩니다.</p>
+                    <div className="my-2.5 inline-block p-2 rounded-xl bg-purple-50 border border-purple-200">
+                      <QrCode className="w-16 h-16 text-[#3B0764] mx-auto" />
+                    </div>
+                    <div className="px-2 py-1 rounded-full bg-purple-50 text-[9px] font-extrabold text-[#3B0764]">
+                      📱 휴대폰 카메라를 켜고 비춰주세요
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-[13px] font-black text-gray-900">문의 전화 90% 감소!</div>
-                    <div className="text-[11px] font-medium text-gray-500">비회원 조회 · 송장추적 · 안내메모 실시간 전달</div>
+
+                  {/* 다중 폼 뱃지 */}
+                  <div className="space-y-2 pt-2">
+                    <div className="px-3.5 py-2.5 rounded-xl bg-purple-50/70 border border-purple-200 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 font-extrabold text-gray-900">
+                        <span>단골할래요?</span>
+                        <span className="px-2 py-0.5 rounded bg-[#5B21B6] text-white text-[10px] inline-flex items-center gap-1">
+                          <Star className="w-2.5 h-2.5 fill-amber-300 text-amber-300" /> 매장 대표 화면
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-bold text-purple-700">/f/ssakdamart/1</span>
+                    </div>
+                    <div className="px-3.5 py-2.5 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between text-xs">
+                      <span className="font-bold text-gray-800">퀵배달 · 특별 예약 신청서 (개별 전송용)</span>
+                      <span className="text-[11px] font-bold text-indigo-600">/f/ssakdamart/2</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 5: 직원채용 간편이력서 (사진 선택 · 보건증 첨부 · A4 1장 출력) */}
+            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+              <div className="flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-extrabold">
+                  핵심 무기 05 · 직원채용 간편이력서 기본 탑재
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+                  &ldquo;종이 이력서 들고 오지 마세요!&rdquo;<br className="hidden sm:block" />
+                  경력·근무시간·보건증까지 스마트폰으로 받는 간편이력서
+                </h3>
+                <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed">
+                  알바나 직원을 구할 때마다 문자로 경력과 가능 시간대를 일일이 물어보느라 번거로우셨죠?<br /><br />
+                  고객 화면에 기본 탑재된 <strong>[직원채용 이력서]</strong> 버튼을 누르면 지원자가 스마트폰으로 <strong>인적사항, 주소, 지원파트, 근무가능 요일·시간, 관련업종 경력, 각오, 보건증 사진(사진 첨부는 부담 없도록 선택사항!)</strong>까지 한 번에 제출합니다. 사장님은 어드민에서 면접 메모를 남기고 <strong>A4 한 장에 딱 맞게 깔끔하게 인쇄·PDF 보관</strong>할 수 있습니다.
+                </p>
+              </div>
+              <div className="flex-1 w-full relative min-h-[380px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-teal-50 rounded-[2.5rem] transform rotate-2 scale-105" />
+
+                <div className="relative w-full max-w-[450px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(16,185,129,0.16)] border border-emerald-100 overflow-hidden z-10">
+                  <div className="bg-gradient-to-r from-emerald-700 to-teal-900 px-6 py-4 text-white flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="w-5 h-5 text-emerald-200" />
+                      <span className="font-extrabold text-[15px]">직원채용 이력서 상세 · A4 1장 출력</span>
+                    </div>
+                    <span className="px-2.5 py-1 bg-white/15 text-emerald-100 text-[11px] font-bold rounded-full">면접메모 저장</span>
+                  </div>
+
+                  <div className="p-5 space-y-3.5 bg-gray-50/60">
+                    <div className="bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs flex items-center gap-4">
+                      <div className="w-14 h-16 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center shrink-0 text-emerald-700">
+                        <Camera className="w-5 h-5 mb-0.5" />
+                        <span className="text-[9.5px] font-bold">사진(선택)</span>
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[15px] font-black text-gray-900">김민지 지원자</span>
+                          <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">010-2345-6789</span>
+                        </div>
+                        <div className="pt-1 flex flex-wrap gap-1.5">
+                          <span className="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md text-[11px] font-bold">지원파트: 홀서빙 · 카운터</span>
+                          <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-md text-[11px] font-bold">평일 오전 09~15시</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-emerald-50/70 px-4 py-3 rounded-xl border border-emerald-200/80 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileCheck className="w-4 h-4 text-emerald-600" />
+                        <span className="text-[12px] font-bold text-emerald-900">증빙서류 (보건증) 첨부 · A4 1장 인쇄 지원</span>
+                      </div>
+                      <Printer className="w-4 h-4 text-emerald-700" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -665,172 +436,115 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Added Bonus Features */}
-      <section className="py-24 bg-gray-50 border-y border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-gray-900 mb-4">여기에 더해, 사장님을 위한 든든한 디테일</h2>
-            <p className="text-gray-500 text-base sm:text-lg font-medium">현장의 작은 불편함까지 놓치지 않고 꼼꼼하게 설계했습니다.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-6">
-                <CreditCard className="w-6 h-6 text-teal-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">계좌번호 무한 추가 & 눈에 띄는 사장님 공지</h3>
-              <p className="text-gray-500 font-medium leading-relaxed">
-                입금 받을 계좌를 무제한으로 등록하고 고객이 버튼 하나로 복사할 수 있습니다. 또한 사장님이 작성한 중요 안내사항(제작 기간, 필독 공지 등)이 계좌 안내 바로 아래 눈에 잘 띄는 알림 박스로 배치되어 고객이 절대 놓치지 않습니다.
-              </p>
-            </div>
-            
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-6">
-                <BarChart3 className="w-6 h-6 text-indigo-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">5대 접수 현황 & 실시간 진짜 알림 대시보드</h3>
-              <p className="text-gray-500 font-medium leading-relaxed">
-                앱을 켜자마자 오늘 하루 들어온 택배, 예약, 상품주문, 맞춤폼, 그리고 직원 이력서 접수 건수까지 큼직한 숫자로 바로 확인하세요. 최근 접수된 실제 고객 및 지원자 알림이 실시간으로 연동되어 업무 흐름이 끊기지 않습니다.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-6">
-                <ShieldCheck className="w-6 h-6 text-amber-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">노쇼(No-Show) 방지 안내 & 원클릭 취소 관리</h3>
-              <p className="text-gray-500 font-medium leading-relaxed">
-                매장 예약 신청서 상단에 노쇼 방지를 위한 사전 연락 안내 문구가 기본 탑재되어 예약 부도를 예방합니다. 혹시라도 고객이 예약이나 주문을 취소할 경우, 어드민 리스트에서 [주문 취소] 버튼 하나로 즉시 상태를 변경하고 깔끔하게 구분할 수 있습니다.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-6">
-                <PlusSquare className="w-6 h-6 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">프라이빗 맞춤폼 개별 링크 & 자유로운 수정</h3>
-              <p className="text-gray-500 font-medium leading-relaxed">
-                일반 고객 화면에는 기본 폼만 깔끔하게 보여주고, 특별 이벤트나 단체 주문용 맞춤폼은 개별 링크를 복사해 원하는 대상자에게만 전송할 수 있습니다. 저장된 맞춤폼은 언제든 다시 불러와 링크 주소 변경 없이 내용을 수정할 수 있습니다.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-            {/* Pricing Section */}
+      {/* Pricing Section (월 9,900원 단독 플랜 + 명절/단기 이용 시 자료 100% 영구 보관 강조) */}
       <section className="py-24 sm:py-32 bg-gray-50 relative overflow-hidden border-t border-gray-100">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-            <h2 className="text-indigo-600 font-extrabold tracking-widest uppercase text-sm mb-3">Pricing</h2>
-            <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-6 leading-tight">
-              복잡한 종이 노트와 수기 관리를 끝내는 비용,<br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">커피 두 잔 값도 안 되는 월 9,900원으로 시작하세요!</span>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <h2 className="text-[#5B21B6] font-extrabold tracking-widest uppercase text-sm mb-3">
+              PRICING
+            </h2>
+            <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">
+              수기 장부와 번거로운 전화 응대를 끝내는 비용,<br className="hidden sm:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#7E22CE]">
+                소상공인 상생 응원가 월 9,900원
+              </span>
             </h3>
-            <p className="text-lg sm:text-xl text-gray-500 font-medium">
-              합리적인 요금으로 매장 업무의 혁신을 경험해보세요.
+            <p className="text-base sm:text-lg text-gray-600 font-medium">
+              복잡한 연간 약정이나 위약금 없이, 필요한 달에만 1개월씩 부담 없이 이용하세요.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-center">
-            
-            {/* Monthly Plan (Event) */}
-            <div className="relative bg-white rounded-[2rem] shadow-2xl shadow-indigo-100/50 border-2 border-indigo-500 p-8 sm:p-10 z-10 transform md:-translate-y-4">
-              <div className="absolute -top-5 right-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[13px] font-black px-4 py-2 rounded-full shadow-lg animate-bounce">
-                소상공인 상생 응원가 🚀
-              </div>
-              
-              <h4 className="text-2xl font-black text-gray-900 mb-2">월간 이용권</h4>
-              <div className="flex items-end gap-2 mb-2">
-                <span className="line-through text-gray-400 text-lg font-bold">월 19,900원</span>
-              </div>
-              <div className="flex items-end gap-2 mb-2">
-                <span className="text-5xl sm:text-6xl font-black text-indigo-600 tracking-tight">9,900<span className="text-xl font-bold text-gray-500 ml-1">원 / 월</span></span>
-              </div>
-              <p className="text-indigo-600 text-sm font-black mb-8 pb-6 border-b border-gray-100">
-                소상공인 상생 응원 특별 할인가
-              </p>
-              
-              <ul className="space-y-4 mb-10">
-                {['아날로그 접수 혁신', '비회원 1초 내 접수 · 실시간 배송조회 지원', '무제한 폼 생성 및 커스텀', '자동 고객 및 주문 관리 (송장 엑셀 다운로드)', '모바일 주문서 다운로드 및 출력', '싹다폼의 모든 강력한 기능 포함'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-indigo-500 shrink-0" />
-                    <span className="text-gray-700 font-bold text-[15px]">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <a 
-                href="/signup"
-                className="block text-center w-full py-4 sm:py-5 rounded-2xl font-black text-white text-lg bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-200 transition-all active:scale-[0.98]"
-              >
-                월간 플랜으로 시작하기
-              </a>
+          {/* 단일 플랜 카드 */}
+          <div className="max-w-xl mx-auto bg-white rounded-[2rem] shadow-2xl shadow-purple-100/70 border-2 border-[#5B21B6] p-8 sm:p-10 relative">
+            <div className="absolute -top-4 right-8 bg-gradient-to-r from-[#3B0764] to-[#6D28D9] text-white text-xs sm:text-[13px] font-black px-4 py-1.5 rounded-full shadow-md">
+              소상공인 상생 응원가 🚀
             </div>
 
-            {/* Yearly Plan */}
-            <div className="relative bg-white rounded-[2rem] border border-gray-200 p-8 sm:p-10 h-fit shadow-lg shadow-gray-100/50">
-              <div className="absolute -top-4 left-8 bg-gray-800 text-white text-[12px] font-black px-4 py-1.5 rounded-full shadow-md">
-                추천! 약 38% 할인 🎁
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-6 mb-6 border-b border-gray-100">
+              <div>
+                <h4 className="text-2xl font-black text-gray-900">월간 이용권 (1개월 단독)</h4>
+                <p className="text-xs sm:text-sm font-bold text-[#5B21B6] mt-1">
+                  자동결제 약정 없음 · 모든 기능 100% 무제한 제공
+                </p>
               </div>
-              <h4 className="text-xl font-bold text-gray-900 mb-2">연간 구독 플랜 (선택 옵션)</h4>
-              <div className="flex items-end gap-2 mb-2">
-                <span className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">149,000<span className="text-lg font-bold text-gray-500 ml-1">원 / 년</span></span>
+              <div className="text-left sm:text-right">
+                <div className="text-sm font-bold text-gray-400 line-through">월 19,900원</div>
+                <div className="text-4xl sm:text-5xl font-black text-[#5B21B6] tracking-tight">
+                  9,900<span className="text-base sm:text-lg font-bold text-gray-600 ml-1">원 / 1개월</span>
+                </div>
               </div>
-              <p className="text-indigo-600 text-sm font-black mb-6 pb-6 border-b border-gray-100">
-                월 12,410원 꼴 (약 38% 추가 할인 혜택!)
-              </p>
-              
-              <p className="text-[15px] text-gray-500 mb-8 font-medium leading-relaxed">
-                1년 치를 한 번에 결제하시면<br className="hidden sm:block" />
-                <strong className="text-gray-900">연간 89,800원의 요금을 특별 할인</strong>해 드립니다.
-              </p>
-              
-              <ul className="space-y-4 mb-10">
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-gray-400 shrink-0" />
-                  <span className="text-gray-600 font-medium">월간 플랜의 <strong>모든 기능 무제한 포함</strong></span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                  <span className="text-gray-900 font-bold">월간 결제 대비 약 38% 파격 할인 제공</span>
-                </li>
-              </ul>
-              
-              <a 
-                href="/signup"
-                className="block text-center w-full py-4 rounded-2xl font-bold text-gray-700 text-lg bg-gray-50 border border-gray-200 hover:border-gray-900 hover:bg-gray-900 hover:text-white transition-all active:scale-[0.98]"
-              >
-                연간 플랜으로 혜택받기
-              </a>
             </div>
 
+            <ul className="space-y-3.5 mb-8">
+              {[
+                '내가 꾸민 맞춤폼을 우리 매장 대표 화면(/store/매장ID)으로 지정',
+                '블로그(소소한 기록) · 실시간 세일 특가 · 쇼핑몰 외부 링크 최상단 연동',
+                '간편 택배 접수 (상품·수량·매장결제완료/계좌이체 입금자 구분) 기본 탑재',
+                '우체국·CJ·롯데·한진 등 택배사 송장용 엑셀(CSV) 원클릭 다운로드',
+                '비회원 1초 내 접수 · 실시간 배송위치 조회 및 사장님 안내메모 전달',
+                '직원채용 간편이력서 기본 탑재 & 모든 접수 내역 A4 1장 깔끔 인쇄',
+                '매장 계산대 비치용 QR 안내문 (A4 반절 / A4 전체) 즉시 인쇄·저장'
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-[#5B21B6] shrink-0 mt-0.5" />
+                  <span className="text-gray-800 font-bold text-[14px] sm:text-[15px] leading-snug">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            {/* 1개월 단기 이용 & 자료 영구 보관 안심 박스 */}
+            <div className="mb-8 p-4 rounded-2xl bg-purple-50/70 border border-purple-200/80 space-y-1.5">
+              <div className="text-[13px] font-extrabold text-[#3B0764] flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-[#5B21B6] shrink-0" />
+                명절·시즌 행사 등 1개월만 쓰고 쉬어도 기존 자료는 100% 보관됩니다!
+              </div>
+              <p className="text-[12px] text-purple-950/80 font-medium leading-relaxed">
+                이용 기간이 끝나면 고객 접수 링크만 일시 정지될 뿐, <strong>기존 고객 장부와 만들어둔 맞춤폼은 삭제되지 않고 그대로 보관</strong>됩니다. 다음 명절이나 행사가 있을 때 다시 결제하면 기존 링크와 폼이 1초 만에 그대로 다시 열립니다.
+              </p>
+            </div>
+
+            <Link
+              href="/signup"
+              className="block text-center w-full py-4 sm:py-5 rounded-2xl font-black text-white text-lg bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#6D28D9] hover:from-[#2E054E] hover:to-[#4C1D95] shadow-xl shadow-purple-900/20 transition-all active:scale-[0.98]"
+            >
+              월 9,900원으로 우리 매장 시작하기
+            </Link>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-indigo-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+      <section className="py-20 bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#4C1D95] relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 leading-tight">
-            더 이상 아날로그 접수에<br className="hidden sm:block" />시간 뺏기지 마세요
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-5 leading-tight">
+            오늘부터 우리 매장도<br className="hidden sm:block" />단골이 모이는 스마트 매장으로 바뀝니다
           </h2>
-          <p className="text-indigo-100 text-lg sm:text-xl mb-10 font-medium">
-            지금 바로 싹다폼을 도입하고 매장 업무의 혁신을 경험해 보세요.
+          <p className="text-purple-100 text-base sm:text-lg mb-8 font-medium">
+            가입 후 1분이면 우리 매장 전용 대표 링크와 QR 안내문이 완성됩니다.
           </p>
-          <Link 
-            href="/demo"
-            className="inline-flex items-center justify-center gap-2 bg-white text-indigo-600 px-10 py-5 rounded-2xl font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
-          >
-            어드민 체험하기 <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+            <Link
+              href="/signup"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-[#3B0764] px-9 py-4 rounded-2xl font-black text-lg transition-all shadow-xl hover:scale-105 active:scale-95"
+            >
+              회원가입하고 바로 시작하기 <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/demo"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 text-white border border-white/25 px-8 py-4 rounded-2xl font-bold text-base transition-all"
+            >
+              어드민 먼저 둘러보기
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="bg-white py-12 border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between gap-8 md:gap-4">
-          
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center">
@@ -838,11 +552,10 @@ export default function LandingPage() {
               </div>
               <span className="font-bold text-gray-400">SSAKDAFORM</span>
             </div>
-            
-            {/* 사업자 정보 아코디언 */}
+
             <details className="group">
               <summary className="text-sm font-bold text-gray-500 cursor-pointer list-none flex items-center gap-1 hover:text-gray-700 transition-colors">
-                사업자 정보 
+                사업자 정보
                 <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <div className="mt-3 text-[13px] text-gray-400 space-y-1.5 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">
@@ -863,7 +576,6 @@ export default function LandingPage() {
             </div>
             <p className="text-[13px] text-gray-400 font-medium">© 2026 싹다폼. All rights reserved.</p>
           </div>
-          
         </div>
       </footer>
     </div>

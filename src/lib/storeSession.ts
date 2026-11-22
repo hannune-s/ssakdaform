@@ -37,6 +37,9 @@ export function getLoggedInStore(): StoreProfile | null {
 }
 
 export function getActiveStoreId(): string {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/demo')) {
+    return 'demo';
+  }
   const store = getLoggedInStore();
   return store?.store_id || 'demo';
 }

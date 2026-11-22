@@ -238,7 +238,9 @@ export default function CustomerFormPage({
             hours: parsed.hours || resolvedInfo?.hours || '',
             closedDays: parsed.closedDays || resolvedInfo?.closedDays || '',
             paymentLink: parsed.paymentLink || resolvedInfo?.paymentLink || '',
-            shopLinks: Array.isArray(parsed.shopLinks) ? parsed.shopLinks : []
+            shopLinks: Array.isArray(parsed.shopLinks) ? parsed.shopLinks : [],
+            showDeliveryButton: parsed.showDeliveryButton !== false,
+            showResumeButton: parsed.showResumeButton !== false
           };
         } catch (e) {}
       }
@@ -258,7 +260,15 @@ export default function CustomerFormPage({
           closedDays: storeMeta.data.closedDays || resolvedInfo?.closedDays || '',
           shopLinks: Array.isArray(storeMeta.data.shopLinks) && storeMeta.data.shopLinks.length > 0
             ? storeMeta.data.shopLinks
-            : (resolvedInfo?.shopLinks || [])
+            : (resolvedInfo?.shopLinks || []),
+          showDeliveryButton:
+            storeMeta.data.showDeliveryButton !== undefined
+              ? Boolean(storeMeta.data.showDeliveryButton)
+              : resolvedInfo?.showDeliveryButton !== false,
+          showResumeButton:
+            storeMeta.data.showResumeButton !== undefined
+              ? Boolean(storeMeta.data.showResumeButton)
+              : resolvedInfo?.showResumeButton !== false
         };
       }
 
@@ -718,40 +728,52 @@ export default function CustomerFormPage({
             />
           )}
 
-          {/* 📦 기본 제공 [간편 택배 접수] & [직원채용 이력서] 바로가기 버튼 (내 접수/배송 조회 바로 위 상단 고정) */}
-          {!isResumeForm && id !== 'delivery-preset' && (
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <a
-                href={`/form/delivery-preset?store=${encodeURIComponent(targetStoreId)}`}
-                className="px-3.5 py-2.5 rounded-xl bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200 hover:border-indigo-400 shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
+          {/* 📦 기본 제공 [간편 택배 접수] & [직원채용 이력서] 바로가기 버튼 (설정에서 표시/숨김 선택 가능) */}
+          {!isResumeForm &&
+            id !== 'delivery-preset' &&
+            (storeInfo?.showDeliveryButton !== false || storeInfo?.showResumeButton !== false) && (
+              <div
+                className={`grid ${
+                  storeInfo?.showDeliveryButton !== false && storeInfo?.showResumeButton !== false
+                    ? 'grid-cols-2'
+                    : 'grid-cols-1'
+                } gap-2 mb-3`}
               >
-                <div className="min-w-0 flex-1">
-                  <p className="text-[13px] sm:text-[13.5px] font-black text-indigo-950 tracking-tight leading-snug break-keep">
-                    간편 택배 접수
-                  </p>
-                  <p className="text-[11px] font-semibold text-indigo-700/80 leading-snug mt-0.5 break-keep">
-                    택배 발송 신청서 작성
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-indigo-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
-              </a>
+                {storeInfo?.showDeliveryButton !== false && (
+                  <a
+                    href={`/form/delivery-preset?store=${encodeURIComponent(targetStoreId)}`}
+                    className="px-3.5 py-2.5 rounded-xl bg-indigo-50/80 hover:bg-indigo-100/80 border border-indigo-200 hover:border-indigo-400 shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] sm:text-[13.5px] font-black text-indigo-950 tracking-tight leading-snug break-keep">
+                        간편 택배 접수
+                      </p>
+                      <p className="text-[11px] font-semibold text-indigo-700/80 leading-snug mt-0.5 break-keep">
+                        택배 발송 신청서 작성
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-indigo-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                  </a>
+                )}
 
-              <a
-                href={`/form/resume-preset?store=${encodeURIComponent(targetStoreId)}`}
-                className="px-3.5 py-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 hover:border-emerald-400 shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-[13px] sm:text-[13.5px] font-black text-emerald-950 tracking-tight leading-snug break-keep">
-                    직원채용 이력서
-                  </p>
-                  <p className="text-[11px] font-semibold text-emerald-700/80 leading-snug mt-0.5 break-keep">
-                    매장 근무 간편 지원
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
-              </a>
-            </div>
-          )}
+                {storeInfo?.showResumeButton !== false && (
+                  <a
+                    href={`/form/resume-preset?store=${encodeURIComponent(targetStoreId)}`}
+                    className="px-3.5 py-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 hover:border-emerald-400 shadow-2xs transition-all flex items-center justify-between gap-1.5 group active:scale-[0.99]"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] sm:text-[13.5px] font-black text-emerald-950 tracking-tight leading-snug break-keep">
+                        직원채용 이력서
+                      </p>
+                      <p className="text-[11px] font-semibold text-emerald-700/80 leading-snug mt-0.5 break-keep">
+                        매장 근무 간편 지원
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                  </a>
+                )}
+              </div>
+            )}
 
           {/* 🔍 내 접수 / 배송 조회 버튼 및 조회 모달 (이력서 폼 제외) */}
           {!isResumeForm && (
