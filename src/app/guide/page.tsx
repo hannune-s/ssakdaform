@@ -35,7 +35,7 @@ export default function GuidePage({ onBack }: GuidePageProps) {
       {/* 본문 카드 영역 */}
       <div className="max-w-[580px] mx-auto px-4 pt-7 sm:pt-9 space-y-6">
         
-        {/* 카드 1: 왜 '싹다폼'인가요? 핵심 장점 4가지 (보라색 상단 포인트) */}
+        {/* 카드 1: 왜 '싹다폼'인가요? 핵심 장점 5가지 (보라색 상단 포인트) */}
         <div className="bg-white rounded-[24px] shadow-[0_4px_20px_rgb(0,0,0,0.04)] border border-gray-200/70 overflow-hidden relative p-6 sm:p-7">
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#7E22CE]" />
           
@@ -48,7 +48,7 @@ export default function GuidePage({ onBack }: GuidePageProps) {
           </div>
 
           <h2 className="text-[18px] sm:text-[19px] font-extrabold text-[#5B21B6] tracking-tight mb-5">
-            우리 매장만의 올인원 고객 홈페이지 & 접수 시스템
+            우리 매장만의 올인원 고객 홈페이지 &amp; 접수 시스템
           </h2>
 
           <ul className="space-y-4">
@@ -65,13 +65,13 @@ export default function GuidePage({ onBack }: GuidePageProps) {
             </li>
 
             <li className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#5B21B6] mt-2 shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-600 mt-2 shrink-0" />
               <div>
                 <h3 className="text-[14.5px] font-extrabold text-gray-900">
-                  2. 아무 설정 없이도 &apos;간편 택배 접수&apos; &amp; &apos;직원채용 이력서&apos; 기본 장착
+                  2. 별도 앱 설치 없는 &apos;실시간 단골 특가푸시 &amp; 원터치 품절&apos;!
                 </h3>
                 <p className="text-[13.5px] font-medium text-gray-600 mt-0.5 leading-relaxed">
-                  컴퓨터가 익숙하지 않은 사장님도 걱정 없습니다. 고객 화면 상단에 <strong>[간편 택배 접수]</strong>(상품명·수량·매장결제완료/계좌이체 입금자 확인 포함)와 <strong>[직원채용 이력서]</strong>(사진·보건증 첨부) 버튼이 기본으로 자동 탑재되어 있습니다!
+                  외부 세일 어플을 따로 깔게 할 필요가 없습니다! 고객이 우리 매장 페이지를 홈화면에 추가하고 <strong>[세일소식 받기]</strong>를 켜두면, 사장님이 어드민 <strong>[특가푸시]</strong>에서 세일 날짜·시간·품목·가격을 적고 전송하는 즉시 <strong>소리와 함께 푸시 알림</strong>이 날아가고 고객 화면에 <strong>특가 팝업</strong>이 자동으로 뜹니다. 다 팔린 품목은 <strong>[품절처리]</strong> 버튼만 누르면 즉시 <strong>[품절]</strong> 도장이 찍힙니다!
                 </p>
               </div>
             </li>
@@ -80,10 +80,10 @@ export default function GuidePage({ onBack }: GuidePageProps) {
               <span className="w-1.5 h-1.5 rounded-full bg-[#5B21B6] mt-2 shrink-0" />
               <div>
                 <h3 className="text-[14.5px] font-extrabold text-gray-900">
-                  3. 쇼핑몰 · 미니블로그 · 세일 전단지 외부 링크 한눈에 연결
+                  3. &apos;간편 택배 접수&apos; &amp; &apos;직원채용 이력서&apos; 기본 장착 (표시/숨김 자유 선택)
                 </h3>
                 <p className="text-[13.5px] font-medium text-gray-600 mt-0.5 leading-relaxed">
-                  매장 블로그(소소한 기록), 실시간 특가/세일 알림 페이지, 스마트스토어, 인스타그램 등을 고객 화면 최상단에 돋보이는 버튼으로 연결하고 위·아래 순서도 자유롭게 바꿀 수 있습니다!
+                  고객 화면 상단에 <strong>[간편 택배 접수]</strong>(상품명·수량·매장결제완료/계좌이체 입금자 확인 포함)와 <strong>[직원채용 이력서]</strong>(사진 선택·보건증 첨부) 버튼이 기본 탑재되어 있습니다. 매장에 따라 필요 없는 버튼은 <strong>[마이 &gt; 설정]</strong>에서 클릭 한 번으로 숨기거나 다시 켤 수 있습니다!
                 </p>
               </div>
             </li>
@@ -92,7 +92,19 @@ export default function GuidePage({ onBack }: GuidePageProps) {
               <span className="w-1.5 h-1.5 rounded-full bg-[#5B21B6] mt-2 shrink-0" />
               <div>
                 <h3 className="text-[14.5px] font-extrabold text-gray-900">
-                  4. 회원가입 없는 &apos;내 접수 / 실시간 배송조회&apos;
+                  4. 쇼핑몰 · 미니블로그 외부 링크 &amp; 가게 기타 안내 연결
+                </h3>
+                <p className="text-[13.5px] font-medium text-gray-600 mt-0.5 leading-relaxed">
+                  매장 블로그(소소한 기록), 스마트스토어, 인스타그램 등을 고객 화면 최상단에 돋보이는 버튼으로 연결해 위·아래 순서를 자유롭게 바꾸고, 주차·포장·예약 팁 같은 <strong>[기타 안내]</strong>도 깔끔하게 적어둘 수 있습니다!
+                </p>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5B21B6] mt-2 shrink-0" />
+              <div>
+                <h3 className="text-[14.5px] font-extrabold text-gray-900">
+                  5. 회원가입 없는 &apos;내 접수 / 실시간 배송조회&apos;
                 </h3>
                 <p className="text-[13.5px] font-medium text-gray-600 mt-0.5 leading-relaxed">
                   고객이 본인 이름과 전화번호만 입력하면 접수 진행상황, 발송 택배사·송장번호(실시간 배송위치), 사장님 전달 안내메모까지 직접 확인해 매장으로 오는 문의 전화를 확 줄여줍니다!
@@ -117,6 +129,15 @@ export default function GuidePage({ onBack }: GuidePageProps) {
           </h2>
 
           <div className="space-y-3.5">
+            <div className="bg-rose-50/60 border border-rose-200/80 rounded-2xl p-4">
+              <h3 className="text-[14px] font-extrabold text-gray-900 mb-1.5">
+                🔔 오늘 남은 신선 상품은 [특가푸시]로 단골에게 바로 쏘세요!
+              </h3>
+              <p className="text-[13px] font-medium text-gray-600 leading-relaxed">
+                어드민 상단 <strong>[특가푸시]</strong> 탭에서 복잡한 사진 업로드 없이 <strong>달력으로 세일 날짜·시간</strong>만 고르고 <strong>사장님 이야기</strong>와 <strong>특가 품목·가격</strong>을 적어 전송하세요! 전송 전 <strong>[푸시화면 미리보기]</strong>로 팝업 모양을 먼저 확인할 수 있고, 다 팔린 품목은 <strong>[품절처리]</strong> 버튼만 누르면 고객 화면에 실시간으로 빨간 <strong>[품절]</strong> 표시가 반영됩니다.
+              </p>
+            </div>
+
             <div className="bg-blue-50/50 border border-blue-100/80 rounded-2xl p-4">
               <h3 className="text-[14px] font-extrabold text-gray-900 mb-1.5">
                 💳 택배 접수 시 &apos;매장 결제 완료&apos; vs &apos;계좌이체 입금자&apos; 자동 구분
@@ -166,19 +187,19 @@ export default function GuidePage({ onBack }: GuidePageProps) {
           <div className="space-y-3.5">
             <div className="bg-emerald-50/40 border border-emerald-100/80 rounded-2xl p-4">
               <h3 className="text-[14px] font-extrabold text-gray-900 mb-1.5">
-                🏦 1단계: 가게 정보 · 입금 계좌 · 외부 링크 등록
+                🏦 1단계: 가게 정보(기타 안내) · 입금 계좌 · 외부 링크 · 기본 버튼 설정
               </h3>
               <p className="text-[13px] font-medium text-gray-600 leading-relaxed">
-                하단 <strong>[마이] &gt; [설정(가게/계좌/쇼핑몰 링크)]</strong>에서 상호명, 영업시간, 무통장 계좌와 운영 중인 블로그·세일 페이지·쇼핑몰 링크를 등록하세요.
+                하단 <strong>[마이] &gt; [설정(가게/계좌/쇼핑몰 링크)]</strong>에서 상호명, 영업시간, 기타 안내, 무통장 계좌, 블로그·쇼핑몰 링크를 등록하고, 간편 택배/직원채용 버튼의 표시 여부도 매장 상황에 맞게 선택하세요.
               </p>
             </div>
 
             <div className="bg-gray-50/80 border border-gray-100 rounded-2xl p-4">
               <h3 className="text-[14px] font-extrabold text-gray-900 mb-1.5">
-                ✨ 2단계: 우리 매장 대표 간편폼 만들기
+                ✨ 2단계: 우리 매장 대표 간편폼 만들기 &amp; 단골 특가푸시 활용
               </h3>
               <p className="text-[13px] font-medium text-gray-600 leading-relaxed">
-                <strong>[간편폼 만들기]</strong>에서 우리 매장의 인사말과 입력 항목, 하단 버튼 이름(예: <em>단골되기</em>, <em>신청하기</em>)을 설정해 저장하면 우리 매장 대표 화면이 즉시 완성됩니다.
+                <strong>[간편폼 만들기]</strong>에서 인사말과 입력 항목, 하단 버튼 이름(예: <em>단골되기</em>)을 설정해 대표 화면을 완성하고, 깜짝 할인이 있는 날엔 <strong>[특가푸시]</strong>로 단골들에게 실시간 소리 푸시와 특가 팝업을 띄워보세요!
               </p>
             </div>
 
@@ -187,7 +208,7 @@ export default function GuidePage({ onBack }: GuidePageProps) {
                 📱 3단계: QR 안내문 비치 &amp; 스마트폰 홈 화면 추가
               </h3>
               <p className="text-[13px] font-medium text-gray-600 leading-relaxed">
-                상단 <strong>[QR 다운로드]</strong>로 안내문을 인쇄해 계산대에 비치하고, 사장님 휴대폰에서는 <strong>[홈 화면에 추가]</strong>를 눌러 언제 어디서나 앱처럼 1초 만에 접수 내역을 확인·A4 한 장 인쇄로 깔끔하게 관리하세요!
+                상단 <strong>[QR 다운로드]</strong>로 안내문을 인쇄해 계산대에 비치하여 손님들이 우리 매장 페이지를 홈화면에 추가하도록 안내하고, 사장님도 휴대폰 홈화면에 추가해 언제 어디서나 1초 만에 접수와 특가 품절을 관리하세요!
               </p>
             </div>
           </div>

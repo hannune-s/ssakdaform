@@ -168,7 +168,12 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
       if (typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator) {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-          const registration = await navigator.serviceWorker.ready;
+          let registration = await navigator.serviceWorker.getRegistration();
+          if (!registration) {
+            registration = await navigator.serviceWorker.register('/sw.js?v=3');
+          }
+          await navigator.serviceWorker.ready;
+
           let sub = await registration.pushManager.getSubscription();
           if (!sub) {
             sub = await registration.pushManager.subscribe({
@@ -187,12 +192,25 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
               .eq('store_id', '__hq__')
               .eq('form_id', '__store_push_sub__');
 
-            const alreadyExists = (existing || []).some(
-              (r: { data?: { storeId?: string; endpoint?: string } }) =>
+            const matchedRow = (existing || []).find(
+              (r: { id: string; data?: { storeId?: string; endpoint?: string } }) =>
                 r.data?.storeId === storeId && r.data?.endpoint === endpoint
             );
 
-            if (!alreadyExists) {
+            if (matchedRow) {
+              await supabase
+                .from('ssakdaform_responses')
+                .update({
+                  data: {
+                    storeId,
+                    storeName,
+                    endpoint,
+                    subscription: subJson,
+                    subscribedAt: new Date().toISOString(),
+                  },
+                })
+                .eq('id', matchedRow.id);
+            } else {
               await supabase.from('ssakdaform_responses').insert([
                 {
                   store_id: '__hq__',
@@ -213,21 +231,31 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
             setIsSubscribed(true);
             playSaleChime();
 
+            // 모바일(안드로이드/아이폰 PWA)에서도 100% 동작하는 서비스워커 showNotification 사용
             try {
-              new Notification(`[${storeName}] 단골 특가 알림이 켜졌습니다`, {
-                body: '새로운 특가 소식이 올라오면 알려드릴게요.',
+              await registration.showNotification(`🔔 [${storeName}] 단골 특가 알림 켜짐!`, {
+                body: '사장님이 깜짝 특가를 올리면 이 기기로 소리와 함께 알림이 도착합니다.',
                 icon: '/icon-192.png',
+                badge: '/icon-192.png',
+                tag: 'ssakdaform-sub-confirm',
               });
-            } catch {}
+            } catch {
+              try {
+                new Notification(`[${storeName}] 단골 특가 알림이 켜졌습니다`, {
+                  body: '새로운 특가 소식이 올라오면 알려드릴게요.',
+                  icon: '/icon-192.png',
+                });
+              } catch {}
+            }
 
             alert(
-              `[${storeName}] 단골 특가 알림이 설정되었습니다.\n사장님이 특가 소식을 올리면 알림으로 바로 받아보실 수 있습니다.`
+              `🔔 [${storeName}] 이 기기(휴대폰/PC)에 실시간 특가 알림이 연결되었습니다!\n사장님이 특가 소식을 전송하면 알림으로 바로 받아보실 수 있습니다.`
             );
             return;
           }
         } else if (permission === 'denied') {
           alert(
-            '브라우저 알림이 꺼져 있습니다.\n주소창 왼쪽 설정 아이콘에서 [알림]을 허용으로 변경해 주세요.'
+            '브라우저 알림이 꺼져 있습니다.\n주소창 옆 메뉴(또는 휴대폰 설정 > 앱 > 브라우저 알림)에서 [알림]을 허용으로 변경해 주세요.'
           );
           return;
         }
@@ -276,11 +304,7 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
         ) : (
           <div
             onClick={() => {
-              if (!isSubscribed) {
-                handleEnablePushAndAddHome();
-              } else {
-                setShowAddHomeGuide(true);
-              }
+              handleEnablePushAndAddHome();
             }}
             className="cursor-pointer w-full px-3.5 sm:px-4 py-3 rounded-xl bg-gradient-to-r from-[#FFF1F2] via-[#FFF5F5] to-[#FFE4E6] hover:from-[#FFE4E6] hover:to-[#FECDD3] border-2 border-rose-300 hover:border-rose-400 shadow-[0_4px_12px_rgba(225,29,72,0.10)] transition-all flex items-center justify-between gap-2.5 group active:scale-[0.99]"
           >
@@ -430,9 +454,13 @@ export default function CustomerSaleSection({ storeId, storeName }: CustomerSale
                 </div>
               ) : (
                 <div className="px-3 py-2.5 rounded-xl bg-rose-50/70 border border-rose-200 flex items-center justify-between gap-2 text-rose-950 text-xs font-bold">
-                  <div className="flex items-center gap-1.5">
+                  <div
+                    onClick={handleEnablePushAndAddHome}
+                    className="flex items-center gap-1.5 cursor-pointer"
+                    title="누르면 이 기기의 푸시 알림을 다시 확인합니다"
+                  >
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-600" />
-                    <span>실시간 세일 알림이 켜져 있습니다</span>
+                    <span>실시간 세일 알림 켜짐 (다시 확인)</span>
                   </div>
                   <button
                     type="button"

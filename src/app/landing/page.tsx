@@ -20,7 +20,10 @@ import {
   MessageSquare,
   ExternalLink,
   Star,
-  Package
+  Package,
+  Bell,
+  Clock,
+  Flower2
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -57,15 +60,15 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto text-center relative">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-100/80 text-[#4C1D95] font-extrabold text-xs sm:text-sm mb-6 border border-purple-200">
             <Sparkles className="w-4 h-4 text-[#5B21B6]" />
-            인스타·블로그 연동 · 단골 모집 · 간편 택배 · 송장 엑셀 · 채용 이력서까지 올인원!
+            인스타·블로그 연동 · 단골 실시간 특가푸시 · 간편 택배 · 송장 엑셀 · 채용 이력서까지 올인원!
           </div>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-gray-900 tracking-tight leading-[1.18] mb-6">
             인스타·블로그·단골을 하나로 잇는<br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3B0764] via-[#5B21B6] to-[#7E22CE]">우리 매장 모바일 홈 &amp; 스마트 접수</span>
           </h1>
           <p className="text-base sm:text-xl text-gray-600 font-medium mb-10 max-w-3xl mx-auto leading-relaxed">
-            고무장갑 벗고 종이 조각에 주소 적던 시대는 끝났습니다.<br className="hidden sm:block" />
-            내가 직접 꾸민 <strong>우리 매장 대표 링크</strong> 하나에 <strong>블로그·인스타·실시간 세일 특가·간편 택배 접수·비회원 배송조회·직원채용 이력서</strong>까지 싹 다 담아드렸습니다.
+            고무장갑 벗고 종이 조각에 주소 적거나, 고객에게 별도의 세일 어플을 따로 깔게 하던 불편함은 끝났습니다.<br className="hidden sm:block" />
+            내가 직접 꾸민 <strong>우리 매장 대표 링크</strong> 하나에 <strong>블로그·인스타·실시간 단골 특가푸시(원터치 품절)·간편 택배 접수·비회원 배송조회·직원채용 이력서</strong>까지 싹 다 담아드렸습니다.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
@@ -143,10 +146,10 @@ export default function LandingPage() {
                     <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#FFF1F2] to-[#FFE4E6] border-2 border-rose-300 flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-black text-rose-950">오늘의 깜짝 특가!</span>
+                          <span className="text-xs font-black text-rose-950">내가먼저 득템!</span>
                           <span className="px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[9px] font-extrabold">실시간 특가</span>
                         </div>
-                        <p className="text-[10px] font-bold text-rose-800 mt-0.5">홈화면에 추가하고 세일소식 먼저 받기</p>
+                        <p className="text-[10px] font-bold text-rose-800 mt-0.5">홈화면에 꼭 추가해주세요! 실시간 세일·득템 소식</p>
                       </div>
                       <span className="px-2 py-1 rounded-md bg-rose-600 text-white text-[10px] font-extrabold shrink-0">세일소식 받기 &gt;</span>
                     </div>
@@ -192,11 +195,95 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Feature 2: 간편 택배 접수 (상품명+수량+매장결제완료 vs 계좌이체 입금자명 + 송장 엑셀) */}
+            {/* Feature 2: 별도 세일 어플 설치 없이! 실시간 단골 특가푸시 & 원터치 품절 팝업 */}
             <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
               <div className="flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF1F2] border border-rose-200 text-rose-700 text-xs font-extrabold">
+                  핵심 무기 02 · 별도 앱 설치 없는 실시간 단골 특가푸시 &amp; 원터치 품절
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+                  &ldquo;세일 보려고 다른 어플을 또 깔라고요?&rdquo;<br className="hidden sm:block" />
+                  우리 매장 싹다폼 하나로 <span className="text-rose-600">실시간 소리 푸시</span>부터 <span className="text-rose-600">원터치 품절</span>까지!
+                </h3>
+                <p className="text-base sm:text-lg text-gray-600 font-medium leading-relaxed">
+                  오늘 조금 남은 귀한 신선 식품이나 반짝 할인 소식을 알리고 싶을 때, 복잡한 외부 세일 어플에 사진을 찍어 올리고 손님에게 또 다른 앱을 설치하게 할 필요가 전혀 없습니다.<br /><br />
+                  고객은 우리 매장 싹다폼을 <strong>홈화면에 추가하고 [세일소식 받기]</strong>만 켜두면 끝! 사장님이 어드민 <strong>[특가푸시]</strong>에서 달력으로 세일 날짜·시간을 고르고 품목과 가격만 적어 전송하면 <strong>고객 휴대폰에 소리와 함께 실시간 푸시 알림</strong>이 날아가고, 접속 즉시 <strong>특가 팝업</strong>이 자동으로 열립니다. 다 팔린 품목은 어드민에서 <strong>[품절처리]</strong> 버튼만 누르면 고객 화면에 실시간으로 빨간 <strong className="text-red-600">[품절]</strong> 도장이 찍힙니다!
+                </p>
+              </div>
+
+              <div className="flex-1 w-full relative min-h-[410px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-tr from-rose-100/80 via-pink-50 to-amber-50/60 rounded-[2.5rem] transform -rotate-2 scale-105" />
+
+                {/* 가상의 샘플 실시간 특가 팝업 목업 */}
+                <div className="relative w-full max-w-[360px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(225,29,72,0.16)] border border-rose-200 overflow-hidden z-10">
+                  <div className="bg-gradient-to-r from-[#FFF1F2] via-[#FFF5F5] to-[#FFE4E6] border-b border-rose-200 px-5 py-4 relative">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-100/90 text-[#4C1D95] border border-purple-200 text-[10.5px] font-extrabold mb-1.5">
+                      싹다상점 강남본점 · 실시간 특가
+                    </span>
+                    <div className="text-[17px] font-black text-gray-900 leading-snug">
+                      오늘 오후 반짝 신선 특가 열렸어요~
+                    </div>
+                    <div className="text-[11.5px] font-bold text-gray-600 mt-1 flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                      <span>오후 4시 ~ 오후 7시 (소진 시 마감)</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 space-y-3 bg-white">
+                    <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[12px] text-amber-950 font-medium leading-relaxed">
+                      <div className="flex items-center gap-1 text-amber-800 font-extrabold text-[11.5px] mb-1">
+                        <Flower2 className="w-3.5 h-3.5 text-amber-600" />
+                        <span>사장님 이야기</span>
+                      </div>
+                      오늘 준비한 신선한 상품 중 조금 남은 귀한 물량을 단골분들께 먼저 기분 좋은 가격으로 나누어 드립니다.
+                    </div>
+
+                    <div className="divide-y divide-rose-100/80 border border-rose-200 rounded-xl overflow-hidden">
+                      {/* 품절 품목 예시 */}
+                      <div className="px-3.5 py-3 flex items-center justify-between gap-2 bg-gray-100/90">
+                        <span className="text-[13.5px] font-extrabold text-gray-400 line-through">
+                          특등급 한우 국거리 300g
+                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-xs font-bold text-gray-400 line-through">15,000원</span>
+                          <span className="px-2.5 py-0.5 rounded-lg bg-red-600 text-white text-[11px] font-extrabold">
+                            품절
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* 판매중 품목 예시 */}
+                      <div className="px-3.5 py-3 flex items-center justify-between gap-2 bg-white">
+                        <span className="text-[14px] font-extrabold text-gray-900">
+                          진한 수제 사골곰탕 2팩 세트
+                        </span>
+                        <div className="text-right shrink-0 flex flex-col items-end">
+                          <span className="text-[11px] font-bold text-gray-500 line-through leading-tight">
+                            18,000원
+                          </span>
+                          <span className="text-[17px] font-black text-rose-600 tracking-tight leading-tight">
+                            12,000원
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="px-3 py-2 rounded-xl bg-rose-50/70 border border-rose-200 flex items-center justify-between text-[11px] font-bold text-rose-950">
+                      <span className="flex items-center gap-1">
+                        <Bell className="w-3.5 h-3.5 text-rose-600" /> 실시간 세일 소리 알림 켜짐
+                      </span>
+                      <span className="text-rose-700 underline">홈화면 추가 안내</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 3: 간편 택배 접수 (상품명+수량+매장결제완료 vs 계좌이체 입금자명 + 송장 엑셀) */}
+            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+              <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold">
-                  핵심 무기 02 · 현장 맞춤형 택배 접수 &amp; 송장 엑셀
+                  핵심 무기 03 · 현장 맞춤형 택배 접수 &amp; 송장 엑셀
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
                   &ldquo;매장에서 카드 결제하셨나요, 계좌이체 하시나요?&rdquo;<br className="hidden sm:block" />
@@ -261,11 +348,11 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Feature 3: 비회원 내 접수 / 실시간 배송조회 */}
-            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+            {/* Feature 4: 비회원 내 접수 / 실시간 배송조회 */}
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
               <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold">
-                  핵심 무기 03 · 고객 문의 전화 90% 감소
+                  핵심 무기 04 · 고객 문의 전화 90% 감소
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
                   &ldquo;사장님, 제 택배 송장번호 뭐예요?&rdquo; 문의 전화 끝!<br className="hidden sm:block" />
@@ -321,11 +408,11 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Feature 4: 여러 개의 맞춤폼 동시 운영 + 매장용 QR 안내문 POP 즉시 출력 */}
-            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
+            {/* Feature 5: 여러 개의 맞춤폼 동시 운영 + 매장용 QR 안내문 POP 즉시 출력 */}
+            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
               <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-extrabold">
-                  핵심 무기 04 · 무제한 맞춤폼 &amp; 매장용 QR 안내문 출력
+                  핵심 무기 05 · 무제한 맞춤폼 &amp; 매장용 QR 안내문 출력
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
                   대표 화면 외에 여러 맞춤폼도 동시에!<br className="hidden sm:block" />
@@ -375,11 +462,11 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Feature 5: 직원채용 간편이력서 (사진 선택 · 보건증 첨부 · A4 1장 출력) */}
-            <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+            {/* Feature 6: 직원채용 간편이력서 (사진 선택 · 보건증 첨부 · A4 1장 출력) */}
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-16">
               <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-extrabold">
-                  핵심 무기 05 · 직원채용 간편이력서 기본 탑재
+                  핵심 무기 06 · 직원채용 간편이력서 기본 탑재
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
                   &ldquo;종이 이력서 들고 오지 마세요!&rdquo;<br className="hidden sm:block" />
@@ -479,8 +566,9 @@ export default function LandingPage() {
             <ul className="space-y-3.5 mb-8">
               {[
                 '내가 꾸민 맞춤폼을 우리 매장 대표 화면(/store/매장ID)으로 지정',
-                '블로그(소소한 기록) · 실시간 세일 특가 · 쇼핑몰 외부 링크 최상단 연동',
-                '간편 택배 접수 (상품·수량·매장결제완료/계좌이체 입금자 구분) 기본 탑재',
+                '별도 앱 설치 없는 단골 실시간 특가푸시(소리 알림) & 원터치 품절 팝업',
+                '블로그(소소한 기록) · 쇼핑몰 외부 링크 최상단 연동 & 가게 기타 안내',
+                '간편 택배 접수 (상품·수량·매장결제완료/계좌이체 입금자 구분 · 표시/숨김 선택)',
                 '우체국·CJ·롯데·한진 등 택배사 송장용 엑셀(CSV) 원클릭 다운로드',
                 '비회원 1초 내 접수 · 실시간 배송위치 조회 및 사장님 안내메모 전달',
                 '직원채용 간편이력서 기본 탑재 & 모든 접수 내역 A4 1장 깔끔 인쇄',
