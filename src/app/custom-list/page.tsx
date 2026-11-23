@@ -7,16 +7,45 @@ import { getEffectiveAdminStoreId } from '@/lib/storeSession';
 
 export default function CustomList({ searchQuery = '' }: { searchQuery?: string }) {
   const [responses, setResponses] = useState<any[]>([]);
+  const [customForms, setCustomForms] = useState<any[]>([]);
+  const [selectedFormFilter, setSelectedFormFilter] = useState<string>('ALL');
   const [selectedResponse, setSelectedResponse] = useState<any>(null);
   const [noticeInputs, setNoticeInputs] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [savedFeedbackId, setSavedFeedbackId] = useState<string | null>(null);
 
+  const getResponseFormTitle = (res: any): string => {
+    const fromData = String(res?.data?.formTitle || '').trim();
+    if (fromData) return fromData;
+    const matched = customForms.find(
+      (f: any) =>
+        String(f.id) === String(res?.form_id) ||
+        String(f.shortCode) === String(res?.form_id) ||
+        String(f.formTitle) === String(res?.form_id)
+    );
+    if (matched?.formTitle) return String(matched.formTitle).trim();
+    return String(res?.form_id || '기본 간편폼').trim();
+  };
+
+  // 매장에 등록된 커스텀 폼 제목들 + 실제 접수된 폼 제목들을 합쳐 자동 필터 탭 생성
+  const formFilterTitles = Array.from(
+    new Set(
+      [
+        ...customForms.map((f: any) => String(f?.formTitle || '').trim()),
+        ...responses.map((r: any) => getResponseFormTitle(r))
+      ].filter(Boolean)
+    )
+  );
+
   const filteredResponses = responses.filter(res => {
+    if (selectedFormFilter !== 'ALL' && getResponseFormTitle(res) !== selectedFormFilter) {
+      return false;
+    }
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     const dataStr = JSON.stringify(res.data || {}).toLowerCase();
-    return dataStr.includes(q);
+    const titleStr = getResponseFormTitle(res).toLowerCase();
+    return dataStr.includes(q) || titleStr.includes(q);
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +53,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, selectedFormFilter]);
 
   const totalPages = Math.ceil(filteredResponses.length / itemsPerPage);
   const paginatedResponses = filteredResponses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -34,12 +63,35 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
   }, []);
 
   const loadData = async () => {
-    const { data, error } = await supabase
-      .from('ssakdaform_responses')
-      .select('*')
-      .eq('store_id', getEffectiveAdminStoreId())
-      .not('form_id', 'in', '("delivery-preset","reservation-preset","order-preset","resume-preset")')
-      .order('submitted_at', { ascending: false });
+    const storeId = getEffectiveAdminStoreId();
+
+    const [{ data, error }, { data: storeRow }] = await Promise.all([
+      supabase
+        .from('ssakdaform_responses')
+        .select('*')
+        .eq('store_id', storeId)
+        .not('form_id', 'in', '("delivery-preset","reservation-preset","order-preset","resume-preset")')
+        .order('submitted_at', { ascending: false }),
+      supabase
+        .from('ssakdaform_stores')
+        .select('custom_forms')
+        .eq('store_id', storeId)
+        .maybeSingle()
+    ]);
+
+    if (storeRow && Array.isArray(storeRow.custom_forms)) {
+      setCustomForms(storeRow.custom_forms);
+    } else if (typeof window !== 'undefined') {
+      try {
+        const localRaw =
+          localStorage.getItem(`ssakdaform_custom_forms_${storeId}`) ||
+          localStorage.getItem('ssakdaform_custom_forms');
+        if (localRaw) {
+          const parsed = JSON.parse(localRaw);
+          if (Array.isArray(parsed)) setCustomForms(parsed);
+        }
+      } catch {}
+    }
 
     if (error) {
       console.error('Load Data Error:', error);
@@ -135,12 +187,47 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
 
   return (
     <div className="max-w-6xl mx-auto pb-12 print:pb-0">
-      <div className="mb-5 flex flex-col md:flex-row md:items-end justify-between gap-3 no-print">
+      <div className="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-3 no-print">
         <div>
           <h1 className="text-[19px] md:text-xl font-bold text-gray-900 mb-1">간편폼접수</h1>
           <p className="text-[13px] text-gray-500">고객들이 제출한 간편폼(설문/주문) 리스트입니다. 안내메모를 입력하고 완료를 누르면 고객 조회 화면에 바로 전달됩니다.</p>
         </div>
       </div>
+
+      {/* 폼별 자동 필터 탭 (사장님이 만든 폼 제목들이 자동으로 표시됨) */}
+      {formFilterTitles.length > 0 && (
+        <div className="mb-4 flex items-center gap-2 flex-wrap no-print">
+          <button
+            type="button"
+            onClick={() => setSelectedFormFilter('ALL')}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all border ${
+              selectedFormFilter === 'ALL'
+                ? 'bg-[#5B21B6] text-white border-[#5B21B6] shadow-xs'
+                : 'bg-white text-gray-700 border-gray-200 hover:bg-purple-50 hover:border-purple-200'
+            }`}
+          >
+            전체 폼 ({responses.length})
+          </button>
+          {formFilterTitles.map((fTitle) => {
+            const count = responses.filter((r) => getResponseFormTitle(r) === fTitle).length;
+            const isSelected = selectedFormFilter === fTitle;
+            return (
+              <button
+                key={fTitle}
+                type="button"
+                onClick={() => setSelectedFormFilter(fTitle)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all border ${
+                  isSelected
+                    ? 'bg-[#5B21B6] text-white border-[#5B21B6] shadow-xs'
+                    : 'bg-purple-50/70 text-[#4C1D95] border-purple-200 hover:bg-purple-100/70'
+                }`}
+              >
+                {fTitle} ({count})
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* 리스트 테이블 */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col min-h-[500px] no-print">
@@ -149,6 +236,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
             <thead className="bg-indigo-50/70 border-b border-indigo-100">
               <tr>
                 <th className="px-4 py-3 text-left text-[13px] font-bold text-indigo-900">접수일시</th>
+                <th className="px-4 py-3 text-left text-[13px] font-bold text-indigo-900">폼 구분</th>
                 <th className="px-4 py-3 text-left text-[13px] font-bold text-indigo-900">이름</th>
                 <th className="px-4 py-3 text-left text-[13px] font-bold text-indigo-900">연락처</th>
                 <th className="px-4 py-3 text-left text-[13px] font-bold text-indigo-900 min-w-[330px]">접수상태 (고객 전달 안내메모)</th>
@@ -159,6 +247,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
               {paginatedResponses.length > 0 ? (
                 paginatedResponses.map((res) => {
                   const data = res.data || {};
+                  const formTitleLabel = getResponseFormTitle(res);
                   
                   let customerName = '-';
                   let customerPhone = '-';
@@ -183,6 +272,11 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
                         <div className="text-[12.5px] font-semibold text-indigo-600 mt-0.5">
                           {new Date(res.submitted_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                         </div>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-purple-50 text-[#5B21B6] border border-purple-200 text-xs font-extrabold">
+                          {formTitleLabel}
+                        </span>
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <div className="font-bold text-gray-900 text-[13px]">{customerName}</div>
@@ -276,7 +370,7 @@ export default function CustomList({ searchQuery = '' }: { searchQuery?: string 
                 })
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={6} className="px-6 py-12 text-center">
                     <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <h3 className="text-gray-900 font-medium text-lg">아직 접수된 맞춤 주문이 없습니다</h3>
                     <p className="text-gray-500 mt-1 text-sm">고객에게 통합 링크를 전달하여 접수를 받아보세요.</p>
