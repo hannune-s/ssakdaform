@@ -27,11 +27,9 @@ import {
   HanookPost
 } from '../page';
 
-// 암호화된 해시값으로만 비교 (00337, j00337)
-const ALLOWED_QUICK_HASHES = [
-  '826b3768f907f023c6c84cc43f3783b582ce9aa2f4a83b1d5ae37f929275148e',
-  '2f56fd39eb47fd97a9e9192638642573e4c2a3a6d497f858d3f6722df63d3f9c'
-];
+// 암호화된 해시값으로만 비교 (j00337)
+const HANOOK_ADMIN_HASH =
+  '2f56fd39eb47fd97a9e9192638642573e4c2a3a6d497f858d3f6722df63d3f9c';
 
 // 휴대폰 고화질 사진을 선명도는 그대로 유지하면서 용량만 ~80-140KB(WebP)로 줄이는 함수
 async function compressImageForSupabase(file: File): Promise<{
@@ -215,24 +213,9 @@ export default function HanookAdminPage() {
       return;
     }
 
-    const inputHash = await hashPassword(trimmed);
     const inputLowerHash = await hashPassword(trimmed.toLowerCase());
 
-    const { data: storeRow } = await supabase
-      .from('ssakdaform_stores')
-      .select('password')
-      .eq('store_id', 'j00337')
-      .maybeSingle();
-
-    const isStorePwMatched = await verifyPassword(trimmed, storeRow?.password);
-    // '00337', 'j00337' 의 SHA-256 해시 또는 DB에 암호화된 매장 비밀번호와 일치하면 통과
-    if (
-      isStorePwMatched ||
-      ALLOWED_QUICK_HASHES.includes(inputHash) ||
-      ALLOWED_QUICK_HASHES.includes(inputLowerHash) ||
-      trimmed === '00337' ||
-      trimmed.toLowerCase() === 'j00337'
-    ) {
+    if (inputLowerHash === HANOOK_ADMIN_HASH) {
       sessionStorage.setItem('hanook_admin_unlocked', 'true');
       setIsUnlocked(true);
     } else {
