@@ -29,7 +29,7 @@ import {
 
 // 암호화된 해시값으로만 비교 (j00337)
 const HANOOK_ADMIN_HASH =
-  '2f56fd39eb47fd97a9e9192638642573e4c2a3a6d497f858d3f6722df63d3f9c';
+  'cfda75eaf6e085d316a9d803906d7f0d529e6b8f44e2d18fb95a7623e12ff6b0';
 
 // 휴대폰 고화질 사진을 선명도는 그대로 유지하면서 용량만 ~80-140KB(WebP)로 줄이는 함수
 async function compressImageForSupabase(file: File): Promise<{
