@@ -191,7 +191,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       return;
     }
 
-    // 택배사(우체국/CJ/롯데/한진 등) 송장 대량 등록 표준 컬럼 순서
+    // 택배사(우체국/CJ/롯데/한진/로젠 등) 송장 대량 등록 표준 필수 8개 컬럼만 구성 (입금자명·결제정보·내부상태 등 제외)
     const headers = [
       '받는분성명',
       '받는분전화번호',
@@ -200,12 +200,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       '수량',
       '배송메시지',
       '보내는분성명',
-      '보내는분전화번호',
-      '기타요청사항',
-      '택배사',
-      '송장번호',
-      '배송상태',
-      '접수일시'
+      '보내는분전화번호'
     ];
 
     const rows = validTargets.map(res => {
@@ -218,13 +213,6 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
       const deliveryMsg = d['배송 기사님께 남길 말씀'] || '';
       const senderName = d['보내는 분 - 이름'] || res.senderName || '';
       const senderPhone = formatPhoneForExcel(d['보내는 분 - 연락처'] || res.senderPhone || '');
-      const paymentInfo = d['주문 상품 - 결제확인'] || '';
-      const rawMemo = d['기타 전달하고 싶은 내용'] || '';
-      const memo = [paymentInfo, rawMemo].filter(Boolean).join(' / ');
-      const courier = d._courier || '';
-      const trackingNumber = d._trackingNumber || '';
-      const status = res.status || '접수대기';
-      const submittedAt = res.submitted_at ? new Date(res.submitted_at).toLocaleString('ko-KR') : '';
 
       return [
         receiverName,
@@ -234,12 +222,7 @@ export default function DeliveryList({ searchQuery = '' }: { searchQuery?: strin
         quantity,
         deliveryMsg,
         senderName,
-        senderPhone,
-        memo,
-        courier,
-        trackingNumber,
-        status,
-        submittedAt
+        senderPhone
       ].map(escapeCsvCell).join(',');
     });
 
